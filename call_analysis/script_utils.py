@@ -38,90 +38,43 @@ def save_json_to_file(data, filename):
         print(f"Error saving to file {filename}: {e}")
         return False
 
-def _get_conv_id_from_logs(project_id, call_id, time_filter, call_id_parameter):
-    """Tries to get the DF Conv ID from runtime logs."""
-    print(f"--- Method 1: Trying to find DF Conv ID for Call ID {call_id} in logs using parameter '{call_id_parameter}' ---")
-    call_id_query_filter = f'''
-    logName="projects/{project_id}/logs/dialogflow-runtime.googleapis.com%2Frequests"
-    AND jsonPayload.queryResult.parameters.{call_id_parameter}="{call_id}"
-    AND {time_filter}
-    '''
-    call_id_query_filter = " ".join(call_id_query_filter.split())
-
-    gcloud_command = f"gcloud logging read '{call_id_query_filter}' --project {project_id} --format=\"value(labels.session_id)\" --limit=1"
-    conversation_id = run_gcloud_command(gcloud_command, raw_output=True)
-    return conversation_id
-
-def _get_conv_id_from_insights(project_id, call_id):
-    """Tries to get the DF Conv ID from CCAI Insights API."""
-    print(f"--- Method 2: Trying to find DF Conv ID for Call ID {call_id} via Insights API ---")
-    try:
-        location = "us-central1"  # Assuming us-central1
-        api_endpoint = f"https://contactcenterinsights.googleapis.com/v1/projects/{project_id}/locations/{location}/conversations"
-        conversation_name_suffix = f"/{call_id}"
-
-        token_process = subprocess.run(["gcloud", "auth", "print-access-token"], capture_output=True, text=True, check=True)
-        token = token_process.stdout.strip()
-
-        curl_command = shlex.split(f"curl -X GET -H 'Authorization: Bearer {token}' -H 'Content-Type: application/json' {api_endpoint}")
-
-        print(f"--- Querying Insights API: {api_endpoint} ---")
-        process = subprocess.Popen(curl_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        stdout, stderr = process.communicate()
-
-        if process.returncode != 0:
-            print(f"Insights API call failed for {call_id}:")
-            print(stderr)
-            return None
-
-        if not stdout.strip():
-            print(f"Insights API returned no data for {call_id}.")
-            return None
-
-        data = json.loads(stdout)
-        conversations = data.get("conversations", [])
-
-        for conv in conversations:
-            if conv.get("name", "").endswith(conversation_name_suffix):
-                labels = conv.get("labels", {})
-                df_conv_id = labels.get("dialogflow_conversation_id_1")
-                if df_conv_id:
-                    return df_conv_id
-                else:
-                    print(f"Found conversation for {call_id}, but 'dialogflow_conversation_id_1' label is missing.")
-                    return None
-
-        print(f"No conversation found in Insights for Call ID: {call_id}")
-        return None
-
-    except subprocess.CalledProcessError as e:
-        print(f"Error getting gcloud token for Insights: {e}")
-        return None
-    except Exception as e:
-        print(f"An error occurred during Insights API call: {e}")
-        return None
-
-def get_dialogflow_conversation_id(virtual_agent_project_id, call_id, lookback_minutes, call_id_parameter='call_id', insights_project_id=None):
-    """Gets the Dialogflow Conversation ID for a given Call ID.
-       Tries runtime logs first, then falls back to CCAI Insights API.
+def get_dialogflow_conversation_id(virtual_agent_project_id, call_id, lookback_minutes, call_id_parameter='call_id', insights_project_id=None, contact_center_id=None, location=None):
+    """Gets the Dialogflow Conversation ID for a given Call ID by searching for the
+       'dialogflow_conversation_created' event in CCAIP logs.
+       Adheres to the 'Identification Quad' by using contact_center_id and location if provided.
     """
     time_filter = get_time_filter(lookback_minutes)
-
-    # Method 1: From Dialogflow runtime logs
-    conversation_id = _get_conv_id_from_logs(virtual_agent_project_id, call_id, time_filter, call_id_parameter)
-    if conversation_id:
-        print(f"Found Conversation ID via logs: {conversation_id}")
-        return conversation_id
-    else:
-        print(f"Could not find Conversation ID via logs for {call_id}.")
-
-    # Method 2: From CCAI Insights API
-    insights_project = insights_project_id if insights_project_id else virtual_agent_project_id
-    conversation_id = _get_conv_id_from_insights(insights_project, call_id)
-    if conversation_id:
-        print(f"Found Conversation ID via Insights: {conversation_id}")
-        return conversation_id
-    else:
-        print(f"Could not find Conversation ID via Insights for {call_id}.")
-
+    
+    print(f"--- Finding DF Conv ID for Call ID {call_id} in CCAIP logs ---")
+    call_id_full = f"call_{call_id}"
+    
+    # Use a loose filter for logName to support routed logs
+    query_filter = f'''
+    logName:"contactcenteraiplatform.googleapis.com%2Fevents"
+    AND jsonPayload.event.name="dialogflow_conversation_created"
+    AND labels.tracker_id="{call_id_full}"
+    AND {time_filter}
+    '''
+    
+    if contact_center_id:
+        query_filter += f'\n    AND resource.labels.resource_id="{contact_center_id}"'
+    if location:
+        query_filter += f'\n    AND resource.labels.location="{location}"'
+        
+    query_filter = " ".join(query_filter.split())
+    
+    gcloud_command = f"gcloud logging read '{query_filter}' --project {virtual_agent_project_id} --format json"
+    logs = run_gcloud_command(gcloud_command)
+    
+    if logs and len(logs) > 0:
+        log = logs[0]
+        try:
+            conv_id = log['jsonPayload']['event']['payload']['participant']['df_conversation_id']
+            print(f"Found Conversation ID via CCAIP logs: {conv_id}")
+            return conv_id
+        except KeyError as e:
+            print(f"Error extracting df_conversation_id from log: {e}")
+            return None
+    
+    print(f"Could not find dialogflow_conversation_created event for Call ID: {call_id} in project {virtual_agent_project_id}")
     return None

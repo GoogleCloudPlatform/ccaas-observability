@@ -2,12 +2,12 @@ import argparse
 import json
 from script_utils import run_gcloud_command, get_time_filter, save_json_to_file, get_dialogflow_conversation_id
 
-def fetch_dialogflow_logs(project_id, lookback_minutes, call_id=None, conversation_id=None, call_id_parameter='call_id', insights_project_id=None):
+def fetch_dialogflow_logs(project_id, lookback_minutes, call_id=None, conversation_id=None, call_id_parameter='call_id', insights_project_id=None, contact_center_id=None, location=None):
     """Fetches Dialogflow logs for a given call ID or conversation ID."""
     time_filter = get_time_filter(lookback_minutes)
 
     if call_id and not conversation_id:
-        conversation_id = get_dialogflow_conversation_id(project_id, call_id, lookback_minutes, call_id_parameter, insights_project_id)
+        conversation_id = get_dialogflow_conversation_id(project_id, call_id, lookback_minutes, call_id_parameter, insights_project_id, contact_center_id, location)
         if not conversation_id:
             print(f"Could not find Conversation ID for Call ID: {call_id}")
             return []
@@ -18,7 +18,7 @@ def fetch_dialogflow_logs(project_id, lookback_minutes, call_id=None, conversati
 
     print(f"--- DF Logs: Querying Audit Logs for Conversation ID: {conversation_id} in project {project_id} ---")
     query_filter = f'''
-    logName="projects/{project_id}/logs/cloudaudit.googleapis.com%2Fdata_access"
+    logName:"cloudaudit.googleapis.com%2Fdata_access"
     protoPayload.serviceName="dialogflow.googleapis.com"
     AND (
       (protoPayload.methodName="google.cloud.dialogflow.v2beta1.Conversations.CreateConversation" AND protoPayload.response.name:"{conversation_id}") OR
@@ -33,7 +33,7 @@ def fetch_dialogflow_logs(project_id, lookback_minutes, call_id=None, conversati
     print(f"Found {num_audit_logs} audit log entries.")
 
     runtime_query_filter = f'''
-    logName="projects/{project_id}/logs/dialogflow-runtime.googleapis.com%2Frequests"
+    logName:"dialogflow-runtime.googleapis.com%2Frequests"
     labels.session_id="{conversation_id}"
     AND {time_filter}
     '''
