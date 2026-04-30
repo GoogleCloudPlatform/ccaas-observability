@@ -50,7 +50,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 ### `get_all_interaction_logs.py`
 
-*   **Purpose:** Orchestrates fetching logs from both CCAIP and Dialogflow for a given Call ID, combines them, and saves them to a file. It adheres to the "Identification Quad" by using Project, Location, Resource, and Interaction IDs.
+*   **Purpose:** Orchestrates fetching logs from both CCAIP and Dialogflow for a given interaction ID, combines them, and saves them to a file. It uses Project, Location, Resource, and Interaction identifiers to reliably match the events.
 *   **Arguments:**
     *   `--contact_center_project_id` (Required): Google CCaaS project ID.
     *   `--contact_center_id` (Required): The identifier for the specific Contact Center instance.
@@ -76,6 +76,20 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
     *   `--call_id` (Required): Call ID for the chart title.
     *   `--out_file` (Optional): Output file name for the Markdown Gantt chart. Default: `call_<call_id>_gantt.md`.
 *   **Output:** A Markdown file containing a `mermaid` code block.
+
+---
+
+### `get_interaction_mapping.py`
+
+*   **Purpose:** Maps a Contact Center interaction ID (e.g., `call_123` or `chat_456`) to its corresponding Dialogflow conversation(s), providing the complete set of identifiers (Project, Location, and Resource ID) for both platforms.
+*   **Arguments:**
+    *   `--project_id` (Required): The centralized GCP project ID to read logs from.
+    *   `--interaction_id` (Optional): The Contact Center interaction ID (e.g., `chat_76609` or `call_1158`).
+    *   `--conversation_id` (Optional): The Dialogflow Conversation ID to map back to its original Contact Center interaction.
+    *   `--contact_center_id` (Optional): The specific Contact Center instance ID to help narrow down the search if an interaction ID is shared across multiple instances.
+    *   `--location` (Optional): The GCP region of the Contact Center instance (e.g., `us-west1` or `asia-southeast1`).
+    *   `--lookback` (Optional): Lookback period in minutes. Default: `1440` (24 hours).
+*   **Process:** It searches for the `dialogflow_conversation_created` event in the Contact Center logs to fetch linked Dialogflow Conversation IDs, and checks Dialogflow Audit logs to reconstruct the target Dialogflow project and region location.
 
 ---
 
