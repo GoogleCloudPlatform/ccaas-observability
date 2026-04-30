@@ -39,13 +39,14 @@ def save_json_to_file(data, filename):
         return False
 
 def get_dialogflow_conversation_id(virtual_agent_project_id, call_id, lookback_minutes, call_id_parameter='call_id', insights_project_id=None, contact_center_id=None, location=None):
-    """Gets the Dialogflow Conversation ID for a given Call ID by searching for the
+    """Gets the Dialogflow Conversation IDs for a given Call ID by searching for the
        'dialogflow_conversation_created' event in CCAIP logs.
        Adheres to the 'Identification Quad' by using contact_center_id and location if provided.
+       Returns a list of unique Conversation IDs.
     """
     time_filter = get_time_filter(lookback_minutes)
     
-    print(f"--- Finding DF Conv ID for Call ID {call_id} in CCAIP logs ---")
+    print(f"--- Finding DF Conv IDs for Call ID {call_id} in CCAIP logs ---")
     call_id_str = str(call_id)
     if call_id_str.startswith("call_") or call_id_str.startswith("chat_"):
         call_id_full = call_id_str
@@ -70,15 +71,19 @@ def get_dialogflow_conversation_id(virtual_agent_project_id, call_id, lookback_m
     gcloud_command = f"gcloud logging read '{query_filter}' --project {virtual_agent_project_id} --format json"
     logs = run_gcloud_command(gcloud_command)
     
+    conv_ids = []
     if logs and len(logs) > 0:
-        log = logs[0]
-        try:
-            conv_id = log['jsonPayload']['event']['payload']['participant']['df_conversation_id']
-            print(f"Found Conversation ID via CCAIP logs: {conv_id}")
-            return conv_id
-        except KeyError as e:
-            print(f"Error extracting df_conversation_id from log: {e}")
-            return None
+        for log in logs:
+            try:
+                c_id = log['jsonPayload']['event']['payload']['participant']['df_conversation_id']
+                if c_id not in conv_ids:
+                    conv_ids.append(c_id)
+            except KeyError as e:
+                continue
+        
+    if conv_ids:
+        print(f"Found Conversation IDs via CCAIP logs: {conv_ids}")
+        return conv_ids
     
     print(f"Could not find dialogflow_conversation_created event for Call ID: {call_id} in project {virtual_agent_project_id}")
-    return None
+    return []

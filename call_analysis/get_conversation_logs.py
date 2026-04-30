@@ -5,47 +5,57 @@ from script_utils import run_gcloud_command, get_time_filter, save_json_to_file,
 def fetch_dialogflow_logs(project_id, lookback_minutes, call_id=None, conversation_id=None, call_id_parameter='call_id', insights_project_id=None, contact_center_id=None, location=None):
     """Fetches Dialogflow logs for a given call ID or conversation ID."""
     time_filter = get_time_filter(lookback_minutes)
+    conversation_ids = []
 
     if call_id and not conversation_id:
-        conversation_id = get_dialogflow_conversation_id(project_id, call_id, lookback_minutes, call_id_parameter, insights_project_id, contact_center_id, location)
-        if not conversation_id:
-            print(f"Could not find Conversation ID for Call ID: {call_id}")
+        conversation_ids = get_dialogflow_conversation_id(project_id, call_id, lookback_minutes, call_id_parameter, insights_project_id, contact_center_id, location)
+        if not conversation_ids:
+            print(f"Could not find Conversation IDs for Call ID: {call_id}")
             return []
-        # print(f"Found Conversation ID: {conversation_id} for Call ID: {call_id}") # This is printed inside the util function
-    elif not conversation_id:
+    elif conversation_id:
+        conversation_ids = [conversation_id]
+    else:
         print("Error: Either call_id or conversation_id must be provided.")
         return []
 
-    print(f"--- DF Logs: Querying Audit Logs for Conversation ID: {conversation_id} in project {project_id} ---")
-    query_filter = f'''
-    logName:"cloudaudit.googleapis.com%2Fdata_access"
-    protoPayload.serviceName="dialogflow.googleapis.com"
-    AND (
-      (protoPayload.methodName="google.cloud.dialogflow.v2beta1.Conversations.CreateConversation" AND protoPayload.response.name:"{conversation_id}") OR
-      (protoPayload.methodName!="google.cloud.dialogflow.v2beta1.Conversations.CreateConversation" AND protoPayload.resourceName:"{conversation_id}")
-    )
-    AND {time_filter}
-    '''
-    query_filter = " ".join(query_filter.split())
-    gcloud_command = f"gcloud logging read '{query_filter}' --project {project_id} --format json"
-    audit_logs = run_gcloud_command(gcloud_command)
-    num_audit_logs = len(audit_logs) if audit_logs else 0
-    print(f"Found {num_audit_logs} audit log entries.")
+    all_logs = []
+    total_audit_logs = 0
+    total_runtime_logs = 0
 
-    runtime_query_filter = f'''
-    logName:"dialogflow-runtime.googleapis.com%2Frequests"
-    labels.session_id="{conversation_id}"
-    AND {time_filter}
-    '''
-    runtime_query_filter = " ".join(runtime_query_filter.split())
-    gcloud_runtime_command = f"gcloud logging read '{runtime_query_filter}' --project {project_id} --format json"
+    for conv_id in conversation_ids:
+        print(f"--- DF Logs: Querying Audit Logs for Conversation ID: {conv_id} in project {project_id} ---")
+        query_filter = f'''
+        logName:"cloudaudit.googleapis.com%2Fdata_access"
+        protoPayload.serviceName="dialogflow.googleapis.com"
+        AND (
+          (protoPayload.methodName="google.cloud.dialogflow.v2beta1.Conversations.CreateConversation" AND protoPayload.response.name:"{conv_id}") OR
+          (protoPayload.methodName!="google.cloud.dialogflow.v2beta1.Conversations.CreateConversation" AND protoPayload.resourceName:"{conv_id}")
+        )
+        AND {time_filter}
+        '''
+        query_filter = " ".join(query_filter.split())
+        gcloud_command = f"gcloud logging read '{query_filter}' --project {project_id} --format json"
+        audit_logs = run_gcloud_command(gcloud_command)
+        num_audit_logs = len(audit_logs) if audit_logs else 0
+        print(f"Found {num_audit_logs} audit log entries for {conv_id}.")
+        total_audit_logs += num_audit_logs
 
-    print(f"--- DF Logs: Querying for Runtime Logs for Session ID: {conversation_id} ---")
-    runtime_logs = run_gcloud_command(gcloud_runtime_command)
-    num_runtime_logs = len(runtime_logs) if runtime_logs else 0
-    print(f"Found {num_runtime_logs} runtime log entries.")
+        runtime_query_filter = f'''
+        logName:"dialogflow-runtime.googleapis.com%2Frequests"
+        labels.session_id="{conv_id}"
+        AND {time_filter}
+        '''
+        runtime_query_filter = " ".join(runtime_query_filter.split())
+        gcloud_runtime_command = f"gcloud logging read '{runtime_query_filter}' --project {project_id} --format json"
 
-    all_logs = (audit_logs or []) + (runtime_logs or [])
+        print(f"--- DF Logs: Querying for Runtime Logs for Session ID: {conv_id} ---")
+        runtime_logs = run_gcloud_command(gcloud_runtime_command)
+        num_runtime_logs = len(runtime_logs) if runtime_logs else 0
+        print(f"Found {num_runtime_logs} runtime log entries for {conv_id}.")
+        total_runtime_logs += num_runtime_logs
+
+        all_logs.extend(audit_logs or [])
+        all_logs.extend(runtime_logs or [])
 
     if not all_logs:
         print("No DF logs found matching the criteria.")
@@ -58,9 +68,9 @@ def fetch_dialogflow_logs(project_id, lookback_minutes, call_id=None, conversati
     print(f"Project ID: {project_id}")
     if call_id:
         print(f"Call ID: {call_id}")
-    print(f"Conversation ID: {conversation_id}")
-    print(f"Audit Logs Found (data access): {num_audit_logs}")
-    print(f"Runtime Logs Found (dialogflow runtime): {num_runtime_logs}")
+    print(f"Conversation IDs: {conversation_ids}")
+    print(f"Total Audit Logs Found: {total_audit_logs}")
+    print(f"Total Runtime Logs Found: {total_runtime_logs}")
     print(f"Total Logs Found: {len(all_logs)}")
     if all_logs:
         print(f"Oldest Log Timestamp: {all_logs[0]['timestamp']}")
