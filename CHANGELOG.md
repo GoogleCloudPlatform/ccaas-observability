@@ -1,3 +1,12 @@
+## Pending Changes
+
+**📈 Metric Enhancements (`modules/calls_dashboard/metrics.tf`)**
+*   **Virtual Join Errors v2:** Added `ccaas_call_virtual_join_errors_v2` and `ccaas_chat_virtual_join_errors_v2` metrics to extract `virtual_agent_id` from logs.
+
+**🖥 Dashboard Updates (`modules/errors_dashboard/main.tf`)**
+*   **Virtual Join Errors by Agent ID:** Added two new widgets (13 and 14) to display call and chat virtual join errors grouped by `virtual_agent_id`.
+*   **Documentation:** Updated the dashboard documentation to include the new charts.
+
 ## Release 2026-03
 
 **✨ New Features & Modules**
