@@ -20,6 +20,8 @@ project.
 
 ## Modules
 
+*   `analytics_dashboard`: Creates a dashboard with log analytics queries to trace
+    interactions across CCaaS and Dialogflow.
 *   `calls_dashboard`: Creates logs-based metrics and a dashboard to monitor
     metrics related to CCaaS voice calls.
 *   `chats_dashboard`: Creates logs-based metrics and a dashboard to monitor
@@ -91,6 +93,7 @@ Once applied, the dashboards can be found in the Google Cloud Console:
     *   "Chats Monitoring"
     *   "DialogFlow Playbook Monitoring"
     *   "DialogFlow CX Monitoring"
+    *   "CCaaS Log Analytics"
 
 ## Destroying the Dashboards and Metrics
 
