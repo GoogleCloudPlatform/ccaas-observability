@@ -1,6 +1,6 @@
 # Call Log Analysis Scripts
 
-This project contains a set of Python scripts designed to fetch, correlate, and visualize call logs from Google Cloud Contact Center AI Platform (CCAIP) and Dialogflow CX.
+This project contains a set of Python scripts designed to fetch, correlate, and visualize call logs from Google Cloud Contact Center as a Service (CCaaS) and Dialogflow CX.
 
 ## Overview
 
@@ -12,7 +12,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 ### `get_contact_center_logs.py`
 
-*   **Purpose:** Fetches CCAIP logs for a specific call within a given contact center instance. It first searches for logs matching the `call_id` to deduce the `session_id`, and then fetches all logs associated with that `session_id`.
+*   **Purpose:** Fetches CCaaS logs for a specific call within a given contact center instance. It first searches for logs matching the `call_id` to deduce the `session_id`, and then fetches all logs associated with that `session_id`.
 *   **Arguments:**
     *   `--contact_center_project_id` (Required): Google CCaaS project ID.
     *   `--contact_center_id` (Required): The identifier that shows in a contact center details page in the Cloud Console at the top of the page (e.g., `e5361509-c230-46e7-a41d-de26d7f9a003`) or in the URL (e.g., `https://console.cloud.google.com/contact-center-ai-platform/instances/<LOCATION>/<CONTACT_CENTER_ID>?project=<PROJECT>`).
@@ -30,11 +30,11 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 ### `get_conversation_logs.py`
 
-*   **Purpose:** Fetches Dialogflow CX logs (Audit and Runtime) for a given Dialogflow Conversation ID or a CCAIP Call ID. If a Call ID is provided, it attempts to find the corresponding Conversation ID by searching for the `dialogflow_conversation_created` event in CCAIP logs.
+*   **Purpose:** Fetches Dialogflow CX logs (Audit and Runtime) for a given Dialogflow Conversation ID or a CCaaS Call ID. If a Call ID is provided, it attempts to find the corresponding Conversation ID by searching for the `dialogflow_conversation_created` event in CCaaS logs.
 *   **Arguments:**
     *   `--virtual_agent_project_id` (Required): GCP Project ID for Dialogflow logs (or centralized project).
     *   `--conversation_id` (Optional): Dialogflow Conversation ID.
-    *   `--call_id` (Optional): CCAIP Call ID to map to a Dialogflow Conversation ID.
+    *   `--call_id` (Optional): CCaaS Call ID to map to a Dialogflow Conversation ID.
     *   `--lookback` (Optional): Lookback period in minutes. Default: `180`.
     *   `--save_logs` (Optional): Flag to save fetched logs to a JSON file. Default: False.
 *   **Log Filters:**
@@ -50,7 +50,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 ### `get_all_interaction_logs.py`
 
-*   **Purpose:** Orchestrates fetching logs from both CCAIP and Dialogflow for a given interaction ID, combines them, and saves them to a file. It uses Project, Location, Resource, and Interaction identifiers to reliably match the events.
+*   **Purpose:** Orchestrates fetching logs from both CCaaS and Dialogflow for a given interaction ID, combines them, and saves them to a file. It uses Project, Location, Resource, and Interaction identifiers to reliably match the events.
 *   **Arguments:**
     *   `--contact_center_project_id` (Required): Google CCaaS project ID.
     *   `--contact_center_id` (Required): The identifier for the specific Contact Center instance.
@@ -59,7 +59,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
     *   `--location` (Optional): GCP location of the Contact Center resource.
     *   `--lookback` (Optional): Lookback period in minutes for log queries. Default: `60`.
     *   `--out_file` (Optional): Output file name for the combined JSON logs. Default: `call_<call_id>_all_logs.json`.
-    *   `--include_activity` (Optional): Flag to include CCAIP activity logs. Default: False.
+    *   `--include_activity` (Optional): Flag to include CCaaS activity logs. Default: False.
 *   **Process:**
     1.  Calls `fetch_contact_center_logs` from `get_contact_center_logs.py`.
     2.  Calls `fetch_dialogflow_logs` from `get_conversation_logs.py`, which maps the Call ID to a Conversation ID using the `dialogflow_conversation_created` event.
@@ -99,10 +99,10 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
     *   `run_gcloud_command()`: Executes gcloud commands.
     *   `get_time_filter()`: Creates timestamp filters for log queries.
     *   `save_json_to_file()`: Saves data to a JSON file.
-    *   `get_dialogflow_conversation_id()`: Maps CCAIP Call ID to Dialogflow Conversation ID by searching for the `dialogflow_conversation_created` event in CCAIP logs. It uses loose filters to support routed logs in centralized projects.
+    *   `get_dialogflow_conversation_id()`: Maps CCaaS Call ID to Dialogflow Conversation ID by searching for the `dialogflow_conversation_created` event in CCaaS logs. It uses loose filters to support routed logs in centralized projects.
 
 *   **`helpers/find_recent_call_ids.py`:**
-    *   **Purpose:** Quickly finds and lists recent Call IDs from CCAIP event logs.
+    *   **Purpose:** Quickly finds and lists recent Call IDs from CCaaS event logs.
     *   **Arguments:**
         *   `--contact_center_project_id` (Required): Google CCaaS project ID.
         *   `--lookback` (Optional): Lookback period in minutes. Default: `60`.
@@ -134,8 +134,8 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
     Found 8 logs in Pass 2.
     ...
     --- Fetching Dialogflow Logs ---
-    --- Finding DF Conv ID for Call ID 1106 in CCAIP logs ---
-    Found Conversation ID via CCAIP logs: 103sAjHcT7ARAGCyejEjgftCg
+    --- Finding DF Conv ID for Call ID 1106 in CCaaS logs ---
+    Found Conversation ID via CCaaS logs: 103sAjHcT7ARAGCyejEjgftCg
     --- DF Logs: Querying Audit Logs for Conversation ID: 103sAjHcT7ARAGCyejEjgftCg in project your-va-project-id ---
     Found 8 audit log entries.
     --- DF Logs: Querying for Runtime Logs for Session ID: 103sAjHcT7ARAGCyejEjgftCg ---
@@ -178,4 +178,3 @@ For more information on Mermaid syntax, see [https://mermaid.js.org/](https://me
 **Rendered Example:**
 
 ![Call Timeline Example](call_timeline.png)
-
