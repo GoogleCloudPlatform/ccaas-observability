@@ -1,7 +1,7 @@
 import argparse
 import json
 from script_utils import save_json_to_file
-from get_contact_center_call_logs import fetch_contact_center_logs
+from get_contact_center_logs import fetch_contact_center_logs
 from get_conversation_logs import fetch_dialogflow_logs
 
 def main():
@@ -27,7 +27,7 @@ def main():
 
     # Step 1: Get Contact Center Logs
     print("--- Fetching Contact Center Logs ---")
-    cc_logs = fetch_contact_center_logs(cc_project_id, args.contact_center_id, int(call_id), lookback, include_activity=args.include_activity)
+    cc_logs = fetch_contact_center_logs(cc_project_id, args.contact_center_id, call_id, lookback, include_activity=args.include_activity)
 
     # Step 2: Get Dialogflow Conversation ID and Logs
     print("--- Fetching Dialogflow Logs ---")

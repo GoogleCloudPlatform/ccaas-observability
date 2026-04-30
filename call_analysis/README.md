@@ -10,7 +10,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 ---
 
-### `get_contact_center_call_logs.py`
+### `get_contact_center_logs.py`
 
 *   **Purpose:** Fetches CCAIP logs for a specific call within a given contact center instance. It first searches for logs matching the `call_id` to deduce the `session_id`, and then fetches all logs associated with that `session_id`.
 *   **Arguments:**
@@ -48,7 +48,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 ---
 
-### `get_all_call_logs.py`
+### `get_all_interaction_logs.py`
 
 *   **Purpose:** Orchestrates fetching logs from both CCAIP and Dialogflow for a given Call ID, combines them, and saves them to a file. It adheres to the "Identification Quad" by using Project, Location, Resource, and Interaction IDs.
 *   **Arguments:**
@@ -61,16 +61,16 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
     *   `--out_file` (Optional): Output file name for the combined JSON logs. Default: `call_<call_id>_all_logs.json`.
     *   `--include_activity` (Optional): Flag to include CCAIP activity logs. Default: False.
 *   **Process:**
-    1.  Calls `fetch_contact_center_logs` from `get_contact_center_call_logs.py`.
+    1.  Calls `fetch_contact_center_logs` from `get_contact_center_logs.py`.
     2.  Calls `fetch_dialogflow_logs` from `get_conversation_logs.py`, which maps the Call ID to a Conversation ID using the `dialogflow_conversation_created` event.
     3.  Combines and sorts the logs by timestamp.
     4.  Saves the result to the specified output file.
 
 ---
 
-### `generate_call_timeline.py`
+### `generate_interaction_timeline.py`
 
-*   **Purpose:** Reads a JSON file containing combined logs (as produced by `get_all_call_logs.py`) and generates a Mermaid Gantt chart in a Markdown file to visualize the call events.
+*   **Purpose:** Reads a JSON file containing combined logs (as produced by `get_all_interaction_logs.py`) and generates a Mermaid Gantt chart in a Markdown file to visualize the interaction events.
 *   **Arguments:**
     *   `--in_file` (Required): Input JSON file with combined logs.
     *   `--call_id` (Required): Call ID for the chart title.
@@ -100,7 +100,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 1.  **Fetch all logs for a call:**
     ```bash
-    python3 get_all_call_logs.py \
+    python3 get_all_interaction_logs.py \
       --contact_center_project_id your-cc-project-id \
       --contact_center_id your-contact-center-id \
       --virtual_agent_project_id your-va-project-id \
@@ -110,7 +110,7 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
     ```
     This will create a file named `call_1106_all_logs.json`.
 
-    **Example Output of `get_all_call_logs.py` for call_1106:**
+    **Example Output of `get_all_interaction_logs.py` for call_1106:**
     ```text
     --- Fetching Contact Center Logs ---
     --- CC Logs: Pass 1: Querying for Call ID: 1106 to find Session ID ---
@@ -138,13 +138,13 @@ The scripts utilize `gcloud` commands and Google Cloud APIs to gather logs based
 
 2.  **Generate the timeline chart:**
     ```bash
-    python3 generate_call_timeline.py \
+    python3 generate_interaction_timeline.py \
       --in_file call_1106_all_logs.json \
       --call_id 1106
     ```
     This will create a file named `call_1106_timeline.md` containing the Mermaid diagram.
 
-    **Example Output of `generate_call_timeline.py`:**
+    **Example Output of `generate_interaction_timeline.py`:**
     ```text
     Successfully saved Gantt chart to call_1106_timeline.md
     ```

@@ -46,7 +46,11 @@ def get_dialogflow_conversation_id(virtual_agent_project_id, call_id, lookback_m
     time_filter = get_time_filter(lookback_minutes)
     
     print(f"--- Finding DF Conv ID for Call ID {call_id} in CCAIP logs ---")
-    call_id_full = f"call_{call_id}"
+    call_id_str = str(call_id)
+    if call_id_str.startswith("call_") or call_id_str.startswith("chat_"):
+        call_id_full = call_id_str
+    else:
+        call_id_full = f"call_{call_id}"
     
     # Use a loose filter for logName to support routed logs
     query_filter = f'''

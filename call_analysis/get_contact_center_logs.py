@@ -10,11 +10,16 @@ def get_session_id(log):
 
 def has_call_id(log, call_id):
     call_id_str = str(call_id)
-    call_id_full = f"call_{call_id}"
+    if call_id_str.startswith("call_") or call_id_str.startswith("chat_"):
+        call_id_full = call_id_str
+    else:
+        call_id_full = f"call_{call_id}"
     payload = log.get("jsonPayload", {}).get("event", {}).get("payload", {})
     labels = log.get("labels", {})
 
     if payload.get("call", {}).get("id") == call_id:
+        return True
+    if payload.get("chat", {}).get("id") == call_id_str:
         return True
     if payload.get("participant", {}).get("call_id") == call_id_full:
         return True
@@ -27,19 +32,33 @@ def fetch_contact_center_logs(project_id, contact_center_id, call_id, lookback_m
     time_filter = get_time_filter(lookback_minutes)
 
     call_id_str = str(call_id)
-    call_id_full = f"call_{call_id}"
+    if call_id_str.startswith("call_") or call_id_str.startswith("chat_"):
+        call_id_full = call_id_str
+    else:
+        call_id_full = f"call_{call_id}"
 
     log_name_filter = "" if include_activity else f'AND -logName="projects/{project_id}/logs/contactcenteraiplatform.googleapis.com%2Factivity"'
 
     # Pass 1: Find Session ID(s) from logs matching Call ID
     print(f"--- CC Logs: Pass 1: Querying for Call ID: {call_id} to find Session ID ---")
+    
+    filter_conditions = []
+    if call_id_str.isdigit():
+        filter_conditions.append(f'jsonPayload.event.payload.call.id={call_id_str}')
+    
+    filter_conditions.extend([
+        f'jsonPayload.event.payload.chat.id="{call_id_str}"',
+        f'jsonPayload.event.payload.participant.call_id="{call_id_full}"',
+        f'labels.tracker_id="{call_id_full}"'
+    ])
+    
+    or_conditions = " OR ".join(filter_conditions)
+
     call_query_filter = f'''
     resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
     AND resource.labels.resource_id="{contact_center_id}"
     AND (
-        jsonPayload.event.payload.call.id={call_id_str} OR
-        jsonPayload.event.payload.participant.call_id="{call_id_full}" OR
-        labels.tracker_id="{call_id_full}"
+        {or_conditions}
     )
     {log_name_filter}
     AND {time_filter}
