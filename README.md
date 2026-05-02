@@ -1,4 +1,4 @@
-# CES Monitoring Dashboards
+# GECX Monitoring Dashboards
 
 This repository contains a set of Cloud Monitoring dashboards that can be used
 to observe the status of Google CCaaS (calls and chats) and Dialogflow (Flow,
@@ -20,6 +20,8 @@ project.
 
 ## Modules
 
+*   `analytics_dashboard`: Creates a dashboard with log analytics queries to trace
+    interactions across CCaaS and Dialogflow.
 *   `calls_dashboard`: Creates logs-based metrics and a dashboard to monitor
     metrics related to CCaaS voice calls.
 *   `chats_dashboard`: Creates logs-based metrics and a dashboard to monitor
@@ -91,6 +93,7 @@ Once applied, the dashboards can be found in the Google Cloud Console:
     *   "Chats Monitoring"
     *   "DialogFlow Playbook Monitoring"
     *   "DialogFlow CX Monitoring"
+    *   "CCaaS Log Analytics"
 
 ## Destroying the Dashboards and Metrics
 
@@ -108,22 +111,23 @@ terraform destroy
 \
 3.  Run `terraform apply` to apply the changes.
 
-## Call Analysis Scripts
+## Interaction Tracing Scripts
 
-Beyond the Terraform-managed dashboards, this repository also includes a set of Python scripts in the `call_analysis/` directory. These scripts are designed to help developers and support engineers fetch, correlate, and visualize call logs from Contact Center AI Platform (CCAIP) and Dialogflow CX.
+Beyond the Terraform-managed dashboards, this repository also includes a set of Python scripts in the `interaction_tracing/` directory. These scripts are designed to help developers and support engineers fetch, correlate, and visualize logs from Contact Center as a Service (CCaaS) and Dialogflow CX.
 
 **Key features:**
 
-*   Fetch logs from CCAIP and Dialogflow based on Call IDs.
-*   Automatically map CCAIP Call IDs to Dialogflow Conversation IDs.
-*   Generate Mermaid Gantt charts to visualize the timeline of call events, making it easier to troubleshoot and understand call flows.
+*   Fetch logs from CCaaS and Dialogflow based on interaction IDs (calls or chats).
+*   Automatically map CCaaS interaction IDs to Dialogflow Conversation IDs.
+*   Generate Mermaid Gantt charts to visualize the timeline of interaction events, making it easier to troubleshoot and understand interaction flows.
+*   Analyze logs at scale using standalone BigQuery SQL scripts (see [BQ README](interaction_tracing/bq/README.md)).
 
-For detailed usage and examples, please refer to the `README.md` within the `call_analysis/` directory.
+For detailed usage and examples, please refer to the `README.md` within the `interaction_tracing/` directory.
 
 **Typical Workflow:**
 
-1.  Use `call_analysis/get_all_call_logs.py` to gather combined logs for a specific call.
-2.  Use `call_analysis/generate_call_timeline.py` to create a visual timeline from the logs.
+1.  Use `interaction_tracing/get_all_interaction_logs.py` to gather combined logs for a specific interaction.
+2.  Use `interaction_tracing/generate_interaction_timeline.py` to create a visual timeline from the logs.
 
 ## Permissions
 

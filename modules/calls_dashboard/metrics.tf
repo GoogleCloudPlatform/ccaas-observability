@@ -230,6 +230,70 @@ resource "google_logging_metric" "chat_virtual_join_errors" {
   }
 }
 
+resource "google_logging_metric" "call_virtual_join_errors_v2" {
+  name        = "ccaas_call_virtual_join_errors_v2"
+  bucket_name = "projects/${var.project_id}/locations/${var.log_bucket.location}/buckets/${var.log_bucket.name}"
+  description = "Call-specific virtual/internal join failures (v2 with logName and agent ID)."
+  filter      = "resource.type=\"contactcenteraiplatform.googleapis.com/ContactCenter\" logName:\"/logs/contactcenteraiplatform.googleapis.com%2Fevents\" jsonPayload.event.name=\"session_participant_join_failed\" jsonPayload.event.payload.participant.id!=\"end_user\" jsonPayload.event.payload.participant.type!=\"campaign_contact\" jsonPayload.event.payload.participant.channel=\"call\""
+  project     = var.project_id
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+    labels {
+      key         = "resource_id"
+      value_type  = "STRING"
+      description = "The Contact Center instance ID"
+    }
+    labels {
+      key         = "location"
+      value_type  = "STRING"
+      description = "The GCP region of the Contact Center"
+    }
+    labels {
+      key         = "virtual_agent_id"
+      value_type  = "STRING"
+      description = "The ID of the virtual agent"
+    }
+  }
+  label_extractors = {
+    "resource_id"      = "EXTRACT(resource.labels.resource_id)"
+    "location"         = "EXTRACT(resource.labels.location)"
+    "virtual_agent_id" = "EXTRACT(jsonPayload.event.payload.participant.id)"
+  }
+}
+
+resource "google_logging_metric" "chat_virtual_join_errors_v2" {
+  name        = "ccaas_chat_virtual_join_errors_v2"
+  bucket_name = "projects/${var.project_id}/locations/${var.log_bucket.location}/buckets/${var.log_bucket.name}"
+  description = "Chat-specific virtual/internal join failures (v2 with logName and agent ID)."
+  filter      = "resource.type=\"contactcenteraiplatform.googleapis.com/ContactCenter\" logName:\"/logs/contactcenteraiplatform.googleapis.com%2Fevents\" jsonPayload.event.name=\"session_participant_join_failed\" jsonPayload.event.payload.participant.id!=\"end_user\" jsonPayload.event.payload.participant.type!=\"campaign_contact\" jsonPayload.event.payload.participant.channel=\"chat\""
+  project     = var.project_id
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+    labels {
+      key         = "resource_id"
+      value_type  = "STRING"
+      description = "The Contact Center instance ID"
+    }
+    labels {
+      key         = "location"
+      value_type  = "STRING"
+      description = "The GCP region of the Contact Center"
+    }
+    labels {
+      key         = "virtual_agent_id"
+      value_type  = "STRING"
+      description = "The ID of the virtual agent"
+    }
+  }
+  label_extractors = {
+    "resource_id"      = "EXTRACT(resource.labels.resource_id)"
+    "location"         = "EXTRACT(resource.labels.location)"
+    "virtual_agent_id" = "EXTRACT(jsonPayload.event.payload.participant.id)"
+  }
+}
+
 resource "google_logging_metric" "calls_established_v2" {
   name = "ccaas_calls_established_v2"
 

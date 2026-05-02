@@ -1,3 +1,30 @@
+## Release 2026-04
+
+**✨ New Features & Modules**
+*   **CCaaS Log Analytics Dashboard (`modules/analytics_dashboard`):** Added a new dashboard with 6 tables using Log Analytics (SQL) to trace interactions across CCaaS and Dialogflow.
+    *   Widget 1: Interaction Aggregate Events Timeline.
+    *   Widget 2: Interaction Mapping Table.
+    *   Widget 3-6: Raw logs for CCaaS Activity, Events, DF Audit, and Runtime.
+    *   Fully supports UI time-range selector by removing hardcoded time filters.
+
+**🛠 Directory Restructuring**
+*   Renamed `call_analysis` directory to `interaction_tracing` to be channel-neutral (supporting both calls and chats).
+*   Created BigQuery versions of the SQL scripts in `interaction_tracing/bq/`.
+
+**🐛 Bug Fixes & Improvements**
+*   Fixed prefix bug in SQL scripts (`ccaip_events.sql`, etc.) where `call_` or `chat_` prefixes were duplicated.
+*   Refactored `main.tf` in `analytics_dashboard` to use `jsonencode` and Heredoc for SQL queries to fix escaping issues and permanent diffs.
+
+**📈 Metric Enhancements (`modules/calls_dashboard/metrics.tf`)**
+*   **Virtual Join Errors v2:** Added `ccaas_call_virtual_join_errors_v2` and `ccaas_chat_virtual_join_errors_v2` metrics to extract `virtual_agent_id` from logs.
+
+**🖥 Dashboard Updates (`modules/errors_dashboard/main.tf`)**
+*   **Virtual Join Errors by Agent ID:** Added two new widgets (13 and 14) to display call and chat virtual join errors grouped by `virtual_agent_id`.
+*   **Documentation:** Updated the dashboard documentation to include the new charts.
+
+**🙏 A shoutout to**
+*   **Bruno and Pranjal:** Thank you for all your support in bringing this toolkit to life!
+
 ## Release 2026-03
 
 **✨ New Features & Modules**

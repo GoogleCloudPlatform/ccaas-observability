@@ -1,5 +1,5 @@
 /**
- * Copyright 2026 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ resource "google_monitoring_dashboard" "errors_dashboard" {
                         "thresholds": [
                             {
                                 "color": "RED",
-                                "direction": "ABOVE",
-                                "value": 0
+                                "direction": "ABOVE"
                             }
                         ],
                         "timeSeriesQuery": {
@@ -64,8 +63,7 @@ resource "google_monitoring_dashboard" "errors_dashboard" {
                         "thresholds": [
                             {
                                 "color": "RED",
-                                "direction": "ABOVE",
-                                "value": 0
+                                "direction": "ABOVE"
                             }
                         ],
                         "timeSeriesQuery": {
@@ -95,8 +93,7 @@ resource "google_monitoring_dashboard" "errors_dashboard" {
                         "thresholds": [
                             {
                                 "color": "RED",
-                                "direction": "ABOVE",
-                                "value": 0
+                                "direction": "ABOVE"
                             }
                         ],
                         "timeSeriesQuery": {
@@ -421,10 +418,75 @@ resource "google_monitoring_dashboard" "errors_dashboard" {
             },
             {
                 "height": 16,
-                "width": 48,
+                "width": 24,
                 "yPos": 84,
                 "widget": {
-                    "title": "13. Global Failure Ratio Delta (1d Platform Trend) %",
+                    "title": "13. Call Virtual Join Errors by Agent ID",
+                    "xyChart": {
+                        "dataSets": [
+                            {
+                                "timeSeriesQuery": {
+                                    "timeSeriesFilter": {
+                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_call_virtual_join_errors_v2\" resource.type=\"logging_bucket\"",
+                                        "aggregation": {
+                                            "alignmentPeriod": "300s",
+                                            "crossSeriesReducer": "REDUCE_SUM",
+                                            "perSeriesAligner": "ALIGN_DELTA",
+                                            "groupByFields": [
+                                                "metric.label.virtual_agent_id"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "plotType": "LINE",
+                                "targetAxis": "Y1"
+                            }
+                        ],
+                        "yAxis": {
+                            "scale": "LINEAR"
+                        }
+                    }
+                }
+            },
+            {
+                "height": 16,
+                "width": 24,
+                "xPos": 24,
+                "yPos": 84,
+                "widget": {
+                    "title": "14. Chat Virtual Join Errors by Agent ID",
+                    "xyChart": {
+                        "dataSets": [
+                            {
+                                "timeSeriesQuery": {
+                                    "timeSeriesFilter": {
+                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_chat_virtual_join_errors_v2\" resource.type=\"logging_bucket\"",
+                                        "aggregation": {
+                                            "alignmentPeriod": "300s",
+                                            "crossSeriesReducer": "REDUCE_SUM",
+                                            "perSeriesAligner": "ALIGN_DELTA",
+                                            "groupByFields": [
+                                                "metric.label.virtual_agent_id"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "plotType": "LINE",
+                                "targetAxis": "Y1"
+                            }
+                        ],
+                        "yAxis": {
+                            "scale": "LINEAR"
+                        }
+                    }
+                }
+            },
+            {
+                "height": 16,
+                "width": 48,
+                "yPos": 100,
+                "widget": {
+                    "title": "15. Global Failure Ratio Delta (1d Platform Trend) %",
                     "xyChart": {
                         "chartOptions": {
                             "mode": "COLOR"
@@ -447,12 +509,13 @@ resource "google_monitoring_dashboard" "errors_dashboard" {
             {
                 "height": 24,
                 "width": 48,
-                "yPos": 100,
+                "yPos": 116,
                 "widget": {
                     "title": "Dashboard Documentation",
                     "text": {
-                        "content": "### CCaaS Errors Dashboard Reference\n\n1. **Calls Failed**: Total absolute count of all calls that ended in a failed state (regardless of point of failure).\n2. **Chats Failed**: Total absolute count of all chats that ended in a failed state.\n3. **Virtual Agent Errors**: Absolute count of errors within the Voice Platform and Streaming pipeline (e.g., Speech-to-Text failures, missing Agent configuration).\n4. **Call Join Errors Breakdown**: Distribution of call failures that occurred *before* connection, categorized by who failed to join (Human, Virtual Agent, or Total).\n5. **Chat Join Errors Breakdown**: Distribution of chat failures that occurred *before* connection, categorized by who failed to join.\n6. **Call Failure Ratio (5m)**: Percentage of calls that fail out of the total initiated calls, calculated over a rolling 5-minute window.\n7. **Call Failure Ratio (60m)**: Percentage of calls that fail out of the total initiated calls, calculated over a rolling 60-minute window.\n8. **Chat Failure Ratio (5m)**: Percentage of chats that fail out of the total initiated chats, calculated over a rolling 5-minute window.\n9. **Chat Failure Ratio (60m)**: Percentage of chats that fail out of the total initiated chats, calculated over a rolling 60-minute window.\n10. **Virtual Agent Error Ratio (5m)**: Percentage of audio/streaming failures relative to the total combined volume of all calls and chats, calculated over a 5-minute window.\n11. **Virtual Agent Error Ratio (60m)**: Percentage of audio/streaming failures relative to the total combined volume of all calls and chats, calculated over a 60-minute window.\n12. **Virtual Agent Errors by Type**: A breakdown of the raw streaming/voice platform errors grouped by their gRPC error code (e.g., INVALID_ARGUMENT, INTERNAL).\n13. **Global Failure Ratio Delta (1d Platform Trend)**: Compares the platform's current 1-hour rolling failure ratio against the same ratio from exactly 24 hours ago. Values above 0% indicate the platform is performing worse today than yesterday; values below 0% indicate improved stability.",
-                        "format": "MARKDOWN"
+                        "content": "### CCaaS Errors Dashboard Reference\n\n1. **Calls Failed**: Total absolute count of all calls that ended in a failed state (regardless of point of failure).\n2. **Chats Failed**: Total absolute count of all chats that ended in a failed state.\n3. **Virtual Agent Errors**: Absolute count of errors within the Voice Platform and Streaming pipeline (e.g., Speech-to-Text failures, missing Agent configuration).\n4. **Call Join Errors Breakdown**: Distribution of call failures that occurred *before* connection, categorized by who failed to join (Human, Virtual Agent, or Total).\n5. **Chat Join Errors Breakdown**: Distribution of chat failures that occurred *before* connection, categorized by who failed to join.\n6. **Call Failure Ratio (5m)**: Percentage of calls that fail out of the total initiated calls, calculated over a rolling 5-minute window.\n7. **Call Failure Ratio (60m)**: Percentage of calls that fail out of the total initiated calls, calculated over a rolling 60-minute window.\n8. **Chat Failure Ratio (5m)**: Percentage of chats that fail out of the total initiated chats, calculated over a rolling 5-minute window.\n9. **Chat Failure Ratio (60m)**: Percentage of chats that fail out of the total initiated chats, calculated over a rolling 60-minute window.\n10. **Virtual Agent Error Ratio (5m)**: Percentage of audio/streaming failures relative to the total combined volume of all calls and chats, calculated over a 5-minute window.\n11. **Virtual Agent Error Ratio (60m)**: Percentage of audio/streaming failures relative to the total combined volume of all calls and chats, calculated over a 60-minute window.\n12. **Virtual Agent Errors by Type**: A breakdown of the raw streaming/voice platform errors grouped by their gRPC error code (e.g., INVALID_ARGUMENT, INTERNAL).\n13. **Call Virtual Join Errors by Agent ID**: Absolute count of call join errors grouped by the specific virtual agent ID.\n14. **Chat Virtual Join Errors by Agent ID**: Absolute count of chat join errors grouped by the specific virtual agent ID.\n15. **Global Failure Ratio Delta (1d Platform Trend)**: Compares the platform's current 1-hour rolling failure ratio against the same ratio from exactly 24 hours ago. Values above 0% indicate the platform is performing worse today than yesterday; values below 0% indicate improved stability.",
+                        "format": "MARKDOWN",
+                        "style": {}
                     }
                 }
             }

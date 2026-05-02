@@ -7,3 +7,7 @@ terraform.tfstate.backup
 # Variables
 project.auto.tfvars
 zip_repo.sh
+
+# Python cache
+__pycache__/
+*.pyc
