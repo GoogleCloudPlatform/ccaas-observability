@@ -22,7 +22,8 @@ os.environ["PATH_CONFIGS"] = json.dumps([
     }
 ])
 
-import main
+with patch("google.cloud.storage.Client"):
+    import main
 
 class TestMetadataLoggerApp(unittest.TestCase):
     def setUp(self):
@@ -111,6 +112,54 @@ class TestMetadataLoggerApp(unittest.TestCase):
         payload = {
             "message": {
                 "data": encoded_data,
+                "messageId": "12345"
+            }
+        }
+
+        response = self.app.post("/", json=payload)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Successfully processed", response.data)
+        mock_storage.bucket.assert_called_with("test-bucket")
+        mock_bucket.blob.assert_called_with("metadata/call-123.json")
+
+    @patch("main.storage_client")
+    @patch("main.get_logging_client")
+    @patch("main.extract_milestones")
+    @patch("main.format_as_log_entry")
+    def test_handle_event_pubsub_attributes(self, mock_format, mock_extract, mock_get_logging, mock_storage):
+        # Setup mocks
+        mock_bucket = MagicMock()
+        mock_blob = MagicMock()
+        mock_blob.download_as_text.return_value = '{"id": 123}'
+        mock_bucket.blob.return_value = mock_blob
+        mock_storage.bucket.return_value = mock_bucket
+
+        mock_logging_client = MagicMock()
+        mock_logger = MagicMock()
+        mock_batch = MagicMock()
+        mock_logger.batch.return_value.__enter__.return_value = mock_batch
+        mock_logging_client.logger.return_value = mock_logger
+        mock_get_logging.return_value = mock_logging_client
+
+        mock_extract.return_value = [{"event": "test"}]
+        mock_format.return_value = {
+            "timestamp": "2026-07-22T12:00:00Z",
+            "jsonPayload": {"event": "test"},
+            "severity": "INFO",
+            "insertId": "1",
+            "resource": {"type": "global", "labels": {}}
+        }
+
+        # Pub/Sub payload where bucket/object are in attributes (empty or non-dict data payload)
+        encoded_data = base64.b64encode(json.dumps({}).encode("utf-8")).decode("utf-8")
+        payload = {
+            "message": {
+                "data": encoded_data,
+                "attributes": {
+                    "bucketId": "test-bucket",
+                    "objectId": "metadata/call-123.json"
+                },
                 "messageId": "12345"
             }
         }

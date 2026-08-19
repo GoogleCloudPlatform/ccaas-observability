@@ -99,8 +99,14 @@ def handle_event():
     bucket_name = event_data.get("bucket")
     object_name = event_data.get("name")
     
+    # Fallback to Pub/Sub message attributes if missing in decoded payload
     if not bucket_name or not object_name:
-        logger.warning(f"Received malformed Eventarc payload missing 'bucket' or 'name': {event_data}")
+        attributes = payload.get("message", {}).get("attributes", {}) or event_data.get("attributes", {})
+        bucket_name = bucket_name or attributes.get("bucketId")
+        object_name = object_name or attributes.get("objectId")
+    
+    if not bucket_name or not object_name:
+        logger.warning(f"Received malformed payload missing 'bucket' or 'name': {payload}")
         return "Missing 'bucket' or 'name' in event request data", 400
 
     gcs_uri = f"gs://{bucket_name}/{object_name}"
