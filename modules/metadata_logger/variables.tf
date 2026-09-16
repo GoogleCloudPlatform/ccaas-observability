@@ -74,3 +74,24 @@ variable "service_name" {
     error_message = "The service_name must be 20 characters or less to avoid exceeding SA name limits."
   }
 }
+
+variable "state_bucket" {
+  type = object({
+    create_bucket  = optional(bool, true)
+    name           = optional(string)
+    location       = optional(string)
+    retention_days = optional(number, 30)
+  })
+  default     = null
+  description = "Configuration for the interaction state tracking GCS bucket. If create_bucket is false, a pre-existing bucket name must be passed. If create_bucket is true, location must be specified, and name is optional (defaults to '<storage_project_id>-<service_name>-state')."
+  validation {
+    condition = var.state_bucket == null || (
+      try(var.state_bucket.create_bucket, true) == false ? (
+        try(var.state_bucket.name != null && var.state_bucket.name != "", false)
+      ) : (
+        try(var.state_bucket.location != null && var.state_bucket.location != "", false)
+      )
+    )
+    error_message = "When state_bucket.create_bucket is false, a pre-existing state_bucket.name must be provided. When create_bucket is true, state_bucket.location must be specified."
+  }
+}

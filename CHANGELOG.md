@@ -1,3 +1,20 @@
+## Release 2026-05.1
+
+**Bug Fixes & Improvements**
+*   **Metadata Logger Duplicate Suppression:** Prevented duplicate milestone log generation caused by asynchronous CCaaS post-interaction metadata re-exports (e.g. wrap-up completion and CSAT survey submissions).
+    *   **GCS State Tracking:** Added state marker tracking (`<bucket>/<object>.marker`) in a dedicated GCS bucket to definitively identify initial exports versus subsequent updates.
+    *   **Heuristic Fallback:** Added automatic timestamp differential detection (`updated_at` vs `ends_at`) as a zero-dependency fallback when the state bucket is not configured.
+    *   **Milestone Categorization:** Filtered out live-interaction milestones (`INITIAL_ONLY_MILESTONES`) on subsequent updates, preventing double-counting in downstream dashboards and metrics.
+    *   **Stable `insertId`:** Excluded transient transport metadata (`gcs_source`) from the `insertId` hash computation to ensure robust log deduplication by Cloud Logging.
+    *   **Terraform Module Support:** Added `state_bucket` input variable to `modules/metadata_logger` with automated bucket creation, lifecycle retention rules, and IAM permissions.
+
+**Rollout & Upgrade Instructions**
+*   Deploying this fix requires a two-step rollout:
+    1. **Phase 1 (Bucket & Build):** Configure `state_bucket` in your Terraform inputs and run `terraform apply` to provision the state tracking bucket and IAM bindings. Next, build and push the new container image to Artifact Registry using `metadata_logging/build_and_push.sh`.
+    2. **Phase 2 (Service Update):** Update `metadata_logger.image_url` to the new container image tag built in Phase 1, then run `terraform apply` again to deploy the Cloud Run service revision with the new image and state tracking enabled.
+
+---
+
 ## Release 2026-05
 
 **✨ New Features & Modules**

@@ -29,6 +29,15 @@ locals {
 
   # Unique target projects where we write logs
   unique_target_projects = distinct([for uri, parsed in local.parsed_paths : parsed.ccaas_project_id])
+
+  # State tracking bucket configuration
+  state_bucket_enabled = var.state_bucket != null
+  create_state_bucket  = local.state_bucket_enabled && coalesce(try(var.state_bucket.create_bucket, null), true)
+  state_bucket_name = local.state_bucket_enabled ? (
+    local.create_state_bucket
+      ? coalesce(try(var.state_bucket.name, null), "${var.storage_project_id}-${var.service_name}-state")
+      : try(var.state_bucket.name, null)
+  ) : null
 }
 
 # Lookup GCS buckets to fetch their location dynamically
@@ -66,6 +75,33 @@ resource "google_storage_bucket_iam_member" "gcs_object_viewer" {
   bucket   = each.value
   role     = "roles/storage.objectViewer"
   member   = "serviceAccount:${google_service_account.metadata_logger_sa.email}"
+}
+
+# Dedicated state tracking bucket for recording processed interactions
+resource "google_storage_bucket" "state_bucket" {
+  count                       = local.create_state_bucket ? 1 : 0
+  name                        = local.state_bucket_name
+  project                     = var.storage_project_id
+  location                    = var.state_bucket.location
+  uniform_bucket_level_access = true
+  force_destroy               = false
+
+  lifecycle_rule {
+    condition {
+      age = coalesce(try(var.state_bucket.retention_days, null), 30)
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}
+
+# When the module creates the bucket, ensure the Cloud Run SA can create and read objects on it
+resource "google_storage_bucket_iam_member" "state_bucket_user" {
+  count  = local.create_state_bucket ? 1 : 0
+  bucket = google_storage_bucket.state_bucket[0].name
+  role   = "roles/storage.objectUser"
+  member = "serviceAccount:${google_service_account.metadata_logger_sa.email}"
 }
 
 # Grant Log Writer permission to the destination Logging Projects
@@ -135,6 +171,14 @@ resource "google_cloud_run_v2_service" "metadata_logger" {
         ])
       }
 
+      dynamic "env" {
+        for_each = local.state_bucket_name != null ? [local.state_bucket_name] : []
+        content {
+          name  = "STATE_BUCKET_NAME"
+          value = env.value
+        }
+      }
+
       resources {
         limits = {
           cpu    = "1"
@@ -154,13 +198,14 @@ resource "google_cloud_run_v2_service" "metadata_logger" {
   }
 
   depends_on = [
-    google_project_service.services
+    google_project_service.services,
+    google_storage_bucket_iam_member.state_bucket_user
   ]
 }
 
 # Grant Invoker access to Eventarc trigger Service Account on Cloud Run
 resource "google_cloud_run_v2_service_iam_member" "eventarc_invoker" {
-  count    = var.trigger_type == "eventarc" ? 1 : 0
+  count    = (var.trigger_type == "eventarc" && var.grant_project_iam_roles) ? 1 : 0
   project  = var.storage_project_id
   location = var.region
   name     = google_cloud_run_v2_service.metadata_logger.name
@@ -217,7 +262,7 @@ resource "google_service_account" "pubsub_invoker_sa" {
 
 # Grant Invoker access to Pub/Sub SA on Cloud Run
 resource "google_cloud_run_v2_service_iam_member" "pubsub_invoker" {
-  count    = var.trigger_type == "pubsub" ? 1 : 0
+  count    = (var.trigger_type == "pubsub" && var.grant_project_iam_roles) ? 1 : 0
   project  = var.storage_project_id
   location = var.region
   name     = google_cloud_run_v2_service.metadata_logger.name

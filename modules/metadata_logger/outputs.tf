@@ -21,3 +21,8 @@ output "runtime_service_account_email" {
   value       = google_service_account.metadata_logger_sa.email
   description = "The email of the Cloud Run runtime service account (needed if setting up cross-project logging/GCS IAM permissions)."
 }
+
+output "state_bucket_name" {
+  value       = local.state_bucket_name
+  description = "The name of the dedicated state tracking bucket (if configured)."
+}

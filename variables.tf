@@ -60,6 +60,14 @@ variable "metadata_logger" {
 
     # The identifier for custom logs.
     custom_log_name = optional(string, "contactcenteraiplatform.googleapis.com%2Fmetadata")
+
+    # Configuration for the interaction state tracking GCS bucket.
+    state_bucket = optional(object({
+      create_bucket  = optional(bool, true)
+      name           = optional(string)
+      location       = optional(string)
+      retention_days = optional(number, 30)
+    }))
   })
   default     = {}
   description = "Configuration settings for the metadata logger."
