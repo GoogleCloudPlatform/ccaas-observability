@@ -8,22 +8,38 @@ This reference provides advanced, deep-dive query recipes for **GECX (CCaaS, Dia
 
 In end-to-end customer journeys, interactions traverse CCaaS, Dialogflow virtual agents, and generative CES agents. Correlate across these streams using specific link keys:
 
-### A. Correlating CCaaS Interactions to Dialogflow CX Sessions
+### A. Correlating CCaaS Interactions to Dialogflow CX / CES via Conversation Profiles
+
+CCaaS (UJet) does not map directly to a Dialogflow CX agent. Instead, CCaaS maps internally to a **Virtual Agent Platform** configuration (represented in CCaaS metadata as `virtual_agent.name` UUID, e.g. `544cf1cb-7351-48e0-8a55-64e6d422b2a1` and ID `1`). That integration targets a Dialogflow `v2beta1` **Conversation Profile** resource, which in turn configures the target Dialogflow CX agent (`automatedAgentConfig.agent`) or CES app.
+
 1. **Find the Dialogflow conversation created event in CCaaS**:
-   When CCaaS hands off to a Virtual Agent, it emits an event containing the Dialogflow session:
+   When CCaaS hands off to a Virtual Agent, it emits an event containing the Dialogflow conversation ID:
    ```bash
    gcloud logging read 'resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
    labels.tracker_id="<TRACKER_ID>"
    logName:"contactcenteraiplatform.googleapis.com%2Fevents"
-   jsonPayload.event_name="dialogflow_conversation_created"' \
+   jsonPayload.event.name="dialogflow_conversation_created"' \
      --project="<LOGS_PROJECT_ID>" \
-     --format=json
+     --format="value(jsonPayload.event.payload.participant.df_conversation_id)"
    ```
-2. **Query the corresponding Dialogflow runtime turns**:
-   Extract the session ID or conversation name from the event above and query runtime requests:
+   *(Or inspect raw metadata JSON in GCS under `participants[].virtual_agent.conversation_id`)*
+
+2. **Correlate with Dialogflow Audit Logs to resolve the Conversation Profile**:
+   Dialogflow logs the conversation creation and target conversation profile:
+   ```bash
+   gcloud logging read 'logName:"cloudaudit.googleapis.com%2Fdata_access"
+   protoPayload.methodName="google.cloud.dialogflow.v2beta1.Conversations.CreateConversation"
+   "<DF_CONVERSATION_ID>"' \
+     --project="<LOGS_PROJECT_ID>" \
+     --format="yaml(protoPayload.response.conversationProfile)"
+   ```
+   Cross-reference the returned profile with `conversation_profiles` in `gecx_environments.yaml` to identify the human-readable profile name and target agent.
+
+3. **Query the corresponding Dialogflow runtime turns**:
+   Using the session ID (which matches the conversation ID for single-session interactions) or filtering by agent ID:
    ```bash
    gcloud logging read 'logName:"dialogflow-runtime.googleapis.com%2Frequests"
-   labels.session_id="<SESSION_ID>"' \
+   labels.session_id="<DF_CONVERSATION_ID>"' \
      --project="<LOGS_PROJECT_ID>" \
      --format=json
    ```

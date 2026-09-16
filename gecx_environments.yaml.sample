@@ -29,6 +29,12 @@ environments:
         default_language_code: "en"
         time_zone: "America/Los_Angeles"
         audio_export_gcs: "gs://my-gecx-artifacts-bucket/recordings"
+    conversation_profiles:
+      - id: "0000000000000000000000"
+        # project_id: "my-df-project"                # Optional: specify if different from default_project_id
+        location: "global"
+        display_name: "CustomerServiceProfile"
+        target_agent: "projects/my-df-project/locations/us-central1/agents/00000000-0000-0000-0000-000000000000/environments/draft"
     cxas_apps:
       - id: "00000000-0000-0000-0000-000000000000"
         # project_id: "my-cxas-project"              # Optional: specify if different from default_project_id

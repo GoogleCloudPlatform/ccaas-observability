@@ -67,6 +67,16 @@ Because these products generally do not have comprehensive CLI support in `gclou
     "https://dialogflow.googleapis.com/v3/projects/<PROJECT_ID>/locations/global/agents"
   ```
 
+  #### Step C: Discover Conversation Profiles (Integration Bridge)
+  CCaaS (UJet) does not invoke Dialogflow CX agents directly; it maps internally via a "Virtual Agent Platform" configuration to a **Dialogflow Conversation Profile** (`v2beta1` API). The Conversation Profile then links to either a Dialogflow CX agent/environment or a CES app:
+  ```bash
+  curl -s \
+    -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+    -H "X-goog-user-project: <PROJECT_ID>" \
+    "https://dialogflow.googleapis.com/v2beta1/projects/<PROJECT_ID>/locations/global/conversationProfiles"
+  ```
+  *(For regional locations like `us-central1`, use `https://<LOCATION>-dialogflow.googleapis.com/v2beta1/...`)*
+
 ---
 
 ### 3. CX Agent Studio (CXAS)
