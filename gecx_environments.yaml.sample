@@ -1,0 +1,46 @@
+# GECX (CCaaS, Dialogflow, CXAS) Observability Environment Configuration Sample
+# Copy this file to `gecx_environments.yaml` or use the `discover-gecx-environments`
+# skill to automatically discover and populate resources using 
+# native GECX REST APIs (CCaaS, Dialogflow, CXAS/CES).
+
+default_environment: dev
+
+environments:
+  dev:
+    description: "Development environment"
+    default_project_id: "my-gecx-project"     # Default GCP project ID for environment resources
+    aggregate_logs_project_id: "my-gecx-logs-project" # Optional: Central aggregate logging project. If omitted, queries target the resource's project_id or default_project_id.
+    components:
+      - ccaas
+      - dialogflow
+      - cxas
+    contact_centers:
+      - id: "customer-service"
+        # project_id: "my-ccaas-project"             # Optional: specify if different from default_project_id
+        location: "us-central1"
+        display_name: "Customer Service Instance"
+        domain_prefix: "customer-service"
+        root_uri: "https://customer-service.uc1.ccaiplatform.com"
+    dialogflow_agents:
+      - id: "00000000-0000-0000-0000-000000000000"
+        # project_id: "my-df-project"                # Optional: specify if different from default_project_id
+        location: "us-central1"
+        display_name: "CustomerServiceAgent"
+        default_language_code: "en"
+        time_zone: "America/Los_Angeles"
+        audio_export_gcs: "gs://my-gecx-artifacts-bucket/recordings"
+    cxas_apps:
+      - id: "00000000-0000-0000-0000-000000000000"
+        # project_id: "my-cxas-project"              # Optional: specify if different from default_project_id
+        location: "us"
+        display_name: "Customer Support Assistant"
+
+  # Example additional environment template:
+  # prod:
+  #   description: "Production environment"
+  #   default_project_id: "my-prod-infra-project"
+  #   aggregate_logs_project_id: "my-prod-logs-project"
+  #   components:
+  #     - ccaas
+  #     - dialogflow
+  #     - cxas
