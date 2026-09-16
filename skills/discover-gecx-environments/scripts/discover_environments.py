@@ -226,6 +226,41 @@ def discover_cxas_resources(project_id, token, target_locations):
     return available_locs, apps
 
 
+def discover_conversation_profiles(project_id, token, target_locations):
+    """Discovers Dialogflow v2 Conversation Profiles across target locations."""
+    if not token:
+        return []
+
+    locations_to_scan = set(target_locations)
+    locations_to_scan.add("global")
+
+    profiles = []
+    for loc in sorted(list(locations_to_scan)):
+        if not loc:
+            continue
+        if loc == "global":
+            cp_url = f"https://dialogflow.googleapis.com/v2beta1/projects/{project_id}/locations/global/conversationProfiles"
+        else:
+            cp_url = f"https://{loc}-dialogflow.googleapis.com/v2beta1/projects/{project_id}/locations/{loc}/conversationProfiles"
+
+        res = fetch_api(cp_url, token, user_project=project_id)
+        if res and "conversationProfiles" in res:
+            for cp in res["conversationProfiles"]:
+                name = cp.get("name", "")
+                profile_id = name.split("/")[-1]
+                profile_info = {
+                    "id": profile_id,
+                    "location": loc,
+                    "display_name": cp.get("displayName", ""),
+                }
+                auto_agent = cp.get("automatedAgentConfig", {})
+                if "agent" in auto_agent:
+                    profile_info["target_agent"] = auto_agent["agent"]
+                profiles.append(profile_info)
+
+    return profiles
+
+
 def discover_environment(project_id, env_name=None):
     """Discovers environment configuration for a given GCP project."""
     if not env_name:
@@ -271,7 +306,14 @@ def discover_environment(project_id, env_name=None):
     for loc in df_locations:
         candidate_locations.add(loc)
 
-    # 4. Discover CX Agent Studio (CXAS) Apps
+    # 4. Discover Dialogflow Conversation Profiles
+    print(f"[*] Querying Dialogflow Conversation Profiles (v2beta1 API)...")
+    conversation_profiles = discover_conversation_profiles(project_id, token, candidate_locations)
+    if conversation_profiles:
+        components.add("dialogflow")
+        print(f"    Found {len(conversation_profiles)} Conversation Profile(s).")
+
+    # 5. Discover CX Agent Studio (CXAS) Apps
     print(f"[*] Querying CXAS API (ces.googleapis.com)...")
     cxas_locations, cxas_apps = discover_cxas_resources(project_id, token, candidate_locations)
     if cxas_apps:
@@ -294,6 +336,9 @@ def discover_environment(project_id, env_name=None):
 
     if df_agents:
         env_config["dialogflow_agents"] = df_agents
+
+    if conversation_profiles:
+        env_config["conversation_profiles"] = conversation_profiles
 
     if cxas_apps:
         env_config["cxas_apps"] = cxas_apps

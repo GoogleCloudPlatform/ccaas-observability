@@ -38,6 +38,7 @@ Before constructing queries, resolve the target environment topology:
 3. **Active Resources**:
    * **`contact_centers`**: Discovered CCaaS contact center IDs (e.g. `iva`, `advanced-reporting`) and locations.
    * **`dialogflow_agents`**: Discovered Dialogflow agent IDs and locations.
+   * **`conversation_profiles`**: Discovered Dialogflow Conversation Profiles (linking CCaaS to Dialogflow CX agents or CES apps).
    * **`cxas_apps`**: Discovered CX Agent Studio app IDs and locations.
 
 ---
