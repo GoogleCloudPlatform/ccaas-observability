@@ -41,6 +41,11 @@ module "ccaas_log_analytics_dashboard" {
   project_id = var.project_id
 }
 
+module "ccaas_platform_dashboard" {
+  source     = "./modules/platform_dashboard"
+  project_id = var.project_id
+}
+
 module "metadata_logger" {
   count                   = var.enable_metadata_logger ? 1 : 0
   source                  = "./modules/metadata_logger"

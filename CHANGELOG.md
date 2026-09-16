@@ -6,6 +6,10 @@
     *   **Log Query Skill (`skills/query-gecx-logs`):** Curated query templates and diagnostic workflows for analyzing CCaaS session lifecycles, virtual agent interactions, and error logs across Cloud Logging and BigQuery Log Analytics.
     *   **Environment Configuration Template:** Added `gecx_environments.yaml.sample` template for multi-environment deployments.
 
+*   **CCaaS Platform Dashboard Module (`modules/platform_dashboard`):** Added a dedicated module and dashboard for monitoring CCaaS platform-level events.
+    *   **CCaaS Version Updates Metric (`ccaas_version_updates`):** Added a log-based metric extracting target version and instance domain prefix from platform upgrade completion events.
+    *   **Platform Updates Widgets:** Features a daily update count scorecard, a stacked bar chart of platform updates over time broken down by target version and instance domain prefix, and a Log Analytics (SQL) table widget for querying upgrade event details.
+
 ---
 
 ## Release 2026-05.1
