@@ -37,6 +37,7 @@ storage_client = storage.Client()
 # Read environment configurations
 CUSTOM_LOG_NAME = os.getenv("CUSTOM_LOG_NAME", "metadata-logger")
 PATH_CONFIGS_STR = os.getenv("PATH_CONFIGS", "[]")
+STATE_BUCKET_NAME = os.getenv("STATE_BUCKET_NAME")
 
 # Parse path configs JSON safely
 try:
@@ -45,6 +46,59 @@ try:
 except Exception as e:
     logger.error(f"Failed to parse PATH_CONFIGS environment variable as JSON: {e}")
     PATH_CONFIGS = []
+
+if STATE_BUCKET_NAME:
+    logger.info(f"Interaction state tracking enabled using state bucket: {STATE_BUCKET_NAME}")
+else:
+    logger.warning("STATE_BUCKET_NAME is not set; interaction state tracking is disabled.")
+
+
+def check_interaction_is_update(bucket_name, object_name):
+    """
+    Checks if this interaction metadata has already been processed by querying
+    the dedicated state tracking bucket.
+
+    Returns:
+        bool: True if marker exists (subsequent update),
+              False if marker does not exist (initial export),
+              None if state tracking is unavailable/disabled.
+    """
+    if not STATE_BUCKET_NAME:
+        return None
+
+    marker_key = f"{bucket_name}/{object_name}.marker"
+    try:
+        state_bucket = storage_client.bucket(STATE_BUCKET_NAME)
+        marker_blob = state_bucket.blob(marker_key)
+        exists = marker_blob.exists()
+        logger.info(f"State marker '{marker_key}' exists={exists} in state bucket '{STATE_BUCKET_NAME}'.")
+        return exists
+    except Exception as e:
+        logger.warning(f"Error checking state marker '{marker_key}' in state bucket '{STATE_BUCKET_NAME}': {e}")
+        return None
+
+
+def record_interaction_initial_export(bucket_name, object_name):
+    """
+    Records a state marker in the dedicated state bucket after successful initial processing.
+    Uses generation precondition 0 (atomic create-if-not-exists) to guarantee safety.
+    """
+    if not STATE_BUCKET_NAME:
+        return
+
+    marker_key = f"{bucket_name}/{object_name}.marker"
+    try:
+        state_bucket = storage_client.bucket(STATE_BUCKET_NAME)
+        marker_blob = state_bucket.blob(marker_key)
+        marker_blob.upload_from_string(
+            datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            if_generation_match=0,
+            content_type="text/plain"
+        )
+        logger.info(f"Successfully recorded initial state marker for '{marker_key}' in '{STATE_BUCKET_NAME}'.")
+    except Exception as e:
+        # PreconditionFailed or other upload issues shouldn't crash or fail the request
+        logger.info(f"State marker for '{marker_key}' already recorded or error: {e}")
 
 # Cache logging clients dynamically per project ID
 logging_clients = {}
@@ -142,13 +196,16 @@ def handle_event():
         # Return 200 to prevent eventarc message loop retry in case of a corrupted or missing file
         return f"Failed to download/parse GCS metadata: {e}", 200
 
+    # Check interaction state (initial export vs subsequent update)
+    is_update = check_interaction_is_update(bucket_name, object_name)
+
     # Extract all milestones
-    milestones = extract_milestones(metadata, gcs_uri)
+    milestones = extract_milestones(metadata, gcs_uri, is_update=is_update)
     if not milestones:
         logger.info(f"No milestones parsed from metadata file: {gcs_uri}")
         return "No milestone events found in metadata file", 200
 
-    logger.info(f"Extracted {len(milestones)} milestones from call {metadata.get('id')}. Commencing write operation.")
+    logger.info(f"Extracted {len(milestones)} milestones from call {metadata.get('id')} (is_update={is_update}). Commencing write operation.")
 
     # Get dynamic logging target details
     target_project_id = matching_config["ccaas_project_id"]
@@ -194,6 +251,10 @@ def handle_event():
                 )
                 
         logger.info(f"Successfully wrote {len(milestones)} batch log entries to {CUSTOM_LOG_NAME} in project {target_project_id}.")
+
+        # If this was confirmed as an initial export, record the state marker in the dedicated state bucket
+        if is_update is False:
+            record_interaction_initial_export(bucket_name, object_name)
     except Exception as e:
         logger.error(f"Failed to write batch entries to Cloud Logging API: {e}")
         return f"Failed writing to Cloud Logging API: {e}", 500

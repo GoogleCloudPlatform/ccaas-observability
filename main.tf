@@ -51,6 +51,7 @@ module "metadata_logger" {
   grant_project_iam_roles = var.metadata_logger.grant_project_iam_roles
   enable_apis             = var.metadata_logger.enable_apis
   custom_log_name         = var.metadata_logger.custom_log_name
+  state_bucket            = var.metadata_logger.state_bucket
 }
 
 

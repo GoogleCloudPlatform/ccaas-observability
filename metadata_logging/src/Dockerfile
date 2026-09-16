@@ -14,11 +14,17 @@
 
 FROM python:3.11-slim
 
+# Update OS packages to capture security patches
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 # Prevent Python from writing .pyc files and keep stdout unbuffered
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
+
+# Upgrade core Python packaging tools
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Install requirements
 COPY requirements.txt .

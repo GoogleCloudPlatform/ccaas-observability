@@ -162,7 +162,107 @@ def redact_pii_fields(val):
         return [redact_pii_fields(item) for item in val]
     return val
 
-def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True):
+
+# Group 1: Milestones that occur strictly during the live interaction (Initial Export).
+# These must never be parsed or emitted on subsequent post-processing updates.
+INITIAL_ONLY_MILESTONES = {
+    # Session lifecycle initiation & termination
+    "call_created",
+    "chat_created",
+    "call_scheduled",
+    "chat_scheduled",
+    "call_ended",
+    "chat_ended",
+
+    # Routing, queueing, and connectivity
+    "call_connected",
+    "chat_connected",
+    "call_queued",
+    "chat_queued",
+    "call_assigned",
+    "chat_assigned",
+
+    # IVR & Virtual Agent (concluded prior to session termination)
+    "consumer_in_menu_started",
+    "consumer_in_menu_ended",
+    "virtual_agent_session_started",
+    "virtual_agent_session_ended",
+}
+
+
+def is_metadata_update(metadata, update_threshold_seconds=120):
+    """
+    Determines whether a metadata JSON payload represents a subsequent update
+    to an already concluded interaction (e.g. post-call processing, wrap-up,
+    CSAT submission) versus the initial session termination export.
+
+    Heuristic Strategy:
+    1. Check 'ends_at' (or 'ended_at') vs 'updated_at':
+       - In CCaaS/UJET, the initial export occurs immediately upon disconnect,
+         with updated_at typically within 0-15 seconds of ends_at.
+       - Asynchronous post-call updates occur significantly later (typically 15-20 minutes
+         later when wrap-up finishes or survey windows expire).
+       - If (updated_at - ends_at) exceeds update_threshold_seconds (default 120s),
+         this payload is classified as an update.
+    2. Fallback: If ends_at is not present, check created_at vs updated_at. If
+       updated_at is significantly later than created_at and the interaction is
+       finished, classify accordingly.
+    3. Returns False (initial creation) by default if timestamps cannot be reliably parsed.
+
+    Args:
+        metadata (dict): The parsed CCaaS metadata JSON object.
+        update_threshold_seconds (int): Minimum difference in seconds between
+            updated_at and ends_at to consider the file an update. Default: 120.
+
+    Returns:
+        bool: True if classified as a subsequent update event; False otherwise.
+    """
+    if not isinstance(metadata, dict):
+        return False
+
+    session = metadata
+    if isinstance(metadata.get("call"), dict):
+        session = metadata["call"]
+    elif isinstance(metadata.get("chat"), dict):
+        session = metadata["chat"]
+
+    ends_at_str = session.get("ends_at") or session.get("ended_at")
+    updated_at_str = session.get("updated_at")
+
+    if not updated_at_str:
+        return False
+
+    try:
+        updated_dt = datetime.fromisoformat(updated_at_str).astimezone(timezone.utc)
+    except Exception:
+        return False
+
+    if ends_at_str:
+        try:
+            ends_dt = datetime.fromisoformat(ends_at_str).astimezone(timezone.utc)
+            delta_sec = (updated_dt - ends_dt).total_seconds()
+            return delta_sec >= update_threshold_seconds
+        except Exception:
+            pass
+
+    # Fallback when ends_at is missing: compare created_at vs updated_at
+    created_at_str = session.get("created_at")
+    if created_at_str:
+        try:
+            created_dt = datetime.fromisoformat(created_at_str).astimezone(timezone.utc)
+            duration = session.get("call_duration") or session.get("chat_duration") or 0
+            effective_end = created_dt.timestamp() + duration
+            delta_sec = updated_dt.timestamp() - effective_end
+            return delta_sec >= update_threshold_seconds
+        except Exception:
+            pass
+
+    return False
+
+def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=None):
+    if is_update is None:
+        is_update = is_metadata_update(metadata)
+
     events = []
     
     is_chat = "chat_type" in metadata or "chat_uuid" in metadata or "chat-" in os.path.basename(gcs_uri)
@@ -192,9 +292,13 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True):
     for field_name, event_name in root_timestamps:
         ts_val = metadata.get(field_name)
         if ts_val:
-            payload_details = {}
             actual_event_name = event_name.replace("call_", "chat_") if is_chat else event_name
             
+            # Group 1 live-interaction milestones must never be re-parsed or re-emitted on updates
+            if is_update and actual_event_name in INITIAL_ONLY_MILESTONES:
+                continue
+
+            payload_details = {}
             if event_name == "call_ended":
                 payload_details.update({
                     "rating": rating,
@@ -225,47 +329,49 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True):
                 "labels": base_labels.copy()
             })
             
-    for item in metadata.get("virtual_agent_handle_durations", []):
-        va_info = item.get("virtual_agent", {})
-        start_va_labels = base_labels.copy()
-        start_va_labels.update({
-            "virtual_agent_id": str(va_info.get("id", "")),
-            "virtual_agent_name": str(va_info.get("name", ""))
-        })
-        
-        end_va_labels = start_va_labels.copy()
-        if item.get("finish_reason"):
-            end_va_labels["va_finish_reason"] = str(item.get("finish_reason"))
-        if item.get("escalation_reason"):
-            end_va_labels["va_escalation_reason"] = str(item.get("escalation_reason"))
-            
-        start = item.get("started_at")
-        if start:
-            events.append({
-                "timestamp": start,
-                "event_name": "virtual_agent_session_started",
-                "payload": {
-                    "event": "virtual_agent_session_started",
-                    "call_id": call_id,
-                    "virtual_agent": va_info,
-                    "details": filter_outcome_fields(item, "virtual_agent_handle_durations")
-                },
-                "labels": start_va_labels.copy()
+    # Virtual agent sessions conclude during the live interaction; skip on updates
+    if not is_update:
+        for item in metadata.get("virtual_agent_handle_durations", []):
+            va_info = item.get("virtual_agent", {})
+            start_va_labels = base_labels.copy()
+            start_va_labels.update({
+                "virtual_agent_id": str(va_info.get("id", "")),
+                "virtual_agent_name": str(va_info.get("name", ""))
             })
             
-        end = item.get("ended_at")
-        if end:
-            events.append({
-                "timestamp": end,
-                "event_name": "virtual_agent_session_ended",
-                "payload": {
-                    "event": "virtual_agent_session_ended",
-                    "call_id": call_id,
-                    "virtual_agent": va_info,
-                    "details": filter_timestamp_fields(item, "virtual_agent_handle_durations")
-                },
-                "labels": end_va_labels.copy()
-            })
+            end_va_labels = start_va_labels.copy()
+            if item.get("finish_reason"):
+                end_va_labels["va_finish_reason"] = str(item.get("finish_reason"))
+            if item.get("escalation_reason"):
+                end_va_labels["va_escalation_reason"] = str(item.get("escalation_reason"))
+                
+            start = item.get("started_at")
+            if start:
+                events.append({
+                    "timestamp": start,
+                    "event_name": "virtual_agent_session_started",
+                    "payload": {
+                        "event": "virtual_agent_session_started",
+                        "call_id": call_id,
+                        "virtual_agent": va_info,
+                        "details": filter_outcome_fields(item, "virtual_agent_handle_durations")
+                    },
+                    "labels": start_va_labels.copy()
+                })
+                
+            end = item.get("ended_at")
+            if end:
+                events.append({
+                    "timestamp": end,
+                    "event_name": "virtual_agent_session_ended",
+                    "payload": {
+                        "event": "virtual_agent_session_ended",
+                        "call_id": call_id,
+                        "virtual_agent": va_info,
+                        "details": filter_timestamp_fields(item, "virtual_agent_handle_durations")
+                    },
+                    "labels": end_va_labels.copy()
+                })
  
     for item in metadata.get("consumer_handle_durations", []):
         start = item.get("started_at")
@@ -294,32 +400,34 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True):
                 "labels": base_labels.copy()
             })
  
-    for item in metadata.get("consumer_in_menu_durations", []):
-        start = item.get("started_at")
-        if start:
-            events.append({
-                "timestamp": start,
-                "event_name": "consumer_in_menu_started",
-                "payload": {
-                    "event": "consumer_in_menu_started",
-                    "call_id": call_id,
-                    "details": filter_outcome_fields(item, "consumer_in_menu_durations")
-                },
-                "labels": {}
-            })
-            
-        end = item.get("ended_at")
-        if end:
-            events.append({
-                "timestamp": end,
-                "event_name": "consumer_in_menu_ended",
-                "payload": {
-                    "event": "consumer_in_menu_ended",
-                    "call_id": call_id,
-                    "details": filter_timestamp_fields(item, "consumer_in_menu_durations")
-                },
-                "labels": {}
-            })
+    # IVR menu navigation occurs during initial greeting; skip on updates
+    if not is_update:
+        for item in metadata.get("consumer_in_menu_durations", []):
+            start = item.get("started_at")
+            if start:
+                events.append({
+                    "timestamp": start,
+                    "event_name": "consumer_in_menu_started",
+                    "payload": {
+                        "event": "consumer_in_menu_started",
+                        "call_id": call_id,
+                        "details": filter_outcome_fields(item, "consumer_in_menu_durations")
+                    },
+                    "labels": {}
+                })
+                
+            end = item.get("ended_at")
+            if end:
+                events.append({
+                    "timestamp": end,
+                    "event_name": "consumer_in_menu_ended",
+                    "payload": {
+                        "event": "consumer_in_menu_ended",
+                        "call_id": call_id,
+                        "details": filter_timestamp_fields(item, "consumer_in_menu_durations")
+                    },
+                    "labels": {}
+                })
  
     for item in metadata.get("participants", []):
         p_labels = base_labels.copy()
@@ -657,8 +765,14 @@ def format_as_log_entry(milestone, project_id, location="asia-southeast1", resou
     else:
         payload["message"] = f"Milestone: {event_name}"
 
-    # Generate a stable unique insertId by hashing the final payload
-    payload_str = json.dumps(payload, sort_keys=True)
+    # Generate a stable unique insertId by hashing the business payload (excluding transient transport details like gcs_source)
+    hash_payload = payload.copy()
+    if "event" in hash_payload and isinstance(hash_payload["event"], dict):
+        hash_event = hash_payload["event"].copy()
+        hash_event.pop("gcs_source", None)
+        hash_payload["event"] = hash_event
+
+    payload_str = json.dumps(hash_payload, sort_keys=True)
     insert_id = hashlib.md5(payload_str.encode('utf-8')).hexdigest()
         
     res = {
