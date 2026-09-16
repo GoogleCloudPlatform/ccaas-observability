@@ -20,3 +20,6 @@ __pycache__/
 
 # Metadata
 metadata/
+
+# Environments
+gecx_environments.yaml
