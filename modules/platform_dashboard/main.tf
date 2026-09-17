@@ -23,8 +23,6 @@ resource "google_monitoring_dashboard" "platform_dashboard" {
         {
           height = 8
           width  = 16
-          xPos   = 0
-          yPos   = 0
           widget = {
             title = "CCaaS Platform Updates"
             scorecard = {
@@ -48,7 +46,6 @@ resource "google_monitoring_dashboard" "platform_dashboard" {
         {
           height = 16
           width  = 48
-          xPos   = 0
           yPos   = 8
           widget = {
             title = "CCaaS Platform Updates by Version"
@@ -87,7 +84,6 @@ resource "google_monitoring_dashboard" "platform_dashboard" {
         {
           height = 16
           width  = 48
-          xPos   = 0
           yPos   = 24
           widget = {
             title = "Platform Updates Log Analytics Table"

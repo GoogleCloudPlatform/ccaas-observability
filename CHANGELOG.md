@@ -10,6 +10,11 @@
     *   **CCaaS Version Updates Metric (`ccaas_version_updates`):** Added a log-based metric extracting target version and instance domain prefix from platform upgrade completion events.
     *   **Platform Updates Widgets:** Features a daily update count scorecard, a stacked bar chart of platform updates over time broken down by target version and instance domain prefix, and a Log Analytics (SQL) table widget for querying upgrade event details.
 
+*   **Metadata Log-Based Dashboards & Metrics (`modules/metadata_calls_dashboard`, `modules/metadata_chats_dashboard`):** Added Cloud Monitoring dashboards and log-based metrics extracted directly from CCaaS metadata milestone logs.
+    *   **Calls Monitoring (Metadata Logs):** Visualizes call volume over time (established, successful, transferred, abandoned, failed), queue wait durations (p50 and p95), current established call rate gauge, and virtual agent session completion breakdown (by finish reason and virtual agent).
+    *   **Chats Monitoring (Metadata Logs):** Visualizes chat session volume over time (successful, escalated, abandoned, failed), transfer wait durations, current escalated chat rate gauge, and virtual agent session completion breakdown (by finish reason and virtual agent).
+    *   **Configurable Ingestion:** Enabled conditionally via `var.enable_metadata_dashboards` with customizable log bucket, custom log name, and rate gauge upper bounds.
+
 ---
 
 ## Release 2026-05.1
