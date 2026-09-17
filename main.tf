@@ -59,4 +59,23 @@ module "metadata_logger" {
   state_bucket            = var.metadata_logger.state_bucket
 }
 
+module "ccaas_metadata_calls_dashboard" {
+  count                             = var.enable_metadata_dashboards ? 1 : 0
+  source                            = "./modules/metadata_calls_dashboard"
+  project_id                        = var.project_id
+  established_call_rate_upper_bound = coalesce(var.metadata_dashboards.established_call_rate_upper_bound, var.established_call_rate_upper_bound)
+  custom_log_name                   = var.metadata_dashboards.custom_log_name
+  log_bucket                        = var.metadata_dashboards.log_bucket
+}
+
+module "ccaas_metadata_chats_dashboard" {
+  count                           = var.enable_metadata_dashboards ? 1 : 0
+  source                          = "./modules/metadata_chats_dashboard"
+  project_id                      = var.project_id
+  escalated_chat_rate_upper_bound = coalesce(var.metadata_dashboards.escalated_chat_rate_upper_bound, var.escalated_chat_rate_upper_bound)
+  custom_log_name                 = var.metadata_dashboards.custom_log_name
+  log_bucket                      = var.metadata_dashboards.log_bucket
+}
+
+
 

@@ -72,3 +72,26 @@ variable "metadata_logger" {
   default     = {}
   description = "Configuration settings for the metadata logger."
 }
+
+variable "enable_metadata_dashboards" {
+  type        = bool
+  default     = false
+  description = "Whether to enable the metadata log-based calls and chats dashboards and metrics."
+}
+
+variable "metadata_dashboards" {
+  type = object({
+    custom_log_name                   = optional(string, "contactcenteraiplatform.googleapis.com%2Fmetadata")
+    established_call_rate_upper_bound = optional(number)
+    escalated_chat_rate_upper_bound   = optional(number)
+    log_bucket = optional(object({
+      location = string
+      name     = string
+    }), {
+      location = "global"
+      name     = "_Default"
+    })
+  })
+  default     = {}
+  description = "Configuration settings for the metadata log-based dashboards."
+}
