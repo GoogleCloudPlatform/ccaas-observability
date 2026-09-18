@@ -87,7 +87,7 @@ resource "google_logging_metric" "metadata_chats_abandoned" {
     resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
     logName:"/logs/${var.custom_log_name}"
     jsonPayload.event.name="chat_ended"
-    jsonPayload.event.payload.chat.status="abandoned"
+    (jsonPayload.event.payload.chat.status="abandoned" OR jsonPayload.event.payload.chat.status="no_response" OR jsonPayload.event.payload.details.fail_reason:"abandoned")
   EOT
 
   metric_descriptor {

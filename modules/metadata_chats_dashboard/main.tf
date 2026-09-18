@@ -90,7 +90,7 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                                             "crossSeriesReducer": "REDUCE_SUM",
                                             "perSeriesAligner": "ALIGN_DELTA"
                                         },
-                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\""
+                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\" metric.label.fail_reason!=monitoring.regex.full_match(\".*abandoned.*\")"
                                     }
                                 }
                             }
@@ -199,7 +199,7 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                                     "crossSeriesReducer": "REDUCE_SUM",
                                     "perSeriesAligner": "ALIGN_SUM"
                                 },
-                                "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\""
+                                "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\" metric.label.fail_reason!=monitoring.regex.full_match(\".*abandoned.*\")"
                             }
                         }
                     },
@@ -261,7 +261,7 @@ resource "google_monitoring_dashboard" "metadata_chats" {
             {
                 "height": 16,
                 "widget": {
-                    "title": "Failed Chats by Fail Reason",
+                    "title": "Failed Chats by Fail Reason (excl. end-user abandonments)",
                     "xyChart": {
                         "chartOptions": {
                             "mode": "COLOR"
@@ -282,7 +282,7 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                                             ],
                                             "perSeriesAligner": "ALIGN_DELTA"
                                         },
-                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\""
+                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\" metric.label.fail_reason!=monitoring.regex.full_match(\".*abandoned.*\")"
                                     }
                                 }
                             }
@@ -319,7 +319,7 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                                             ],
                                             "perSeriesAligner": "ALIGN_DELTA"
                                         },
-                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\""
+                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_failed\" resource.type=\"logging_bucket\" metric.label.fail_reason!=monitoring.regex.full_match(\".*abandoned.*\")"
                                     }
                                 }
                             }
