@@ -106,7 +106,7 @@ resource "google_logging_metric" "metadata_calls_abandoned" {
     resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
     logName:"/logs/${var.custom_log_name}"
     jsonPayload.event.name="call_ended"
-    jsonPayload.event.payload.call.status="abandoned"
+    (jsonPayload.event.payload.call.status="abandoned" OR jsonPayload.event.payload.details.fail_reason:"abandoned")
   EOT
 
   metric_descriptor {
