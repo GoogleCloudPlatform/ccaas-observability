@@ -196,5 +196,61 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
         self.assertNotIn("call_ended", update_names)
         self.assertIn("call_updated", update_names)
 
+    def test_virtual_agent_escalation_deflected_extraction(self):
+        metadata = {
+            "id": 12345,
+            "call_uuid": "c-uuid-12345",
+            "call_type": "Voice Inbound (IVR)",
+            "created_at": "2026-09-16T17:22:48.000-07:00",
+            "ends_at": "2026-09-16T17:27:50.000-07:00",
+            "updated_at": "2026-09-16T17:27:50.000-07:00",
+            "status": "canceled",
+            "virtual_agent_deflected_escalations": [
+                {
+                    "id": 101,
+                    "deflection": "temp_redirection_queue",
+                    "escalation_id": 201,
+                    "escalation_reason": "unknown",
+                    "escalated_at": "2026-09-16T17:27:11.000-07:00",
+                    "menu_path_id": 50,
+                    "menu_path": "Main Menu - IVR/Virtual Agent/Reroute to service selection",
+                    "lang": "en",
+                    "virtual_agent": {
+                        "id": 6,
+                        "name": "Example Virtual Agent",
+                        "va_alias": None,
+                        "avatar_url": "https://example.com/avatar.png"
+                    }
+                }
+            ]
+        }
+        gcs_uri = "gs://bucket/call-12345.json"
+        milestones = extract_milestones(metadata, gcs_uri)
+        deflected = [m for m in milestones if m["event_name"] == "virtual_agent_escalation_deflected"]
+        self.assertEqual(len(deflected), 1)
+
+        event = deflected[0]
+        self.assertEqual(event["timestamp"], "2026-09-16T17:27:11.000-07:00")
+        inner = event["payload"]["event"]["payload"]
+        self.assertEqual(inner["call"]["id"], 12345)
+        self.assertEqual(inner["virtual_agent"]["id"], 6)
+        self.assertEqual(inner["virtual_agent"]["name"], "Example Virtual Agent")
+        vade = inner["virtual_agent_deflected_escalation"]
+        self.assertEqual(vade["deflection"], "temp_redirection_queue")
+        self.assertEqual(vade["escalation_id"], 201)
+        self.assertEqual(vade["menu_path_id"], 50)
+        self.assertIn("Reroute to service selection", vade["menu_path"])
+
+        # Formatted log entry check
+        log_entry = format_as_log_entry(event, self.project_id, self.location, self.resource_id)
+        self.assertEqual(log_entry["severity"], "INFO")
+        self.assertEqual(log_entry["timestamp"], "2026-09-17T00:27:11Z")
+        self.assertEqual(log_entry["jsonPayload"]["message"], "Milestone: virtual_agent_escalation_deflected (call 12345)")
+
+        # Verify suppressed on metadata update
+        update_milestones = extract_milestones(metadata, gcs_uri, is_update=True)
+        update_deflected = [m for m in update_milestones if m["event_name"] == "virtual_agent_escalation_deflected"]
+        self.assertEqual(len(update_deflected), 0)
+
 if __name__ == "__main__":
     unittest.main()
