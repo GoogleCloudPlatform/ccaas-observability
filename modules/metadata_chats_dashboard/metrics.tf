@@ -220,3 +220,60 @@ resource "google_logging_metric" "metadata_chats_va_sessions_ended" {
 
   project = var.project_id
 }
+
+resource "google_logging_metric" "metadata_chats_va_deflected" {
+  name        = "ccaas_metadata_chats_va_deflected"
+  bucket_name = "projects/${var.project_id}/locations/${var.log_bucket.location}/buckets/${var.log_bucket.name}"
+  description = "Number of virtual agent escalation deflections on chats from metadata logs labeled by deflection type, menu path, VA name, escalation reason, and chat type."
+  filter      = <<-EOT
+    resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
+    logName:"/logs/${var.custom_log_name}"
+    jsonPayload.event.name="virtual_agent_escalation_deflected"
+    jsonPayload.event.payload.chat:*
+  EOT
+
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+
+    labels {
+      key         = "deflection"
+      value_type  = "STRING"
+      description = "The deflection mechanism (e.g. temp_redirection_queue, after_hours_message_only)."
+    }
+
+    labels {
+      key         = "menu_path"
+      value_type  = "STRING"
+      description = "Target menu path where the deflection was routed."
+    }
+
+    labels {
+      key         = "virtual_agent_name"
+      value_type  = "STRING"
+      description = "Virtual agent name (e.g. Chat Agentic AI)."
+    }
+
+    labels {
+      key         = "escalation_reason"
+      value_type  = "STRING"
+      description = "Reason for escalation (e.g. by_virtual_agent, unknown)."
+    }
+
+    labels {
+      key         = "chat_type"
+      value_type  = "STRING"
+      description = "Chat channel type (e.g. Messaging Inbound (Web Chat))."
+    }
+  }
+
+  label_extractors = {
+    "deflection"         = "EXTRACT(jsonPayload.event.payload.virtual_agent_deflected_escalation.deflection)"
+    "menu_path"          = "EXTRACT(jsonPayload.event.payload.virtual_agent_deflected_escalation.menu_path)"
+    "virtual_agent_name" = "EXTRACT(jsonPayload.event.payload.virtual_agent.name)"
+    "escalation_reason"  = "EXTRACT(jsonPayload.event.payload.virtual_agent_deflected_escalation.escalation_reason)"
+    "chat_type"          = "EXTRACT(jsonPayload.event.payload.chat.type)"
+  }
+
+  project = var.project_id
+}
