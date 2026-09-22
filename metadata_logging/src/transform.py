@@ -39,6 +39,9 @@ OUTCOME_ONLY_FIELDS = {
     },
     "consumer_event_durations": {
         "started_at", "ended_at", "duration", "event"
+    },
+    "virtual_agent_deflected_escalations": {
+        "escalated_at"
     }
 }
 
@@ -52,6 +55,7 @@ MILESTONE_TIMESTAMP_FIELDS = {
     "transfers": {"created_at", "assigned_at", "connected_at", "updated_at", "started_at"},
     "handle_durations": {"started_at", "ended_at"},
     "consumer_event_durations": {"started_at", "ended_at"},
+    "virtual_agent_deflected_escalations": {"escalated_at"},
 }
 
 def filter_timestamp_fields(item, parent_key):
@@ -105,6 +109,9 @@ EVENT_PAYLOAD_KEY_MAPPING = {
     "csat_session_completed": "csat_session",
     "consumer_event_started": "consumer_event",
     "consumer_event_completed": "consumer_event",
+
+    # Escalation Deflection
+    "virtual_agent_escalation_deflected": "virtual_agent_deflected_escalation",
 }
 
 def filter_outcome_fields(item, parent_key):
@@ -187,6 +194,7 @@ INITIAL_ONLY_MILESTONES = {
     "consumer_in_menu_ended",
     "virtual_agent_session_started",
     "virtual_agent_session_ended",
+    "virtual_agent_escalation_deflected",
 }
 
 
@@ -371,6 +379,29 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
                         "details": filter_timestamp_fields(item, "virtual_agent_handle_durations")
                     },
                     "labels": end_va_labels.copy()
+                })
+
+        for item in metadata.get("virtual_agent_deflected_escalations", []):
+            esc_at = item.get("escalated_at")
+            if esc_at:
+                va_info = item.get("virtual_agent", {})
+                vade_details = filter_timestamp_fields(item, "virtual_agent_deflected_escalations")
+                if "virtual_agent" in vade_details:
+                    del vade_details["virtual_agent"]
+
+                vade_payload = {
+                    "event": "virtual_agent_escalation_deflected",
+                    "call_id": call_id,
+                    "details": vade_details
+                }
+                if va_info:
+                    vade_payload["virtual_agent"] = va_info
+
+                events.append({
+                    "timestamp": esc_at,
+                    "event_name": "virtual_agent_escalation_deflected",
+                    "payload": vade_payload,
+                    "labels": {}
                 })
  
     for item in metadata.get("consumer_handle_durations", []):
