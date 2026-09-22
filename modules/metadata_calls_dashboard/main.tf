@@ -423,6 +423,79 @@ resource "google_monitoring_dashboard" "metadata_calls" {
                 "width": 24,
                 "xPos": 24,
                 "yPos": 41
+            },
+            {
+                "height": 16,
+                "widget": {
+                    "title": "VA Escalations Deflected Volume (in 5 min windows)",
+                    "xyChart": {
+                        "chartOptions": {
+                            "mode": "COLOR"
+                        },
+                        "dataSets": [
+                            {
+                                "legendTemplate": "Deflected",
+                                "minAlignmentPeriod": "300s",
+                                "plotType": "LINE",
+                                "targetAxis": "Y1",
+                                "timeSeriesQuery": {
+                                    "timeSeriesFilter": {
+                                        "aggregation": {
+                                            "alignmentPeriod": "300s",
+                                            "crossSeriesReducer": "REDUCE_SUM",
+                                            "perSeriesAligner": "ALIGN_DELTA"
+                                        },
+                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_calls_va_deflected\" resource.type=\"logging_bucket\""
+                                    }
+                                }
+                            }
+                        ],
+                        "timeshiftDuration": "86400s",
+                        "yAxis": {
+                            "scale": "LINEAR"
+                        }
+                    }
+                },
+                "width": 24,
+                "yPos": 57
+            },
+            {
+                "height": 16,
+                "widget": {
+                    "title": "VA Escalations Deflected by Deflection Type",
+                    "xyChart": {
+                        "chartOptions": {
+                            "mode": "COLOR"
+                        },
+                        "dataSets": [
+                            {
+                                "legendTemplate": "$${metric.labels.deflection}",
+                                "minAlignmentPeriod": "300s",
+                                "plotType": "STACKED_BAR",
+                                "targetAxis": "Y1",
+                                "timeSeriesQuery": {
+                                    "timeSeriesFilter": {
+                                        "aggregation": {
+                                            "alignmentPeriod": "300s",
+                                            "crossSeriesReducer": "REDUCE_SUM",
+                                            "groupByFields": [
+                                                "metric.label.deflection"
+                                            ],
+                                            "perSeriesAligner": "ALIGN_DELTA"
+                                        },
+                                        "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_calls_va_deflected\" resource.type=\"logging_bucket\""
+                                    }
+                                }
+                            }
+                        ],
+                        "yAxis": {
+                            "scale": "LINEAR"
+                        }
+                    }
+                },
+                "width": 24,
+                "xPos": 24,
+                "yPos": 57
             }
         ]
     }
