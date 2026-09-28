@@ -87,9 +87,12 @@
                       "type": "integer",
                       "description": "Metric property: wait_duration."
                     },
-                    "call_duration": {
-                      "type": "null",
-                      "description": "Metric property: call_duration."
+                    "chat_duration": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Metric property: chat_duration."
                     },
                     "hold_duration": {
                       "type": "null",

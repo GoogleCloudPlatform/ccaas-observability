@@ -12,6 +12,7 @@
 
 *   **CCaaS Telemetry Milestone Logger Updates (`metadata_logging`):**
     *   **Virtual Agent Escalation Deflection Milestone (`virtual_agent_escalation_deflected`):** Added milestone extraction for virtual agent escalation deflections across calls and chats. Emits deflection details (e.g. deflection mechanism, target menu path, escalation reason) alongside virtual agent attributes and suppresses duplicate milestone emissions on subsequent metadata updates.
+    *   **Chat Duration Extraction on `chat_ended`:** Fixed `chat_ended` milestone extraction to populate `details.chat_duration` from root chat metadata instead of `details.call_duration`, and updated the `chat_ended` log schema and documentation accordingly.
 
 *   **Metadata Log-Based Dashboards & Metrics (`modules/metadata_calls_dashboard`, `modules/metadata_chats_dashboard`):** Added Cloud Monitoring dashboards and log-based metrics extracted directly from CCaaS metadata milestone logs.
     *   **Calls Monitoring (Metadata Logs):** Visualizes call volume over time (established, successful, transferred, abandoned, failed), queue wait durations (p50 and p95), current established call rate gauge, and virtual agent session completion breakdown (by finish reason and virtual agent).

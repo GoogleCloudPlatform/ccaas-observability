@@ -24,7 +24,7 @@ Markdown representation of the CCAIPChatLog_chat_ended event schema.
 | `jsonPayload.event.payload.details.sub_status` | `Nullable<string>` | Metric property: sub_status. |
 | `jsonPayload.event.payload.details.disconnected_by` | `null` | Metric property: disconnected_by. |
 | `jsonPayload.event.payload.details.wait_duration` | `integer` | Metric property: wait_duration. |
-| `jsonPayload.event.payload.details.call_duration` | `null` | Metric property: call_duration. |
+| `jsonPayload.event.payload.details.chat_duration` | `Nullable<integer>` | Metric property: chat_duration. |
 | `jsonPayload.event.payload.details.hold_duration` | `null` | Metric property: hold_duration. |
 | `jsonPayload.event.payload.details.in_queue_wait_time_va` | `null` | Metric property: in_queue_wait_time_va. |
 | `jsonPayload.event.payload.details.automation_redirection` | `null` | Metric property: automation_redirection. |
@@ -63,7 +63,7 @@ Markdown representation of the CCAIPChatLog_chat_ended event schema.
           "sub_status": null,
           "disconnected_by": null,
           "wait_duration": 7200,
-          "call_duration": null,
+          "chat_duration": null,
           "hold_duration": null,
           "in_queue_wait_time_va": null,
           "automation_redirection": null
