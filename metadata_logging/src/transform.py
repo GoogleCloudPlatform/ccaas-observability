@@ -308,6 +308,7 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
 
             payload_details = {}
             if event_name == "call_ended":
+                duration_key = "chat_duration" if is_chat else "call_duration"
                 payload_details.update({
                     "rating": rating,
                     "feedback": metadata.get("feedback"),
@@ -316,10 +317,12 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
                     "sub_status": metadata.get("sub_status"),
                     "disconnected_by": metadata.get("disconnected_by"),
                     "wait_duration": metadata.get("wait_duration"),
-                    "call_duration": metadata.get("call_duration"),
+                    duration_key: metadata.get(duration_key),
                     "hold_duration": metadata.get("hold_duration"),
                     "in_queue_wait_time_va": metadata.get("in_queue_wait_time_va"),
-                    "automation_redirection": metadata.get("automation_redirection")
+                    "automation_redirection": metadata.get("automation_redirection"),
+                    "has_virtual_agent_handle": len(metadata.get("virtual_agent_handle_durations") or []) > 0,
+                    "has_human_agent_handle": len(metadata.get("handle_durations") or []) > 0
                 })
                 
             payload = {

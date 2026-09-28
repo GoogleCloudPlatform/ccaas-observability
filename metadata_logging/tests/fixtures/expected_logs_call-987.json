@@ -112,7 +112,7 @@
     "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
-    "insertId": "49c193564794567f37b4888e9312e70b",
+    "insertId": "9a0b26b8298d79f2c0502d50180d6b53",
     "jsonPayload": {
       "event": {
         "name": "call_ended",
@@ -135,7 +135,9 @@
             "call_duration": 12,
             "hold_duration": 0,
             "in_queue_wait_time_va": null,
-            "automation_redirection": null
+            "automation_redirection": null,
+            "has_virtual_agent_handle": false,
+            "has_human_agent_handle": true
           }
         }
       },

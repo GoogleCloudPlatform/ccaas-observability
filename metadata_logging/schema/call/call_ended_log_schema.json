@@ -171,6 +171,14 @@
                         }
                       },
                       "description": "Metric property: automation_redirection."
+                    },
+                    "has_virtual_agent_handle": {
+                      "type": "boolean",
+                      "description": "Whether the call had at least one virtual agent handle leg."
+                    },
+                    "has_human_agent_handle": {
+                      "type": "boolean",
+                      "description": "Whether the call had at least one human agent handle leg."
                     }
                   },
                   "description": "Milestone-specific metrics and attributes payload for details."
