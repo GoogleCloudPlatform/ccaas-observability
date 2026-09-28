@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 GECX Environment Discovery Script
-Discovers GECX (CCaaS, Dialogflow, CXAS) environment resources using
+Discovers GECX (CCaaS, Dialogflow, CXAS, Insights) environment resources using
 native Google Cloud REST APIs and Logging sinks, and populates or updates
 gecx_environments.yaml based on gecx_environments.yaml.sample.
 """
@@ -205,7 +205,7 @@ def discover_cxas_resources(project_id, token, target_locations):
 
     locations_to_scan = set(target_locations)
     locations_to_scan.update(available_locs)
-    locations_to_scan.add("global")
+    locations_to_scan.update(["global", "us", "eu"])
 
     apps = []
     for loc in sorted(locations_to_scan):
@@ -261,6 +261,111 @@ def discover_conversation_profiles(project_id, token, target_locations):
     return profiles
 
 
+INSIGHTS_SUPPORTED_LOCATIONS = {
+    "us",
+    "eu",
+    "us-central1",
+    "us-east1",
+    "us-west1",
+    "northamerica-northeast1",
+    "northamerica-northeast2",
+    "europe-west1",
+    "europe-west2",
+    "europe-west3",
+    "europe-west4",
+    "europe-west6",
+    "asia-northeast1",
+    "asia-northeast3",
+    "asia-south1",
+    "asia-southeast1",
+    "asia-southeast2",
+    "australia-southeast1",
+    "me-west1",
+}
+
+
+def _extract_generators(gen_data, loc):
+    """Extracts generator metadata list from an Insights generators API response."""
+    result = []
+    if gen_data and "generators" in gen_data:
+        for g in gen_data["generators"]:
+            name = g.get("name", "")
+            gen_id = name.split("/")[-1]
+            result.append({
+                "id": gen_id,
+                "location": loc,
+                "display_name": g.get("displayName", ""),
+            })
+    return result
+
+
+def discover_insights_resources(project_id, token, target_locations):
+    """Discovers Contact Center Insights (contactcenterinsights.googleapis.com) settings and resources."""
+    if not token:
+        return None
+
+    # 1. Check global summarization generators first
+    global_gen_url = f"https://contactcenterinsights.googleapis.com/v1/projects/{project_id}/locations/global/generators"
+    global_generators = _extract_generators(
+        fetch_api(global_gen_url, token, user_project=project_id), "global"
+    )
+
+    # 2. Build ordered list of valid regional/multi-regional Insights locations (prioritizing us-central1 and us)
+    valid_locs = [loc for loc in target_locations if loc in INSIGHTS_SUPPORTED_LOCATIONS]
+    ordered_locs = []
+    for preferred in ("us-central1", "us"):
+        if preferred in valid_locs:
+            ordered_locs.append(preferred)
+    for loc in sorted(valid_locs):
+        if loc not in ordered_locs:
+            ordered_locs.append(loc)
+
+    active_locations = []
+    conversation_ttl = None
+    regional_generators = []
+
+    for loc in ordered_locs:
+        base_url = f"https://{loc}-contactcenterinsights.googleapis.com/v1/projects/{project_id}/locations/{loc}"
+        settings = fetch_api(f"{base_url}/settings", token, user_project=project_id)
+        if not settings or "name" not in settings:
+            continue
+
+        # A region's /settings endpoint always returns {"name": "..."} when the API is enabled.
+        # Consider the region active only if settings has non-default fields, existing conversations, or generators.
+        has_configured_settings = any(k != "name" for k in settings.keys())
+        convs = fetch_api(f"{base_url}/conversations?pageSize=1", token, user_project=project_id)
+        has_conversations = bool(convs and convs.get("conversations"))
+        loc_generators = _extract_generators(
+            fetch_api(f"{base_url}/generators", token, user_project=project_id), loc
+        )
+
+        if has_configured_settings or has_conversations or loc_generators:
+            active_locations.append(loc)
+            if not conversation_ttl and "conversationTtl" in settings:
+                conversation_ttl = settings["conversationTtl"]
+            regional_generators.extend(loc_generators)
+
+    if active_locations:
+        insights_config = {"location": active_locations[0]}
+        if len(active_locations) > 1:
+            insights_config["locations"] = active_locations
+        if conversation_ttl:
+            insights_config["conversation_ttl"] = conversation_ttl
+        all_generators = global_generators + regional_generators
+        if all_generators:
+            insights_config["generators"] = all_generators
+        return insights_config
+
+    if global_generators:
+        default_loc = ordered_locs[0] if ordered_locs else "us-central1"
+        return {
+            "location": default_loc,
+            "generators": global_generators,
+        }
+
+    return None
+
+
 def discover_environment(project_id, env_name=None):
     """Discovers environment configuration for a given GCP project."""
     if not env_name:
@@ -303,8 +408,9 @@ def discover_environment(project_id, env_name=None):
     if df_agents:
         components.add("dialogflow")
         print(f"    Found {len(df_agents)} Dialogflow CX agent(s).")
-    for loc in df_locations:
-        candidate_locations.add(loc)
+    for ag in df_agents:
+        if ag.get("location"):
+            candidate_locations.add(ag["location"])
 
     # 4. Discover Dialogflow Conversation Profiles
     print(f"[*] Querying Dialogflow Conversation Profiles (v2beta1 API)...")
@@ -319,6 +425,18 @@ def discover_environment(project_id, env_name=None):
     if cxas_apps:
         components.add("cxas")
         print(f"    Found {len(cxas_apps)} CXAS app(s).")
+    for app in cxas_apps:
+        if app.get("location"):
+            candidate_locations.add(app["location"])
+    candidate_locations.add("us")
+
+    # 6. Discover Contact Center Insights
+    print(f"[*] Querying Contact Center Insights API (contactcenterinsights.googleapis.com)...")
+    insights_config = discover_insights_resources(project_id, token, candidate_locations)
+    if insights_config:
+        components.add("insights")
+        locs_display = insights_config.get("locations") or [insights_config.get("location")]
+        print(f"    Found Contact Center Insights in location(s): {', '.join(locs_display)}.")
 
     env_config = {
         "description": f"{env_name.capitalize()} environment (discovered)",
@@ -342,6 +460,9 @@ def discover_environment(project_id, env_name=None):
 
     if cxas_apps:
         env_config["cxas_apps"] = cxas_apps
+
+    if insights_config:
+        env_config["insights"] = insights_config
 
     return env_name, env_config
 
