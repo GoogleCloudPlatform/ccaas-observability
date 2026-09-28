@@ -277,3 +277,76 @@ resource "google_logging_metric" "metadata_chats_va_deflected" {
 
   project = var.project_id
 }
+
+resource "google_logging_metric" "metadata_chats_va_handled" {
+  name        = "ccaas_metadata_chats_va_handled"
+  bucket_name = "projects/${var.project_id}/locations/${var.log_bucket.location}/buckets/${var.log_bucket.name}"
+  description = "Number of chats handled by a virtual agent from metadata logs labeled by chat type and status."
+  filter      = <<-EOT
+    resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
+    logName:"/logs/${var.custom_log_name}"
+    jsonPayload.event.name="chat_ended"
+    jsonPayload.event.payload.details.has_virtual_agent_handle=true
+  EOT
+
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+
+    labels {
+      key         = "chat_type"
+      value_type  = "STRING"
+      description = "Chat channel type (e.g. Messaging Inbound (Web Chat))."
+    }
+
+    labels {
+      key         = "status"
+      value_type  = "STRING"
+      description = "Final chat status (e.g. finished, failed, abandoned, no_response)."
+    }
+  }
+
+  label_extractors = {
+    "chat_type" = "EXTRACT(jsonPayload.event.payload.chat.type)"
+    "status"    = "EXTRACT(jsonPayload.event.payload.chat.status)"
+  }
+
+  project = var.project_id
+}
+
+resource "google_logging_metric" "metadata_chats_human_handled" {
+  name        = "ccaas_metadata_chats_human_handled"
+  bucket_name = "projects/${var.project_id}/locations/${var.log_bucket.location}/buckets/${var.log_bucket.name}"
+  description = "Number of chats handled by a human agent from metadata logs labeled by chat type and status."
+  filter      = <<-EOT
+    resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
+    logName:"/logs/${var.custom_log_name}"
+    jsonPayload.event.name="chat_ended"
+    jsonPayload.event.payload.details.has_human_agent_handle=true
+  EOT
+
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+
+    labels {
+      key         = "chat_type"
+      value_type  = "STRING"
+      description = "Chat channel type (e.g. Messaging Inbound (Web Chat))."
+    }
+
+    labels {
+      key         = "status"
+      value_type  = "STRING"
+      description = "Final chat status (e.g. finished, failed, abandoned, no_response)."
+    }
+  }
+
+  label_extractors = {
+    "chat_type" = "EXTRACT(jsonPayload.event.payload.chat.type)"
+    "status"    = "EXTRACT(jsonPayload.event.payload.chat.status)"
+  }
+
+  project = var.project_id
+}
+

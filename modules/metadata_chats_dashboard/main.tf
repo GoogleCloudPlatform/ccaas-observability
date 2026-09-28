@@ -174,7 +174,57 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                     },
                     "title": "Chats Escalated (selected interval)"
                 },
-                "width": 12,
+                "width": 8,
+                "yPos": 16
+            },
+            {
+                "height": 9,
+                "widget": {
+                    "scorecard": {
+                        "sparkChartView": {
+                            "sparkChartType": "SPARK_BAR"
+                        },
+                        "timeSeriesQuery": {
+                            "outputFullDuration": true,
+                            "timeSeriesFilter": {
+                                "aggregation": {
+                                    "alignmentPeriod": "300s",
+                                    "crossSeriesReducer": "REDUCE_SUM",
+                                    "perSeriesAligner": "ALIGN_DELTA"
+                                },
+                                "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_va_handled\" resource.type=\"logging_bucket\""
+                            }
+                        }
+                    },
+                    "title": "VA Handled Chats (selected interval)"
+                },
+                "width": 8,
+                "xPos": 8,
+                "yPos": 16
+            },
+            {
+                "height": 9,
+                "widget": {
+                    "scorecard": {
+                        "sparkChartView": {
+                            "sparkChartType": "SPARK_BAR"
+                        },
+                        "timeSeriesQuery": {
+                            "outputFullDuration": true,
+                            "timeSeriesFilter": {
+                                "aggregation": {
+                                    "alignmentPeriod": "300s",
+                                    "crossSeriesReducer": "REDUCE_SUM",
+                                    "perSeriesAligner": "ALIGN_DELTA"
+                                },
+                                "filter": "metric.type=\"logging.googleapis.com/user/ccaas_metadata_chats_human_handled\" resource.type=\"logging_bucket\""
+                            }
+                        }
+                    },
+                    "title": "Human Handled Chats (selected interval)"
+                },
+                "width": 8,
+                "xPos": 16,
                 "yPos": 16
             },
             {
@@ -205,8 +255,8 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                     },
                     "title": "Chats Failed (selected interval)"
                 },
-                "width": 12,
-                "xPos": 12,
+                "width": 8,
+                "xPos": 24,
                 "yPos": 16
             },
             {
@@ -229,8 +279,8 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                     },
                     "title": "Current Escalated Chat Rate (5 min window)"
                 },
-                "width": 12,
-                "xPos": 24,
+                "width": 8,
+                "xPos": 32,
                 "yPos": 16
             },
             {
@@ -254,8 +304,8 @@ resource "google_monitoring_dashboard" "metadata_chats" {
                     },
                     "title": "VA Sessions Ended Unexpectedly"
                 },
-                "width": 12,
-                "xPos": 36,
+                "width": 8,
+                "xPos": 40,
                 "yPos": 16
             },
             {

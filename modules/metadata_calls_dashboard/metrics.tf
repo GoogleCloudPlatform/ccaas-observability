@@ -296,3 +296,76 @@ resource "google_logging_metric" "metadata_calls_va_deflected" {
 
   project = var.project_id
 }
+
+resource "google_logging_metric" "metadata_calls_va_handled" {
+  name        = "ccaas_metadata_calls_va_handled"
+  bucket_name = "projects/${var.project_id}/locations/${var.log_bucket.location}/buckets/${var.log_bucket.name}"
+  description = "Number of calls handled by a virtual agent from metadata logs labeled by call type and status."
+  filter      = <<-EOT
+    resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
+    logName:"/logs/${var.custom_log_name}"
+    jsonPayload.event.name="call_ended"
+    jsonPayload.event.payload.details.has_virtual_agent_handle=true
+  EOT
+
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+
+    labels {
+      key         = "call_type"
+      value_type  = "STRING"
+      description = "Call channel type (e.g. Voice Inbound (IVR), Voice Outbound)."
+    }
+
+    labels {
+      key         = "status"
+      value_type  = "STRING"
+      description = "Final call status (e.g. finished, failed, abandoned)."
+    }
+  }
+
+  label_extractors = {
+    "call_type" = "EXTRACT(jsonPayload.event.payload.call.type)"
+    "status"    = "EXTRACT(jsonPayload.event.payload.call.status)"
+  }
+
+  project = var.project_id
+}
+
+resource "google_logging_metric" "metadata_calls_human_handled" {
+  name        = "ccaas_metadata_calls_human_handled"
+  bucket_name = "projects/${var.project_id}/locations/${var.log_bucket.location}/buckets/${var.log_bucket.name}"
+  description = "Number of calls handled by a human agent from metadata logs labeled by call type and status."
+  filter      = <<-EOT
+    resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
+    logName:"/logs/${var.custom_log_name}"
+    jsonPayload.event.name="call_ended"
+    jsonPayload.event.payload.details.has_human_agent_handle=true
+  EOT
+
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+
+    labels {
+      key         = "call_type"
+      value_type  = "STRING"
+      description = "Call channel type (e.g. Voice Inbound (IVR), Voice Outbound)."
+    }
+
+    labels {
+      key         = "status"
+      value_type  = "STRING"
+      description = "Final call status (e.g. finished, failed, abandoned)."
+    }
+  }
+
+  label_extractors = {
+    "call_type" = "EXTRACT(jsonPayload.event.payload.call.type)"
+    "status"    = "EXTRACT(jsonPayload.event.payload.call.status)"
+  }
+
+  project = var.project_id
+}
+
