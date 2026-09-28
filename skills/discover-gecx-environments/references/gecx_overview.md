@@ -67,8 +67,14 @@ Because these products generally do not have comprehensive CLI support in `gclou
     "https://dialogflow.googleapis.com/v3/projects/<PROJECT_ID>/locations/global/agents"
   ```
 
-  #### Step C: Discover Conversation Profiles (Integration Bridge)
-  CCaaS (UJet) does not invoke Dialogflow CX agents directly; it maps internally via a "Virtual Agent Platform" configuration to a **Dialogflow Conversation Profile** (`v2beta1` API). The Conversation Profile then links to either a Dialogflow CX agent/environment or a CES app:
+  #### Step C: Discover Conversation Profiles (Universal Integration Bridge)
+  A **Dialogflow Conversation Profile** (`v2beta1` API) serves as the universal routing bridge between voice/chat ingestion layers and downstream virtual agent platforms (**Dialogflow CX/ES agents** or **CXAS / CES apps**). Two primary ingestion layers route through Conversation Profiles:
+  1. **Google CCaaS**: Maps internally via a "Virtual Agent Platform" configuration to a Conversation Profile rather than invoking Dialogflow CX or CES directly.
+  2. **Dialogflow Telephony (Phone Gateway & SIP Telephony Integration)**: Provides an alternative voice ingestion layer to Google CCaaS, hosted on the **Google Telephony Platform (GTP)** under `dialogflow.googleapis.com`:
+     * **Phone Gateway**: Connectivity via Google-managed PSTN telephone numbers.
+     * **SIP Telephony Integration**: Connectivity from customer Session Border Controllers (SBCs) via virtual SIP trunks.
+     * Both share the **same underlying telephony infrastructure**, emit the same `logName:"dialogflow.googleapis.com%2Fincoming_call"` logs under `dialogflow.googleapis.com`, and route calls via a `ConversationProfile` to either a **Dialogflow agent** or a **CXAS / CES app**.
+
   ```bash
   curl -s \
     -H "Authorization: Bearer $(gcloud auth print-access-token)" \

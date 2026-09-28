@@ -6,43 +6,60 @@ This reference provides advanced, deep-dive query recipes for **GECX (CCaaS, Dia
 
 ## 1. Cross-Product Interaction Correlation
 
-In end-to-end customer journeys, interactions traverse CCaaS, Dialogflow virtual agents, and generative CES agents. Correlate across these streams using specific link keys:
+In end-to-end customer journeys, interactions enter virtual agent platforms (**Dialogflow CX** or **CES / CX Agent Studio**) through one of two voice/session ingestion layers—**Google CCaaS** or **Dialogflow Telephony (Phone Gateway / SIP Telephony Integration)**—both of which route via a **Dialogflow `ConversationProfile`**.
 
-### A. Correlating CCaaS Interactions to Dialogflow CX / CES via Conversation Profiles
+### A. Correlating Ingestion Layers (CCaaS vs. Phone Gateway / SIP Trunk) to Dialogflow CX / CES via Conversation Profiles
 
-CCaaS (UJet) does not map directly to a Dialogflow CX agent. Instead, CCaaS maps internally to a **Virtual Agent Platform** configuration (represented in CCaaS metadata as `virtual_agent.name` UUID, e.g. `544cf1cb-7351-48e0-8a55-64e6d422b2a1` and ID `1`). That integration targets a Dialogflow `v2beta1` **Conversation Profile** resource, which in turn configures the target Dialogflow CX agent (`automatedAgentConfig.agent`) or CES app.
+A Dialogflow `v2beta1` **Conversation Profile** configures the target virtual agent (`automatedAgentConfig.agent`, pointing to either a Dialogflow CX agent or a CES app):
+* **Via Google CCaaS**: CCaaS (UJet) maps internally to a **Virtual Agent Platform** configuration (represented in CCaaS metadata as `virtual_agent.name` UUID, e.g. `544cf1cb-7351-48e0-8a55-64e6d422b2a1` and ID `1`), which targets the Conversation Profile.
+* **Via Dialogflow Telephony (Phone Gateway & SIP Telephony Integration)**: Google-managed PSTN numbers (**Phone Gateway**) and customer SBC virtual SIP trunks (**SIP Telephony Integration**) share the same Google Telephony Platform (GTP) infrastructure (`logName:"dialogflow.googleapis.com%2Fincoming_call"`) and act as an alternative ingestion layer to CCaaS, invoking `Conversations.CreateConversation` on the Conversation Profile to start a Dialogflow CX or CES session.
+  * *(For SIP Trunk integrations with `sipConfig.createConversationOnTheFly=true`, the SBC sets `$CONVERSATION_ID` dynamically in the `SIP INVITE` via the `Call-Info` or hex-encoded `User-to-User` [UUI] header with `purpose=Goog-ContactCenter-Conversation`.)*
 
-1. **Find the Dialogflow conversation created event in CCaaS**:
-   When CCaaS hands off to a Virtual Agent, it emits an event containing the Dialogflow conversation ID:
-   ```bash
-   gcloud logging read 'resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
-   labels.tracker_id="<TRACKER_ID>"
-   logName:"contactcenteraiplatform.googleapis.com%2Fevents"
-   jsonPayload.event.name="dialogflow_conversation_created"' \
-     --project="<LOGS_PROJECT_ID>" \
-     --format="value(jsonPayload.event.payload.participant.df_conversation_id)"
-   ```
-   *(Or inspect raw metadata JSON in GCS under `participants[].virtual_agent.conversation_id`)*
+1. **Find the Dialogflow / CES conversation ID from the ingestion layer**:
+   * **If ingested via Google CCaaS** (from CCaaS `dialogflow_conversation_created` events, or raw metadata JSON in GCS under `participants[].virtual_agent.conversation_id`):
+     ```bash
+     gcloud logging read 'resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"
+     labels.tracker_id="<TRACKER_ID>"
+     logName:"contactcenteraiplatform.googleapis.com%2Fevents"
+     jsonPayload.event.name="dialogflow_conversation_created"' \
+       --project="<LOGS_PROJECT_ID>" \
+       --format="value(jsonPayload.event.payload.participant.df_conversation_id)"
+     ```
+   * **If ingested via Phone Gateway / SIP Telephony Integration** (inspect `incoming_call` logs and `CreateConversation` audit logs):
+     ```bash
+     gcloud logging read 'logName:"dialogflow.googleapis.com%2Fincoming_call"' \
+       --project="<LOGS_PROJECT_ID>" \
+       --limit=20 \
+       --format=json
+     ```
 
 2. **Correlate with Dialogflow Audit Logs to resolve the Conversation Profile**:
-   Dialogflow logs the conversation creation and target conversation profile:
+   Dialogflow logs the conversation creation and target conversation profile (for both CCaaS and Phone Gateway / SIP Trunk calls):
    ```bash
    gcloud logging read 'logName:"cloudaudit.googleapis.com%2Fdata_access"
-   protoPayload.methodName="google.cloud.dialogflow.v2beta1.Conversations.CreateConversation"
+   protoPayload.methodName=~"google.cloud.dialogflow..*.Conversations.CreateConversation"
    "<DF_CONVERSATION_ID>"' \
      --project="<LOGS_PROJECT_ID>" \
-     --format="yaml(protoPayload.response.conversationProfile)"
+     --format="yaml(protoPayload.request.conversation.conversationProfile,protoPayload.response.conversationProfile)"
    ```
-   Cross-reference the returned profile with `conversation_profiles` in `gecx_environments.yaml` to identify the human-readable profile name and target agent.
+   Cross-reference the returned profile with `conversation_profiles` in `gecx_environments.yaml` to identify the human-readable profile name and target Dialogflow CX agent or CES app.
 
-3. **Query the corresponding Dialogflow runtime turns**:
-   Using the session ID (which matches the conversation ID for single-session interactions) or filtering by agent ID:
-   ```bash
-   gcloud logging read 'logName:"dialogflow-runtime.googleapis.com%2Frequests"
-   labels.session_id="<DF_CONVERSATION_ID>"' \
-     --project="<LOGS_PROJECT_ID>" \
-     --format=json
-   ```
+3. **Query the corresponding Virtual Agent runtime turns (Dialogflow CX or CES)**:
+   Using the session ID (which matches `<DF_CONVERSATION_ID>` for single-session interactions):
+   * **If the Conversation Profile targets a Dialogflow CX agent**:
+     ```bash
+     gcloud logging read 'logName:"dialogflow-runtime.googleapis.com%2Frequests"
+     labels.session_id="<DF_CONVERSATION_ID>"' \
+       --project="<LOGS_PROJECT_ID>" \
+       --format=json
+     ```
+   * **If the Conversation Profile targets a CXAS / CES app**:
+     ```bash
+     gcloud logging read 'logName:"ces.googleapis.com%2Fresponses"
+     labels.session_id="<DF_CONVERSATION_ID>"' \
+       --project="<LOGS_PROJECT_ID>" \
+       --format=json
+     ```
 
 ### B. Correlating CCaaS with CRM / Third-Party Webhooks
 Extract CRM integration calls and external webhook payloads by `tracker_id`:
@@ -130,11 +147,20 @@ When CCaaS (`ccai-insights-sa`, `Ruby` client) uploads completed calls or chats 
 
 ---
 
-## 2. Telephony & SIP Diagnostics
+## 2. Telephony & SIP Diagnostics (Phone Gateway & SIP Telephony Integration)
 
-### A. Telephony Lifecycle & Disconnect Events
-For Dialogflow Phone Gateway / CCaaS SIP integrations, inspect call disconnect and lifecycle events:
+**Dialogflow Phone Gateway** (Google-managed PSTN connectivity) and **SIP Telephony Integration** (customer SBC connectivity via virtual SIP trunks) are the same underlying telephony infrastructure component under `dialogflow.googleapis.com`. Both emit call lifecycle events to `logName:"dialogflow.googleapis.com%2Fincoming_call"` and route calls through a Dialogflow `ConversationProfile` to either a **Dialogflow agent** or a **CXAS / CES app** (acting as an alternative voice ingestion layer to Google CCaaS).
+
+### A. Telephony Call Lifecycle & Disconnect Events (`incoming_call`)
+Inspect incoming call setup, signaling, and disconnect events across Phone Gateway and SIP Trunk integrations:
 ```bash
+# Inspect all incoming_call lifecycle events
+gcloud logging read 'logName:"dialogflow.googleapis.com%2Fincoming_call"' \
+  --project="<LOGS_PROJECT_ID>" \
+  --limit=20 \
+  --format=json
+
+# Filter specifically for call disconnect events
 gcloud logging read 'logName:"dialogflow.googleapis.com%2Fincoming_call"
 jsonPayload.action="disconnectCall"' \
   --project="<LOGS_PROJECT_ID>" \
@@ -142,15 +168,15 @@ jsonPayload.action="disconnectCall"' \
   --format=json
 ```
 
-### B. Inspecting Telephony / SIP Headers
-Dialogflow CX logs carrier headers, SBC addresses, and SIP call IDs in session parameters:
+### B. Inspecting Telephony / SIP Headers (`x-headers` & `uui-headers`)
+In SIP Telephony integrations, custom `x-` headers (with the `x-` prefix stripped) and hex-encoded `User-to-User` (`UUI`) headers (`purpose=Goog-Session-Param`) sent by the SBC in the `SIP INVITE` are passed into session parameters (`x-headers` and `uui-headers`):
 ```bash
 gcloud logging read 'logName:"dialogflow-runtime.googleapis.com%2Frequests"
 labels.session_id="<SESSION_ID>"' \
   --project="<LOGS_PROJECT_ID>" \
-  --format="json(timestamp,jsonPayload.queryResult.parameters.x-headers)"
+  --format="json(timestamp,jsonPayload.queryResult.parameters.x-headers,jsonPayload.queryResult.parameters.uui-headers)"
 ```
-*(Key fields include `google-inbound-carrier-id`, `google-sbc-address`, `google-session-callid`, and `telephony-caller-id`)*
+*(Standard telephony fields in `x-headers` include `google-inbound-carrier-id`, `google-sbc-address`, `google-session-callid`, and `telephony-caller-id`, alongside any custom SBC `x-*` headers.)*
 
 ---
 

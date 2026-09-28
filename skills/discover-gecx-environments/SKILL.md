@@ -52,7 +52,7 @@ python3 skills/discover-gecx-environments/scripts/discover_environments.py \
 2. **Dialogflow CX Agents (`dialogflow_agents`)**:
    - Discovers available project locations via `https://dialogflow.googleapis.com/v2/projects/<project>/locations`.
    - Queries regional endpoints (e.g. `us-central1-dialogflow.googleapis.com`) and `global` to list deployed CX agents, start flows, and audio export GCS destinations.
-3. **Dialogflow Conversation Profiles (`conversation_profiles`)**: Queries `https://dialogflow.googleapis.com/v2beta1/projects/<project>/locations/<location>/conversationProfiles` across discovered locations. Conversation Profiles serve as the crucial integration bridge between CCaaS Virtual Agent Platform configurations and downstream Dialogflow CX agents or CES apps.
+3. **Dialogflow Conversation Profiles (`conversation_profiles`)**: Queries `https://dialogflow.googleapis.com/v2beta1/projects/<project>/locations/<location>/conversationProfiles` across discovered locations. Conversation Profiles serve as the integration bridge between voice/chat ingestion layers (**Google CCaaS** or **Dialogflow Telephony** via Phone Gateway / SIP Trunks) and downstream **Dialogflow CX agents** or **CES apps**.
 4. **Aggregate Logs Project (`aggregate_logs_project_id`)**: Queries Cloud Logging sinks in the infrastructure project to detect sinks (like `ccaas-logs-project`) exporting to dedicated central logging projects.
 5. **Contact Center Insights (`insights`)**: Queries `https://<location>-contactcenterinsights.googleapis.com/v1/projects/<project>/locations/<location>/settings`, conversations, and generators to discover active Insights locations, conversation TTL, and summarization generators.
 6. **Components (`components`)**: Identifies enabled GECX products (`ccaas`, `dialogflow`, `cxas`, `insights`).
@@ -95,7 +95,7 @@ curl -s \
   "https://dialogflow.googleapis.com/v3/projects/<PROJECT_ID>/locations/global/agents"
 ```
 
-### 3. Dialogflow Conversation Profiles (Bridge between CCaaS and DF CX / CES)
+### 3. Dialogflow Conversation Profiles (Bridge between CCaaS / Telephony and DF CX / CES)
 **List conversation profiles (e.g. `global` or regional):**
 ```bash
 curl -s \

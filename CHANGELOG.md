@@ -3,7 +3,7 @@
 **New Features & Modules**
 *   **GECX Observability Skills:** Added skills and automation tools for interacting with GECX environments.
     *   **Environment Discovery Skill (`skills/discover-gecx-environments`):** Automatically discovers CCaaS contact centers, Dialogflow CX agents, Dialogflow Conversation Profiles, CX Agent Studio apps, Contact Center Insights (multi-location settings, conversation TTL, and summarization generators), and central log destinations across GCP projects via REST APIs, generating structured environment configurations (`gecx_environments.yaml`).
-    *   **Log Query Skill (`skills/query-gecx-logs`):** Curated query templates and diagnostic workflows for analyzing CCaaS session lifecycles, virtual agent interactions, Contact Center Insights ingestion/update logs, cross-product correlation (CCaaS, Dialogflow CX/CES, and Insights), and error logs across Cloud Logging and BigQuery Log Analytics.
+    *   **Log Query Skill (`skills/query-gecx-logs`):** Curated query templates and diagnostic workflows for analyzing CCaaS session lifecycles, Dialogflow Telephony (Phone Gateway and SIP Telephony Integration `incoming_call`) ingestion logs, virtual agent interactions, Contact Center Insights ingestion/update logs, cross-product correlation (CCaaS, Dialogflow Telephony, Dialogflow CX/CES, and Insights), and error logs across Cloud Logging and BigQuery Log Analytics.
     *   **Environment Configuration Template:** Added `gecx_environments.yaml.sample` template for multi-environment deployments.
 
 *   **CCaaS Platform Dashboard Module (`modules/platform_dashboard`):** Added a dedicated module and dashboard for monitoring CCaaS platform-level events.
