@@ -38,7 +38,7 @@ Before constructing queries, resolve the target environment topology:
 3. **Active Resources**:
    * **`contact_centers`**: Discovered CCaaS contact center IDs (e.g. `iva`, `advanced-reporting`) and locations.
    * **`dialogflow_agents`**: Discovered Dialogflow agent IDs and locations.
-   * **`conversation_profiles`**: Discovered Dialogflow Conversation Profiles (linking CCaaS to Dialogflow CX agents or CES apps).
+   * **`conversation_profiles`**: Discovered Dialogflow Conversation Profiles (linking CCaaS or Dialogflow Telephony [Phone Gateway / SIP Trunks] to Dialogflow CX agents or CES apps).
    * **`cxas_apps`**: Discovered CX Agent Studio app IDs and locations.
    * **`insights`**: Discovered Contact Center Insights location, conversation TTL, and summarization generators.
 
@@ -119,10 +119,14 @@ gcloud logging read 'logName:"ces.googleapis.com%2Fresponses"' \
   * By Deployment ID: `labels.deployment_id="<DEPLOYMENT_ID>"`
   * By Location: `labels.location_id="<LOCATION>"`
 
+> [!NOTE]
+> **Voice Calls Ingested via Phone Gateway or SIP Telephony Integration**:
+> When a CES app receives voice calls via **Dialogflow Phone Gateway** or **SIP Telephony Integration** (instead of Google CCaaS), call setup, SIP signaling, and disconnect events are logged under the Dialogflow service in `logName:"dialogflow.googleapis.com%2Fincoming_call"` and `dialogflow.googleapis.com` `CreateConversation` audit logs (see **Section 3.D** below).
+
 ---
 
-### 3. Dialogflow (CX / ES)
-Dialogflow follows the same 3-tier logging structure:
+### 3. Dialogflow (CX / ES) & Telephony Ingestion
+Dialogflow emits audit logs, runtime session logs, and telephony ingestion logs:
 
 #### A. Audit Logs (Admin Activity)
 Captures administrative operations and agent management (e.g., agent creation, flow updates, intents):
@@ -168,7 +172,28 @@ gcloud logging read 'logName:"dialogflow-runtime.googleapis.com%2Frequests"' \
   * By Environment ID: `labels.environment_id="<ENVIRONMENT_ID>"`
   * By Location: `labels.location_id="<LOCATION>"`
 
-*(Note: Telephony integrations may also log call lifecycle events to `logName:"dialogflow.googleapis.com%2Fincoming_call"`)*
+#### D. Telephony Ingestion Logs (Phone Gateway & SIP Telephony Integration)
+**Dialogflow Phone Gateway** (Google-managed PSTN numbers) and **SIP Telephony Integration** (customer SBC connectivity via virtual SIP trunks) are the **same underlying Google Telephony Platform (GTP) infrastructure component** and both emit `logName:"dialogflow.googleapis.com%2Fincoming_call"` under `dialogflow.googleapis.com`.
+
+Because both route incoming voice calls through a **Dialogflow `ConversationProfile`** (which can target either a **Dialogflow CX/ES agent** or a **CXAS / CES app**), they serve as an **alternative voice ingestion layer to Google CCaaS**:
+```bash
+gcloud logging read 'logName:"dialogflow.googleapis.com%2Fincoming_call"' \
+  --project="<LOGS_PROJECT_ID>" \
+  --limit=50 \
+  --format=json
+```
+
+* **Useful Refinements**:
+  * By lifecycle action: `jsonPayload.action="disconnectCall"` (or other call setup/signaling actions)
+  * Correlate conversation creation by `ConversationProfile` in Dialogflow Data Access audit logs:
+    ```bash
+    gcloud logging read 'protoPayload.serviceName="dialogflow.googleapis.com"
+    protoPayload.methodName=~"google.cloud.dialogflow..*.Conversations.CreateConversation"
+    protoPayload.request.conversation.conversationProfile:"conversationProfiles/<CONVERSATION_PROFILE_ID>"' \
+      --project="<LOGS_PROJECT_ID>" \
+      --limit=50 \
+      --format=json
+    ```
 
 ---
 
