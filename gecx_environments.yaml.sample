@@ -14,6 +14,7 @@ environments:
       - ccaas
       - dialogflow
       - cxas
+      - insights
     contact_centers:
       - id: "customer-service"
         # project_id: "my-ccaas-project"             # Optional: specify if different from default_project_id
@@ -40,6 +41,17 @@ environments:
         # project_id: "my-cxas-project"              # Optional: specify if different from default_project_id
         location: "us"
         display_name: "Customer Support Assistant"
+    insights:
+      location: "us-central1"
+      locations:
+        - "us-central1"                     # Regional location (typically CCaaS call-<ID> / chat-<ID> uploads)
+        - "us"                              # Multi-region location (typically direct Dialogflow CX / CES <SESSION_ID> ingestion)
+      # project_id: "my-insights-project"        # Optional: specify if different from default_project_id
+      conversation_ttl: "31536000s"
+      generators:
+        - id: "00000000000000000000"
+          location: "global"
+          display_name: "Customer Support Summarization"
 
   # Example additional environment template:
   # prod:

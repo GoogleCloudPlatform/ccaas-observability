@@ -55,6 +55,79 @@ jsonPayload.message:"CRM"' \
   --format=json
 ```
 
+### C. Correlating CCaaS, Dialogflow CX / CES, and Contact Center Insights
+
+When a customer interaction traverses both a Virtual Agent (Dialogflow CX / CES) and CCaaS, **two separate Insights Conversation resources are created** (often in different Insights locations within the same GCP project). They are **not** merged into a single Insights record; instead, the CCaaS-uploaded conversation references the Virtual Agent conversation via a foreign-key label (`labels.dialogflow_conversation_id_1`):
+
+1. **Virtual Agent Insights Conversation (`conversations/<SESSION_ID>`, e.g. in `locations/us`)**: Created in real time (`21:23:47Z`) directly by the Dialogflow CX agent or CES app in its own location. Captures the automated virtual agent turns and runtime annotations.
+2. **CCaaS Insights Conversation (`conversations/call-<ID>` or `chat-<ID>`, e.g. in `locations/us-central1`)**: Created **after** the interaction ends (`21:27:10Z`) when `ccai-insights-sa` calls `UploadConversation` with `conversationId="chat-<ID>"`. Captures the full CCaaS transcript/recording from GCS (`gs://.../chat-<ID>.json`) and stores `labels.dialogflow_conversation_id_1="<SESSION_ID>"` pointing to the Virtual Agent Insights conversation.
+
+#### Path 1: Direct Dialogflow CX / CES Runtime Conversation (Matches Agent/App Location, e.g. `locations/us`) — **1:1 ID Match**
+When `loggingSettings.conversationLoggingSettings` is enabled on a CES app (or Insights export is enabled on a Dialogflow agent/Conversation Profile), the agent/app **directly creates its own conversation in Contact Center Insights in its own `<LOCATION>`** (e.g., a CES app in `locations/us` writes to Insights `locations/us`).
+* **Insights Location**: Matches the Dialogflow agent or CES app's `location` (e.g., `locations/us`).
+* **Insights Conversation ID**: Identical to the Dialogflow Conversation ID / CES `labels.session_id` (`conversations/<SESSION_ID>`).
+* **Insights `agentId`**: Matches the CES `labels.app_id` (or Dialogflow `agent_id`).
+
+1. **Find the `session_id` (or `df_conversation_id`) in CES / Dialogflow / CCaaS logs**:
+   ```bash
+   gcloud logging read 'logName:"ces.googleapis.com%2Fresponses"
+   labels.session_id="<SESSION_ID>"' \
+     --project="<LOGS_PROJECT_ID>" \
+     --limit=5 \
+     --format="table(timestamp,labels.app_id,labels.session_id,jsonPayload.diagnosticInfo.rootSpan.attributes.user\ audio\ uri)"
+   ```
+   *(Note: For voice calls handed off from CCaaS, CES logs also record `ccaasCallId` / `call_id_str` inside `BeforeModel` callback attributes.)*
+
+2. **Inspect the corresponding Insights Conversation directly using `<SESSION_ID>`**:
+   ```bash
+   curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+     -H "X-goog-user-project: <PROJECT_ID>" \
+     "https://<INSIGHTS_LOCATION>-contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/<INSIGHTS_LOCATION>/conversations/<SESSION_ID>" \
+     | jq '{name, agentId, medium, dataSource, labels, latestSummary, runtimeAnnotations: (.runtimeAnnotations | length)}'
+   ```
+
+#### Path 2: CCaaS Post-Interaction Upload (e.g. `locations/us-central1`) — **Structured Bridge via `conversationId` & `labels`**
+When CCaaS (`ccai-insights-sa`, `Ruby` client) uploads completed calls or chats via `UploadConversation`, it converts the CCaaS `labels.tracker_id` from underscore (`call_<ID>` / `chat_<ID>`) to hyphen (`call-<ID>` / `chat-<ID>`) and populates **structured correlation labels** on the Insights Conversation resource that link CCaaS, Dialogflow/CES, and CRM tickets together:
+
+| System / Resource | Structured Correlation Field | Example Value (`chat_5580`) |
+| :--- | :--- | :--- |
+| **CCaaS Event Logs** (`%2Fevents`) | `labels.tracker_id`<br>`jsonPayload.event.payload.participant.df_conversation_id` | `"chat_5580"`<br>`"119DaI5v0mCR1ywyTMSEjg0gw"` |
+| **Insights `UploadConversation` Audit Log** | `protoPayload.request.conversationId`<br>*(Note: `protoPayload.resourceName` is the parent location, NOT the conversation path)* | `"chat-5580"` |
+| **Insights `Get`/`UpdateConversation` Audit Log** | `protoPayload.resourceName` | `".../locations/us-central1/conversations/chat-5580"` |
+| **Insights Conversation Resource (`labels`)** | `labels.id` (CCaaS numeric ID)<br>`labels.dialogflow_conversation_id_1` (DF / CES Session ID)<br>`labels.out_ticket_id` (CRM / Salesforce Case ID) | `"5580"`<br>`"119DaI5v0mCR1ywyTMSEjg0gw"`<br>`"500DF00000PTvCiYAL"` |
+
+1. **Trace the Insights `UploadConversation` / `UpdateConversation` audit logs by structured `conversationId`**:
+   ```bash
+   gcloud logging read 'protoPayload.serviceName="contactcenterinsights.googleapis.com"
+   (protoPayload.request.conversationId="chat-<ID>" OR protoPayload.resourceName:"conversations/chat-<ID>")' \
+     --project="<LOGS_PROJECT_ID>" \
+     --limit=20 \
+     --format="table(timestamp,protoPayload.methodName,protoPayload.request.conversationId,protoPayload.resourceName,protoPayload.status.code,protoPayload.status.message)"
+   ```
+
+2. **Query the Insights Conversation to extract linked Dialogflow/CES session IDs and CRM ticket IDs**:
+   ```bash
+   curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+     -H "X-goog-user-project: <PROJECT_ID>" \
+     "https://<INSIGHTS_LOCATION>-contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/<INSIGHTS_LOCATION>/conversations/chat-<ID>" \
+     | jq '{
+         name,
+         ccaas_id: .labels.id,
+         df_or_ces_session_id: .labels.dialogflow_conversation_id_1,
+         crm_ticket_id: .labels.out_ticket_id,
+         gcs_source: .dataSource.gcsSource,
+         latestSummary
+       }'
+   ```
+
+3. **Search Insights Conversations by Dialogflow/CES Session ID or CRM Ticket ID**:
+   ```bash
+   curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+     -H "X-goog-user-project: <PROJECT_ID>" \
+     "https://<INSIGHTS_LOCATION>-contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/<INSIGHTS_LOCATION>/conversations?filter=labels.dialogflow_conversation_id_1=\"<DF_CONVERSATION_ID>\"" \
+     | jq '.conversations[] | {name, labels, dataSource}'
+   ```
+
 ---
 
 ## 2. Telephony & SIP Diagnostics
@@ -204,6 +277,47 @@ WHERE
   AND timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
 GROUP BY
   model_name;
+```
+
+### D. Contact Center Insights Ingestion Error Breakdown
+```sql
+SELECT
+  protoPayload.methodName AS api_method,
+  protoPayload.status.code AS error_code,
+  protoPayload.status.message AS error_message,
+  COUNT(1) AS failure_count
+FROM
+  `<PROJECT_ID>.<LOCATION>._AllLogs`
+WHERE
+  protoPayload.serviceName = 'contactcenterinsights.googleapis.com'
+  AND severity = 'ERROR'
+  AND timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+GROUP BY
+  api_method, error_code, error_message
+ORDER BY
+  failure_count DESC;
+```
+
+### E. Insights Conversation Ingestion vs Update Volume
+```sql
+SELECT
+  TIMESTAMP_TRUNC(timestamp, HOUR) AS hour,
+  protoPayload.methodName AS api_method,
+  protoPayload.status.code AS status_code,
+  COUNT(1) AS call_count
+FROM
+  `<PROJECT_ID>.<LOCATION>._AllLogs`
+WHERE
+  protoPayload.serviceName = 'contactcenterinsights.googleapis.com'
+  AND protoPayload.methodName IN (
+    'google.cloud.contactcenterinsights.v1.ContactCenterInsights.UploadConversation',
+    'google.cloud.contactcenterinsights.v1.ContactCenterInsights.UpdateConversation'
+  )
+  AND timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
+GROUP BY
+  hour, api_method, status_code
+ORDER BY
+  hour DESC, call_count DESC;
 ```
 
 ---
