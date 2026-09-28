@@ -320,7 +320,9 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
                     duration_key: metadata.get(duration_key),
                     "hold_duration": metadata.get("hold_duration"),
                     "in_queue_wait_time_va": metadata.get("in_queue_wait_time_va"),
-                    "automation_redirection": metadata.get("automation_redirection")
+                    "automation_redirection": metadata.get("automation_redirection"),
+                    "has_virtual_agent_handle": len(metadata.get("virtual_agent_handle_durations") or []) > 0,
+                    "has_human_agent_handle": len(metadata.get("handle_durations") or []) > 0
                 })
                 
             payload = {

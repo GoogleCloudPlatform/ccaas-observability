@@ -37,6 +37,8 @@ Markdown representation of the CCAIPCallLog_call_ended event schema.
 | `jsonPayload.event.payload.details.automation_redirection.redirection_group[].destination.lang` | `Nullable<string>` | N/A |
 | `jsonPayload.event.payload.details.automation_redirection.redirection_group[].after_hours` | `boolean` | N/A |
 | `jsonPayload.event.payload.details.automation_redirection.redirection_group[].ah_destination` | `null` | N/A |
+| `jsonPayload.event.payload.details.has_virtual_agent_handle` | `boolean` | Whether the call had at least one virtual agent handle leg. |
+| `jsonPayload.event.payload.details.has_human_agent_handle` | `boolean` | Whether the call had at least one human agent handle leg. |
 | `jsonPayload.message` | `string` | N/A |
 | `resource` | `object` | Google Cloud resource monitored resource metadata envelope. |
 | `resource.type` | `string` | The monitored resource type identifier (always contactcenteraiplatform.googleapis.com/ContactCenter). |
@@ -89,7 +91,9 @@ Markdown representation of the CCAIPCallLog_call_ended event schema.
                 "ah_destination": null
               }
             ]
-          }
+          },
+          "has_virtual_agent_handle": true,
+          "has_human_agent_handle": false
         }
       }
     },

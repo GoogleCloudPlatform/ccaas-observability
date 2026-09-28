@@ -28,6 +28,8 @@ Markdown representation of the CCAIPChatLog_chat_ended event schema.
 | `jsonPayload.event.payload.details.hold_duration` | `null` | Metric property: hold_duration. |
 | `jsonPayload.event.payload.details.in_queue_wait_time_va` | `null` | Metric property: in_queue_wait_time_va. |
 | `jsonPayload.event.payload.details.automation_redirection` | `null` | Metric property: automation_redirection. |
+| `jsonPayload.event.payload.details.has_virtual_agent_handle` | `boolean` | Whether the chat had at least one virtual agent handle leg. |
+| `jsonPayload.event.payload.details.has_human_agent_handle` | `boolean` | Whether the chat had at least one human agent handle leg. |
 | `jsonPayload.message` | `string` | N/A |
 | `resource` | `object` | Google Cloud resource monitored resource metadata envelope. |
 | `resource.type` | `string` | The monitored resource type identifier (always contactcenteraiplatform.googleapis.com/ContactCenter). |
@@ -66,7 +68,9 @@ Markdown representation of the CCAIPChatLog_chat_ended event schema.
           "chat_duration": null,
           "hold_duration": null,
           "in_queue_wait_time_va": null,
-          "automation_redirection": null
+          "automation_redirection": null,
+          "has_virtual_agent_handle": false,
+          "has_human_agent_handle": false
         }
       }
     },

@@ -252,5 +252,47 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
         update_deflected = [m for m in update_milestones if m["event_name"] == "virtual_agent_escalation_deflected"]
         self.assertEqual(len(update_deflected), 0)
 
+    def test_session_ended_handle_boolean_flags(self):
+        # 1. Neither VA nor human handle
+        meta_neither = {
+            "id": 1001,
+            "call_type": "Voice Inbound (IVR)",
+            "ends_at": "2026-09-16T17:27:50.000-07:00",
+            "virtual_agent_handle_durations": [],
+            "handle_durations": []
+        }
+        ended_neither = [m for m in extract_milestones(meta_neither, "gs://b/call-1001.json") if m["event_name"] == "call_ended"][0]
+        details_neither = ended_neither["payload"]["event"]["payload"]["details"]
+        self.assertFalse(details_neither["has_virtual_agent_handle"])
+        self.assertFalse(details_neither["has_human_agent_handle"])
+
+        # 2. VA handle only (chat)
+        meta_va_only = {
+            "id": 1002,
+            "chat_type": "Messaging Inbound (Web Chat)",
+            "ends_at": "2026-09-16T17:27:50.000-07:00",
+            "chat_duration": 42,
+            "virtual_agent_handle_durations": [{"id": 1, "started_at": "2026-09-16T17:27:00.000-07:00"}],
+            "handle_durations": []
+        }
+        ended_va = [m for m in extract_milestones(meta_va_only, "gs://b/chat-1002.json") if m["event_name"] == "chat_ended"][0]
+        details_va = ended_va["payload"]["event"]["payload"]["details"]
+        self.assertTrue(details_va["has_virtual_agent_handle"])
+        self.assertFalse(details_va["has_human_agent_handle"])
+        self.assertEqual(details_va["chat_duration"], 42)
+
+        # 3. Both VA and human handle
+        meta_both = {
+            "id": 1003,
+            "call_type": "Voice Inbound (IVR)",
+            "ends_at": "2026-09-16T17:27:50.000-07:00",
+            "virtual_agent_handle_durations": [{"id": 1}],
+            "handle_durations": [{"id": 2}]
+        }
+        ended_both = [m for m in extract_milestones(meta_both, "gs://b/call-1003.json") if m["event_name"] == "call_ended"][0]
+        details_both = ended_both["payload"]["event"]["payload"]["details"]
+        self.assertTrue(details_both["has_virtual_agent_handle"])
+        self.assertTrue(details_both["has_human_agent_handle"])
+
 if __name__ == "__main__":
     unittest.main()
