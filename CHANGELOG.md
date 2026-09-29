@@ -1,4 +1,4 @@
-## Upcoming / Unreleased
+## Release 2026-09
 
 **New Features & Modules**
 *   **GECX Observability Skills:** Added skills and automation tools for interacting with GECX environments.
