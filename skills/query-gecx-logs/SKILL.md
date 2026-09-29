@@ -2,13 +2,13 @@
 name: query-gecx-logs
 description: >-
   Queries, filters, and analyzes Google Cloud Logging for GECX products (CCaaS / CCAIP,
-  Dialogflow CX/ES, and CES / CX Agent Studio). Resolves target logs projects,
-  contact center IDs, locations, and agents from gecx_environments.yaml.
+  Dialogflow CX/ES, CES / CX Agent Studio, and Contact Center Insights). Resolves
+  target logs projects, contact center IDs, locations, and agents from gecx_environments.yaml.
 ---
 
 # Query GECX Cloud Logs Skill
 
-This skill provides step-by-step instructions and query recipes for querying Google Cloud Logging for **GECX (Gemini Enterprise for Customer Experience)** products, including **CCaaS**, **Dialogflow**, and **CES / CX Agent Studio**.
+This skill provides step-by-step instructions and query recipes for querying Google Cloud Logging for **GECX (Gemini Enterprise for Customer Experience)** products, including **CCaaS**, **Dialogflow**, **CES / CX Agent Studio**, and **Contact Center Insights**.
 
 For advanced recipes (cross-service correlation, SIP diagnostics, audio URIs, latency/token analytics, Log Analytics SQL), see the [Advanced Logging Queries Cookbook](references/logging_queries.md).
 
@@ -38,8 +38,9 @@ Before constructing queries, resolve the target environment topology:
 3. **Active Resources**:
    * **`contact_centers`**: Discovered CCaaS contact center IDs (e.g. `iva`, `advanced-reporting`) and locations.
    * **`dialogflow_agents`**: Discovered Dialogflow agent IDs and locations.
-   * **`conversation_profiles`**: Discovered Dialogflow Conversation Profiles (linking CCaaS to Dialogflow CX agents or CES apps).
+   * **`conversation_profiles`**: Discovered Dialogflow Conversation Profiles (linking CCaaS or Dialogflow Telephony [Phone Gateway / SIP Trunks] to Dialogflow CX agents or CES apps).
    * **`cxas_apps`**: Discovered CX Agent Studio app IDs and locations.
+   * **`insights`**: Discovered Contact Center Insights location, conversation TTL, and summarization generators.
 
 ---
 
@@ -118,10 +119,14 @@ gcloud logging read 'logName:"ces.googleapis.com%2Fresponses"' \
   * By Deployment ID: `labels.deployment_id="<DEPLOYMENT_ID>"`
   * By Location: `labels.location_id="<LOCATION>"`
 
+> [!NOTE]
+> **Voice Calls Ingested via Phone Gateway or SIP Telephony Integration**:
+> When a CES app receives voice calls via **Dialogflow Phone Gateway** or **SIP Telephony Integration** (instead of Google CCaaS), call setup, SIP signaling, and disconnect events are logged under the Dialogflow service in `logName:"dialogflow.googleapis.com%2Fincoming_call"` and `dialogflow.googleapis.com` `CreateConversation` audit logs (see **Section 3.D** below).
+
 ---
 
-### 3. Dialogflow (CX / ES)
-Dialogflow follows the same 3-tier logging structure:
+### 3. Dialogflow (CX / ES) & Telephony Ingestion
+Dialogflow emits audit logs, runtime session logs, and telephony ingestion logs:
 
 #### A. Audit Logs (Admin Activity)
 Captures administrative operations and agent management (e.g., agent creation, flow updates, intents):
@@ -167,7 +172,85 @@ gcloud logging read 'logName:"dialogflow-runtime.googleapis.com%2Frequests"' \
   * By Environment ID: `labels.environment_id="<ENVIRONMENT_ID>"`
   * By Location: `labels.location_id="<LOCATION>"`
 
-*(Note: Telephony integrations may also log call lifecycle events to `logName:"dialogflow.googleapis.com%2Fincoming_call"`)*
+#### D. Telephony Ingestion Logs (Phone Gateway & SIP Telephony Integration)
+**Dialogflow Phone Gateway** (Google-managed PSTN numbers) and **SIP Telephony Integration** (customer SBC connectivity via virtual SIP trunks) are the **same underlying Google Telephony Platform (GTP) infrastructure component** and both emit `logName:"dialogflow.googleapis.com%2Fincoming_call"` under `dialogflow.googleapis.com`.
+
+Because both route incoming voice calls through a **Dialogflow `ConversationProfile`** (which can target either a **Dialogflow CX/ES agent** or a **CXAS / CES app**), they serve as an **alternative voice ingestion layer to Google CCaaS**:
+```bash
+gcloud logging read 'logName:"dialogflow.googleapis.com%2Fincoming_call"' \
+  --project="<LOGS_PROJECT_ID>" \
+  --limit=50 \
+  --format=json
+```
+
+* **Useful Refinements**:
+  * By lifecycle action: `jsonPayload.action="disconnectCall"` (or other call setup/signaling actions)
+  * Correlate conversation creation by `ConversationProfile` in Dialogflow Data Access audit logs:
+    ```bash
+    gcloud logging read 'protoPayload.serviceName="dialogflow.googleapis.com"
+    protoPayload.methodName=~"google.cloud.dialogflow..*.Conversations.CreateConversation"
+    protoPayload.request.conversation.conversationProfile:"conversationProfiles/<CONVERSATION_PROFILE_ID>"' \
+      --project="<LOGS_PROJECT_ID>" \
+      --limit=50 \
+      --format=json
+    ```
+
+---
+
+### 4. Contact Center Insights (CCAI Insights)
+Contact Center Insights processes call/chat recordings, runs transcription, generates AI summaries, and evaluates QA scorecards.
+
+> [!TIP]
+> **Two Ingestion Paths & Multi-Location Topology**:
+> Environments often have **multiple active Insights locations** (`insights.locations` in `gecx_environments.yaml`) because each producer writes to its own configured location:
+> 1. **Direct Dialogflow CX / CES Runtime Export** (created in the **same `<LOCATION>` as the DF agent or CES app**, e.g., `us` or `eu`, via `loggingSettings.conversationLoggingSettings`): The Insights `<CONVERSATION_ID>` **matches the Dialogflow Conversation ID / CES `labels.session_id` 1:1** (e.g., `locations/us/conversations/119DaI5v0mCR1ywyTMSEjg0gw`), and `agentId` matches the CES `labels.app_id`.
+> 2. **CCaaS Post-Interaction Upload** (uploaded to the **CCaaS Insights target location**, e.g., `us-central1`): CCaaS uploads completed interactions via `UploadConversation` as `call-<ID>` or `chat-<ID>` (hyphenated CCaaS `labels.tracker_id="call_<ID>"` / `"chat_<ID>"`) and attaches structured correlation labels on the Insights Conversation resource:
+>    * `labels.id`: Numeric CCaaS interaction ID (e.g. `"5580"`)
+>    * `labels.dialogflow_conversation_id_1`: Linked Dialogflow / CES session ID (e.g. `"119DaI5v0mCR1ywyTMSEjg0gw"`, which links directly to the Path 1 Insights conversation in the agent/app's location!)
+>    * `labels.out_ticket_id`: External CRM / Salesforce ticket ID (e.g. `"500DF00000PTvCiYAL"`)
+
+#### A. Audit Logs (Data Access & Admin Activity)
+Captures conversation uploads, metadata updates, retrieval, deletion, and analysis operations:
+```bash
+gcloud logging read 'protoPayload.serviceName="contactcenterinsights.googleapis.com"
+logName:"cloudaudit.googleapis.com%2Fdata_access"' \
+  --project="<LOGS_PROJECT_ID>" \
+  --limit=50 \
+  --format=json
+```
+
+* **Useful Refinements**:
+  * By API method: `protoPayload.methodName:"google.cloud.contactcenterinsights.v1.ContactCenterInsights."`
+    * `UploadConversation` (conversation audio & metadata ingestion)
+    * `UpdateConversation` (metadataJson patches, label updates)
+    * `GetConversation` (conversation reads by console or services)
+    * `CreateAnalysis` / `BatchAnalyzeConversations` (annotator execution)
+  * By Conversation ID:
+    * For `UploadConversation`, `protoPayload.resourceName` is the **parent location** (`projects/<PROJECT>/locations/<LOCATION>`), so filter by **`protoPayload.request.conversationId="<CONVERSATION_ID>"`** (e.g. `call-12345` or `chat-5580`).
+    * For `GetConversation` / `UpdateConversation`, filter by **`protoPayload.resourceName:"conversations/<CONVERSATION_ID>"`**.
+  * By Caller / Service Account: `protoPayload.authenticationInfo.principalEmail="<SERVICE_ACCOUNT>"`
+  * By Status: `protoPayload.status.code != 0` (non-zero gRPC error codes)
+
+#### B. Direct REST API Access (CLI Workaround)
+Since `gcloud` does not provide a native `gcloud contact-center-insights` command group, query the regional/multi-regional REST API (`<LOCATION>-contactcenterinsights.googleapis.com`) directly with OAuth bearer tokens:
+
+```bash
+# 1. Fetch conversation details, correlation labels, quality metadata, and summaries
+#    (<CONVERSATION_ID> is either `call-<ID>` / `chat-<ID>` for CCaaS uploads, or `<SESSION_ID>` for direct DF/CES ingestion):
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  -H "X-goog-user-project: <PROJECT_ID>" \
+  "https://<LOCATION>-contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/<LOCATION>/conversations/<CONVERSATION_ID>"
+
+# 2. List/filter CCaaS-uploaded conversations by numeric Call/Chat ID, Dialogflow/CES Session ID, or CRM Ticket ID:
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  -H "X-goog-user-project: <PROJECT_ID>" \
+  "https://<LOCATION>-contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/<LOCATION>/conversations?pageSize=20&filter=labels.dialogflow_conversation_id_1=\"<DF_OR_CES_SESSION_ID>\""
+
+# 3. Fetch conversation analyses, runtime annotations, and LLM summaries:
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  -H "X-goog-user-project: <PROJECT_ID>" \
+  "https://<LOCATION>-contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/<LOCATION>/conversations/<CONVERSATION_ID>/analyses"
+```
 
 ---
 
@@ -252,7 +335,43 @@ gcloud logging read 'logName:"ces.googleapis.com%2Fresponses"
 
 ---
 
-### 3. Platform & Infrastructure Errors (Severity Filter)
+### 3. Contact Center Insights Ingestion & Update Failures
+
+#### A. Segmented Metadata Copy Failure (Code 9 - FAILED_PRECONDITION)
+When CCAIP uploads calls with segmented audio, `UpdateConversation` patches `metadataJson`. If the segment audio filename does not match `file::Basename(audio_uri)`, or if the call ended without an assigned agent/virtual agent (`agent_id` empty), Insights rejects the update with `"Failed to copy segmented metadata."`:
+```bash
+gcloud logging read 'protoPayload.serviceName="contactcenterinsights.googleapis.com"
+protoPayload.methodName="google.cloud.contactcenterinsights.v1.ContactCenterInsights.UpdateConversation"
+protoPayload.status.code=9' \
+  --project="<LOGS_PROJECT_ID>" \
+  --limit=25 \
+  --format="table(timestamp,protoPayload.resourceName,protoPayload.status.message)"
+```
+
+#### B. Conversation Not Found Race Condition (Code 5 - NOT_FOUND)
+CCAI Platform may invoke `UpdateConversation` before the asynchronous `UploadConversation` call finishes creating the conversation resource in Insights:
+```bash
+gcloud logging read 'protoPayload.serviceName="contactcenterinsights.googleapis.com"
+protoPayload.methodName="google.cloud.contactcenterinsights.v1.ContactCenterInsights.UpdateConversation"
+protoPayload.status.code=5' \
+  --project="<LOGS_PROJECT_ID>" \
+  --limit=25 \
+  --format="table(timestamp,protoPayload.resourceName,protoPayload.status.message)"
+```
+
+#### C. General Insights Ingestion Failures
+Find all failing operations across Contact Center Insights:
+```bash
+gcloud logging read 'protoPayload.serviceName="contactcenterinsights.googleapis.com"
+severity>=ERROR' \
+  --project="<LOGS_PROJECT_ID>" \
+  --limit=50 \
+  --format="table(timestamp,protoPayload.methodName,protoPayload.status.code,protoPayload.status.message,protoPayload.resourceName)"
+```
+
+---
+
+### 4. Platform & Infrastructure Errors (Severity Filter)
 Use `severity>=ERROR` strictly as a quick first pass for unhandled platform crashes or infrastructure-level alerts:
 ```bash
 gcloud logging read 'resource.type="contactcenteraiplatform.googleapis.com/ContactCenter"

@@ -39,6 +39,9 @@ OUTCOME_ONLY_FIELDS = {
     },
     "consumer_event_durations": {
         "started_at", "ended_at", "duration", "event"
+    },
+    "virtual_agent_deflected_escalations": {
+        "escalated_at"
     }
 }
 
@@ -52,6 +55,7 @@ MILESTONE_TIMESTAMP_FIELDS = {
     "transfers": {"created_at", "assigned_at", "connected_at", "updated_at", "started_at"},
     "handle_durations": {"started_at", "ended_at"},
     "consumer_event_durations": {"started_at", "ended_at"},
+    "virtual_agent_deflected_escalations": {"escalated_at"},
 }
 
 def filter_timestamp_fields(item, parent_key):
@@ -105,6 +109,9 @@ EVENT_PAYLOAD_KEY_MAPPING = {
     "csat_session_completed": "csat_session",
     "consumer_event_started": "consumer_event",
     "consumer_event_completed": "consumer_event",
+
+    # Escalation Deflection
+    "virtual_agent_escalation_deflected": "virtual_agent_deflected_escalation",
 }
 
 def filter_outcome_fields(item, parent_key):
@@ -187,6 +194,7 @@ INITIAL_ONLY_MILESTONES = {
     "consumer_in_menu_ended",
     "virtual_agent_session_started",
     "virtual_agent_session_ended",
+    "virtual_agent_escalation_deflected",
 }
 
 
@@ -300,6 +308,7 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
 
             payload_details = {}
             if event_name == "call_ended":
+                duration_key = "chat_duration" if is_chat else "call_duration"
                 payload_details.update({
                     "rating": rating,
                     "feedback": metadata.get("feedback"),
@@ -308,10 +317,12 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
                     "sub_status": metadata.get("sub_status"),
                     "disconnected_by": metadata.get("disconnected_by"),
                     "wait_duration": metadata.get("wait_duration"),
-                    "call_duration": metadata.get("call_duration"),
+                    duration_key: metadata.get(duration_key),
                     "hold_duration": metadata.get("hold_duration"),
                     "in_queue_wait_time_va": metadata.get("in_queue_wait_time_va"),
-                    "automation_redirection": metadata.get("automation_redirection")
+                    "automation_redirection": metadata.get("automation_redirection"),
+                    "has_virtual_agent_handle": len(metadata.get("virtual_agent_handle_durations") or []) > 0,
+                    "has_human_agent_handle": len(metadata.get("handle_durations") or []) > 0
                 })
                 
             payload = {
@@ -371,6 +382,29 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
                         "details": filter_timestamp_fields(item, "virtual_agent_handle_durations")
                     },
                     "labels": end_va_labels.copy()
+                })
+
+        for item in metadata.get("virtual_agent_deflected_escalations", []):
+            esc_at = item.get("escalated_at")
+            if esc_at:
+                va_info = item.get("virtual_agent", {})
+                vade_details = filter_timestamp_fields(item, "virtual_agent_deflected_escalations")
+                if "virtual_agent" in vade_details:
+                    del vade_details["virtual_agent"]
+
+                vade_payload = {
+                    "event": "virtual_agent_escalation_deflected",
+                    "call_id": call_id,
+                    "details": vade_details
+                }
+                if va_info:
+                    vade_payload["virtual_agent"] = va_info
+
+                events.append({
+                    "timestamp": esc_at,
+                    "event_name": "virtual_agent_escalation_deflected",
+                    "payload": vade_payload,
+                    "labels": {}
                 })
  
     for item in metadata.get("consumer_handle_durations", []):

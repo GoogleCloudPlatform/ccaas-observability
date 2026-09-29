@@ -36,86 +36,63 @@
                     "lang": {
                       "type": "string",
                       "description": "The ISO 689 language code used during the chat session."
-                    },
-                    "status": {
-                      "type": "string",
-                      "description": "The outcome status of the chat session, e.g. finished or abandoned."
                     }
                   },
                   "description": "Reference metadata for the chat session."
                 },
-                "details": {
+                "virtual_agent": {
                   "type": "object",
                   "properties": {
-                    "rating": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ],
-                      "description": "Metric property: rating."
+                    "id": {
+                      "type": "integer"
                     },
-                    "feedback": {
-                      "type": [
-                        "null",
-                        "string"
-                      ],
-                      "description": "Metric property: feedback."
+                    "name": {
+                      "type": "string"
                     },
-                    "fail_reason": {
+                    "avatar_url": {
+                      "type": "string"
+                    },
+                    "va_alias": {
                       "type": [
                         "null",
                         "string"
-                      ],
-                      "description": "why the chat failed, e.g. agent_no_answer or client_error"
-                    },
-                    "fail_details": {
-                      "type": "null",
-                      "description": "Metric property: fail_details."
-                    },
-                    "sub_status": {
-                      "type": [
-                        "null",
-                        "string"
-                      ],
-                      "description": "Metric property: sub_status."
-                    },
-                    "disconnected_by": {
-                      "type": "null",
-                      "description": "Metric property: disconnected_by."
-                    },
-                    "wait_duration": {
+                      ]
+                    }
+                  }
+                },
+                "virtual_agent_deflected_escalation": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
                       "type": "integer",
-                      "description": "Metric property: wait_duration."
+                      "description": "Metric property: id."
                     },
-                    "chat_duration": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ],
-                      "description": "Metric property: chat_duration."
+                    "deflection": {
+                      "type": "string",
+                      "description": "The deflection mechanism (e.g. temp_redirection_queue, after_hours_message_only)."
                     },
-                    "hold_duration": {
-                      "type": "null",
-                      "description": "Metric property: hold_duration."
+                    "escalation_id": {
+                      "type": "integer",
+                      "description": "Metric property: escalation_id."
                     },
-                    "in_queue_wait_time_va": {
-                      "type": "null",
-                      "description": "Metric property: in_queue_wait_time_va."
+                    "escalation_reason": {
+                      "type": "string",
+                      "description": "Reason for escalation (e.g. by_virtual_agent, unknown)."
                     },
-                    "automation_redirection": {
-                      "type": "null",
-                      "description": "Metric property: automation_redirection."
+                    "menu_path_id": {
+                      "type": "integer",
+                      "description": "Metric property: menu_path_id."
                     },
-                    "has_virtual_agent_handle": {
-                      "type": "boolean",
-                      "description": "Whether the chat had at least one virtual agent handle leg."
+                    "menu_path": {
+                      "type": "string",
+                      "description": "Target menu path where the deflection was routed."
                     },
-                    "has_human_agent_handle": {
-                      "type": "boolean",
-                      "description": "Whether the chat had at least one human agent handle leg."
+                    "lang": {
+                      "type": "string",
+                      "description": "language"
                     }
                   },
-                  "description": "Milestone-specific metrics and attributes payload for details."
+                  "description": "Milestone-specific metrics and attributes payload for virtual_agent_deflected_escalation."
                 }
               },
               "description": "Milestone-specific metrics and attributes payload."
@@ -168,7 +145,5 @@
       "type": "string",
       "description": "The Google Cloud Logging resource path for the metadata log."
     }
-  },
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "CCAIPChatLog_chat_ended"
+  }
 }

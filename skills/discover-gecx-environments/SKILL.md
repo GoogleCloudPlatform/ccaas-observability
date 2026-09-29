@@ -1,7 +1,7 @@
 ---
 name: discover-gecx-environments
 description: >-
-  Discovers available GECX (CCaaS/Dialogflow/CXAS) environments using
+  Discovers available GECX (CCaaS/Dialogflow/CXAS/Insights) environments using
   native GECX REST APIs, and initializes or updates
   gecx_environments.yaml from gecx_environments.yaml.sample.
 ---
@@ -52,9 +52,10 @@ python3 skills/discover-gecx-environments/scripts/discover_environments.py \
 2. **Dialogflow CX Agents (`dialogflow_agents`)**:
    - Discovers available project locations via `https://dialogflow.googleapis.com/v2/projects/<project>/locations`.
    - Queries regional endpoints (e.g. `us-central1-dialogflow.googleapis.com`) and `global` to list deployed CX agents, start flows, and audio export GCS destinations.
-3. **Dialogflow Conversation Profiles (`conversation_profiles`)**: Queries `https://dialogflow.googleapis.com/v2beta1/projects/<project>/locations/<location>/conversationProfiles` across discovered locations. Conversation Profiles serve as the crucial integration bridge between CCaaS Virtual Agent Platform configurations and downstream Dialogflow CX agents or CES apps.
+3. **Dialogflow Conversation Profiles (`conversation_profiles`)**: Queries `https://dialogflow.googleapis.com/v2beta1/projects/<project>/locations/<location>/conversationProfiles` across discovered locations. Conversation Profiles serve as the integration bridge between voice/chat ingestion layers (**Google CCaaS** or **Dialogflow Telephony** via Phone Gateway / SIP Trunks) and downstream **Dialogflow CX agents** or **CES apps**.
 4. **Aggregate Logs Project (`aggregate_logs_project_id`)**: Queries Cloud Logging sinks in the infrastructure project to detect sinks (like `ccaas-logs-project`) exporting to dedicated central logging projects.
-5. **Components (`components`)**: Identifies enabled GECX products (`ccaas`, `dialogflow`, `cxas`).
+5. **Contact Center Insights (`insights`)**: Queries `https://<location>-contactcenterinsights.googleapis.com/v1/projects/<project>/locations/<location>/settings`, conversations, and generators to discover active Insights locations, conversation TTL, and summarization generators.
+6. **Components (`components`)**: Identifies enabled GECX products (`ccaas`, `dialogflow`, `cxas`, `insights`).
 
 ---
 
@@ -94,7 +95,7 @@ curl -s \
   "https://dialogflow.googleapis.com/v3/projects/<PROJECT_ID>/locations/global/agents"
 ```
 
-### 3. Dialogflow Conversation Profiles (Bridge between CCaaS and DF CX / CES)
+### 3. Dialogflow Conversation Profiles (Bridge between CCaaS / Telephony and DF CX / CES)
 **List conversation profiles (e.g. `global` or regional):**
 ```bash
 curl -s \
@@ -122,6 +123,25 @@ curl -s \
   "https://ces.googleapis.com/v1/projects/<PROJECT_ID>/locations/<LOCATION>/apps"
 ```
 
+### 5. Contact Center Insights
+* **API Service**: `contactcenterinsights.googleapis.com` (regional endpoints require `<LOCATION>-contactcenterinsights.googleapis.com`)
+
+**Discover settings (TTL, retention):**
+```bash
+curl -s \
+  -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  -H "X-goog-user-project: <PROJECT_ID>" \
+  "https://<LOCATION>-contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/<LOCATION>/settings"
+```
+
+**List summarization generators (`global` or regional):**
+```bash
+curl -s \
+  -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  -H "X-goog-user-project: <PROJECT_ID>" \
+  "https://contactcenterinsights.googleapis.com/v1/projects/<PROJECT_ID>/locations/global/generators"
+```
+
 ---
 
 ## Environment Schema
@@ -140,6 +160,7 @@ environments:
       - ccaas
       - dialogflow
       - cxas
+      - insights
     contact_centers:                      # Discovered CCaaS contact center instances
       - id: "customer-service"
         location: "us-central1"
@@ -157,4 +178,14 @@ environments:
       - id: "00000000-0000-0000-0000-000000000000"
         location: "us"
         display_name: "Customer Support Assistant"
+    insights:                             # Discovered Contact Center Insights configuration
+      location: "us-central1"
+      locations:                          # All active Insights locations (e.g. regional CCaaS upload + multi-region CES/DF export)
+        - "us-central1"
+        - "us"
+      conversation_ttl: "31536000s"
+      generators:
+        - id: "00000000000000000000"
+          location: "global"
+          display_name: "Customer Support Summarization"
 ```
