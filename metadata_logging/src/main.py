@@ -21,6 +21,7 @@ from flask import Flask, request
 from google.cloud import storage
 from google.cloud import logging as cloud_logging
 from google.cloud.logging_v2 import LogEntry
+from google.api_core.exceptions import InvalidArgument, ClientError
 
 # Import shared transformation engine functions
 from transform import extract_milestones, format_as_log_entry
@@ -124,8 +125,21 @@ def parse_timestamp(ts_str):
     try:
         # Parse standard ISO format (with timezone offset)
         dt = datetime.datetime.fromisoformat(ts_str)
-        # Convert explicitly to UTC timezone
-        return dt.astimezone(datetime.timezone.utc)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=datetime.timezone.utc)
+        else:
+            dt = dt.astimezone(datetime.timezone.utc)
+
+        # Google Cloud Logging rejects timestamps > 24 hours in the future
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
+        if dt > now_utc + datetime.timedelta(hours=23):
+            logger.warning(
+                f"Timestamp '{ts_str}' is over 23 hours in the future ({dt.isoformat()}). "
+                f"Clamping to current UTC time ({now_utc.isoformat()}) to satisfy Cloud Logging API constraints."
+            )
+            return now_utc
+
+        return dt
     except Exception as e:
         logger.warning(f"Failed to parse timestamp '{ts_str}': {e}. Using current time.")
         return datetime.datetime.now(datetime.timezone.utc)
@@ -255,6 +269,14 @@ def handle_event():
         # If this was confirmed as an initial export, record the state marker in the dedicated state bucket
         if is_update is False:
             record_interaction_initial_export(bucket_name, object_name)
+    except (InvalidArgument, ClientError) as e:
+        logger.error(
+            f"Non-retryable 4xx client error writing log batch to Cloud Logging: {e}. "
+            f"Acknowledging message to prevent infinite retry loop on object {gcs_uri}."
+        )
+        if is_update is False:
+            record_interaction_initial_export(bucket_name, object_name)
+        return f"Non-retryable error writing to Cloud Logging API: {e}", 200
     except Exception as e:
         logger.error(f"Failed to write batch entries to Cloud Logging API: {e}")
         return f"Failed writing to Cloud Logging API: {e}", 500
