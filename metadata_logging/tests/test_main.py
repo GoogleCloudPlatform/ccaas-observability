@@ -5,7 +5,7 @@ import base64
 import datetime
 import unittest
 from unittest.mock import patch, MagicMock
-from google.api_core.exceptions import InvalidArgument, ClientError
+from google.api_core.exceptions import InvalidArgument, BadRequest, TooManyRequests
 
 # Add src/ to python path
 src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -258,6 +258,43 @@ class TestMetadataLoggerApp(unittest.TestCase):
         response = self.app.post("/", json=payload)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Non-retryable error writing to Cloud Logging API", response.data)
+
+    @patch("main.storage_client")
+    @patch("main.get_logging_client")
+    @patch("main.extract_milestones")
+    @patch("main.format_as_log_entry")
+    def test_handle_event_retryable_429_error(self, mock_format, mock_extract, mock_get_logging, mock_storage):
+        mock_bucket = MagicMock()
+        mock_blob = MagicMock()
+        mock_blob.download_as_text.return_value = '{"id": 123}'
+        mock_bucket.blob.return_value = mock_blob
+        mock_storage.bucket.return_value = mock_bucket
+
+        mock_logging_client = MagicMock()
+        mock_logger = MagicMock()
+        mock_batch = MagicMock()
+        mock_batch.__exit__.side_effect = TooManyRequests("429 Quota exceeded for quota metric")
+        mock_logger.batch.return_value = mock_batch
+        mock_logging_client.logger.return_value = mock_logger
+        mock_get_logging.return_value = mock_logging_client
+
+        mock_extract.return_value = [{"event": "test"}]
+        mock_format.return_value = {
+            "timestamp": "2026-07-22T12:00:00Z",
+            "jsonPayload": {"event": "test"},
+            "severity": "INFO",
+            "insertId": "1",
+            "resource": {"type": "global", "labels": {}}
+        }
+
+        payload = {
+            "bucket": "test-bucket",
+            "name": "metadata/call-123.json"
+        }
+
+        response = self.app.post("/", json=payload)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(b"Failed writing to Cloud Logging API", response.data)
 
     @patch("main.storage_client")
     @patch("main.get_logging_client")

@@ -21,7 +21,7 @@ from flask import Flask, request
 from google.cloud import storage
 from google.cloud import logging as cloud_logging
 from google.cloud.logging_v2 import LogEntry
-from google.api_core.exceptions import InvalidArgument, ClientError
+from google.api_core.exceptions import InvalidArgument, BadRequest
 
 # Import shared transformation engine functions
 from transform import extract_milestones, format_as_log_entry
@@ -269,9 +269,9 @@ def handle_event():
         # If this was confirmed as an initial export, record the state marker in the dedicated state bucket
         if is_update is False:
             record_interaction_initial_export(bucket_name, object_name)
-    except (InvalidArgument, ClientError) as e:
+    except (InvalidArgument, BadRequest) as e:
         logger.error(
-            f"Non-retryable 4xx client error writing log batch to Cloud Logging: {e}. "
+            f"Non-retryable 400 Bad Request writing log batch to Cloud Logging: {e}. "
             f"Acknowledging message to prevent infinite retry loop on object {gcs_uri}."
         )
         if is_update is False:
