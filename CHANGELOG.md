@@ -1,3 +1,16 @@
+## Release 2026-09.1
+
+**Bug Fixes & Improvements**
+*   **Metadata Logger Future Timestamp Handling & Retry Storm Prevention (`metadata_logging`):** Prevented infinite Eventarc/Pub/Sub retry loops (`400 Timestamp is over a day in the future`) when ingesting scheduled interactions or clock-skewed metadata exports.
+    *   **Scheduled Milestone Timestamps (`call_scheduled`, `chat_scheduled`):** Updated `call_scheduled` and `chat_scheduled` milestone extraction to use `created_at` (when the interaction was scheduled, falling back to `scheduled_at` if absent) as the Cloud Logging entry timestamp, while preserving the target future appointment time in `details.scheduled_for`.
+    *   **Future Timestamp Clamping:** Added defensive validation in `parse_timestamp` to clamp timestamps more than 23 hours in the future to the current UTC ingestion time (with a warning log) to satisfy Cloud Logging API limits.
+    *   **Non-Retryable `400 Bad Request` Acknowledgment:** Narrowed Cloud Logging batch write error handling to acknowledge (`HTTP 200`) non-retryable `400 InvalidArgument` / `BadRequest` rejections so malformed payloads do not block the subscription queue, while continuing to return `HTTP 500` for retryable errors (`429 TooManyRequests`, `5xx`).
+
+**Rollout & Upgrade Instructions**
+*   Build and push a new `metadata-logger` container image using `metadata_logging/build_and_push.sh`, update `metadata_logger.image_url` in your Terraform configuration (or run `gcloud run services update`), and redeploy the Cloud Run service.
+
+---
+
 ## Release 2026-09
 
 **New Features & Modules**
