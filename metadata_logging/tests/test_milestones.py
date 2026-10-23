@@ -294,5 +294,25 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
         self.assertTrue(details_both["has_virtual_agent_handle"])
         self.assertTrue(details_both["has_human_agent_handle"])
 
+    def test_call_scheduled_future_uses_created_at_timestamp(self):
+        metadata = {
+            "id": 2050,
+            "lang": "en",
+            "call_type": "Voice Scheduled (API)",
+            "created_at": "2026-10-21T10:00:00.000-04:00",
+            "scheduled_at": "2026-10-28T15:30:00.000-04:00",
+            "updated_at": "2026-10-21T10:00:05.000-04:00"
+        }
+        gcs_uri = "gs://bucket/call-2050.json"
+        milestones = extract_milestones(metadata, gcs_uri, is_update=False)
+        scheduled_events = [m for m in milestones if m["event_name"] == "call_scheduled"]
+        self.assertEqual(len(scheduled_events), 1)
+
+        log_entry = format_as_log_entry(scheduled_events[0], self.project_id, self.location, self.resource_id)
+        # Timestamp must reflect when the scheduling event occurred (created_at = 14:00:00Z),
+        # not the future appointment time (>24h in the future on 2026-10-28).
+        self.assertEqual(log_entry["timestamp"], "2026-10-21T14:00:00Z")
+        self.assertNotIn("2026-10-28", json.dumps(log_entry))
+
 if __name__ == "__main__":
     unittest.main()

@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import base64
+import datetime
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -26,6 +27,7 @@ try:
     import flask
     import google.cloud.storage
     import google.cloud.logging
+    from google.api_core.exceptions import InvalidArgument, BadRequest, TooManyRequests
     DEPENDENCIES_AVAILABLE = True
 except ImportError:
     DEPENDENCIES_AVAILABLE = False
@@ -202,6 +204,134 @@ class TestMetadataLoggerApp(unittest.TestCase):
         response = self.app.post("/", json=payload)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Ignored GCS file upload", response.data)
+
+    def test_parse_timestamp_valid(self):
+        target_dt = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=2)
+        dt = main.parse_timestamp(target_dt.isoformat())
+        self.assertEqual(int(dt.timestamp()), int(target_dt.timestamp()))
+
+    def test_parse_timestamp_near_future_not_clamped(self):
+        target_dt = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=2)
+        dt = main.parse_timestamp(target_dt.isoformat())
+        self.assertEqual(int(dt.timestamp()), int(target_dt.timestamp()))
+
+    def test_parse_timestamp_future_clamped(self):
+        future_dt = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=7)
+        before = datetime.datetime.now(datetime.timezone.utc)
+        dt = main.parse_timestamp(future_dt.isoformat())
+        after = datetime.datetime.now(datetime.timezone.utc)
+        self.assertTrue(before <= dt <= after)
+
+    @patch("main.storage_client")
+    @patch("main.get_logging_client")
+    @patch("main.extract_milestones")
+    @patch("main.format_as_log_entry")
+    def test_handle_event_non_retryable_400_error(self, mock_format, mock_extract, mock_get_logging, mock_storage):
+        mock_bucket = MagicMock()
+        mock_blob = MagicMock()
+        mock_blob.download_as_text.return_value = '{"id": 123}'
+        mock_bucket.blob.return_value = mock_blob
+        mock_storage.bucket.return_value = mock_bucket
+
+        mock_logging_client = MagicMock()
+        mock_logger = MagicMock()
+        mock_batch = MagicMock()
+        mock_batch.__exit__.side_effect = InvalidArgument("400 Timestamp is over a day in the future")
+        mock_logger.batch.return_value = mock_batch
+        mock_logging_client.logger.return_value = mock_logger
+        mock_get_logging.return_value = mock_logging_client
+
+        mock_extract.return_value = [{"event": "test"}]
+        mock_format.return_value = {
+            "timestamp": "2026-07-22T12:00:00Z",
+            "jsonPayload": {"event": "test"},
+            "severity": "INFO",
+            "insertId": "1",
+            "resource": {"type": "global", "labels": {}}
+        }
+
+        payload = {
+            "bucket": "test-bucket",
+            "name": "metadata/call-123.json"
+        }
+
+        response = self.app.post("/", json=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Non-retryable error writing to Cloud Logging API", response.data)
+
+    @patch("main.storage_client")
+    @patch("main.get_logging_client")
+    @patch("main.extract_milestones")
+    @patch("main.format_as_log_entry")
+    def test_handle_event_retryable_429_error(self, mock_format, mock_extract, mock_get_logging, mock_storage):
+        mock_bucket = MagicMock()
+        mock_blob = MagicMock()
+        mock_blob.download_as_text.return_value = '{"id": 123}'
+        mock_bucket.blob.return_value = mock_blob
+        mock_storage.bucket.return_value = mock_bucket
+
+        mock_logging_client = MagicMock()
+        mock_logger = MagicMock()
+        mock_batch = MagicMock()
+        mock_batch.__exit__.side_effect = TooManyRequests("429 Quota exceeded for quota metric")
+        mock_logger.batch.return_value = mock_batch
+        mock_logging_client.logger.return_value = mock_logger
+        mock_get_logging.return_value = mock_logging_client
+
+        mock_extract.return_value = [{"event": "test"}]
+        mock_format.return_value = {
+            "timestamp": "2026-07-22T12:00:00Z",
+            "jsonPayload": {"event": "test"},
+            "severity": "INFO",
+            "insertId": "1",
+            "resource": {"type": "global", "labels": {}}
+        }
+
+        payload = {
+            "bucket": "test-bucket",
+            "name": "metadata/call-123.json"
+        }
+
+        response = self.app.post("/", json=payload)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(b"Failed writing to Cloud Logging API", response.data)
+
+    @patch("main.storage_client")
+    @patch("main.get_logging_client")
+    @patch("main.extract_milestones")
+    @patch("main.format_as_log_entry")
+    def test_handle_event_retryable_500_error(self, mock_format, mock_extract, mock_get_logging, mock_storage):
+        mock_bucket = MagicMock()
+        mock_blob = MagicMock()
+        mock_blob.download_as_text.return_value = '{"id": 123}'
+        mock_bucket.blob.return_value = mock_blob
+        mock_storage.bucket.return_value = mock_bucket
+
+        mock_logging_client = MagicMock()
+        mock_logger = MagicMock()
+        mock_batch = MagicMock()
+        mock_batch.__exit__.side_effect = ConnectionError("503 Service Unavailable")
+        mock_logger.batch.return_value = mock_batch
+        mock_logging_client.logger.return_value = mock_logger
+        mock_get_logging.return_value = mock_logging_client
+
+        mock_extract.return_value = [{"event": "test"}]
+        mock_format.return_value = {
+            "timestamp": "2026-07-22T12:00:00Z",
+            "jsonPayload": {"event": "test"},
+            "severity": "INFO",
+            "insertId": "1",
+            "resource": {"type": "global", "labels": {}}
+        }
+
+        payload = {
+            "bucket": "test-bucket",
+            "name": "metadata/call-123.json"
+        }
+
+        response = self.app.post("/", json=payload)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(b"Failed writing to Cloud Logging API", response.data)
 
 if __name__ == "__main__":
     unittest.main()

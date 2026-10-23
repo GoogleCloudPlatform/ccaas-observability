@@ -300,6 +300,11 @@ def extract_milestones(metadata, gcs_uri, redact_pii_enabled=True, is_update=Non
     for field_name, event_name in root_timestamps:
         ts_val = metadata.get(field_name)
         if ts_val:
+            if field_name == "scheduled_at":
+                # scheduled_at in CCaaS metadata represents the target future appointment slot,
+                # whereas created_at represents when the scheduling event actually occurred.
+                ts_val = metadata.get("created_at") or metadata.get("updated_at") or ts_val
+
             actual_event_name = event_name.replace("call_", "chat_") if is_chat else event_name
             
             # Group 1 live-interaction milestones must never be re-parsed or re-emitted on updates
