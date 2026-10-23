@@ -5,7 +5,6 @@ import base64
 import datetime
 import unittest
 from unittest.mock import patch, MagicMock
-from google.api_core.exceptions import InvalidArgument, BadRequest, TooManyRequests
 
 # Add src/ to python path
 src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -28,6 +27,7 @@ try:
     import flask
     import google.cloud.storage
     import google.cloud.logging
+    from google.api_core.exceptions import InvalidArgument, BadRequest, TooManyRequests
     DEPENDENCIES_AVAILABLE = True
 except ImportError:
     DEPENDENCIES_AVAILABLE = False
