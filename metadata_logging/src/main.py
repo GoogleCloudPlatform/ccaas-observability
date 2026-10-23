@@ -39,6 +39,7 @@ storage_client = storage.Client()
 CUSTOM_LOG_NAME = os.getenv("CUSTOM_LOG_NAME", "metadata-logger")
 PATH_CONFIGS_STR = os.getenv("PATH_CONFIGS", "[]")
 STATE_BUCKET_NAME = os.getenv("STATE_BUCKET_NAME")
+REDACT_PII = os.getenv("REDACT_PII", "true").strip().lower() not in ("false", "0", "no")
 
 # Parse path configs JSON safely
 try:
@@ -52,6 +53,8 @@ if STATE_BUCKET_NAME:
     logger.info(f"Interaction state tracking enabled using state bucket: {STATE_BUCKET_NAME}")
 else:
     logger.warning("STATE_BUCKET_NAME is not set; interaction state tracking is disabled.")
+
+logger.info(f"PII redaction enabled: {REDACT_PII}")
 
 
 def check_interaction_is_update(bucket_name, object_name):
@@ -214,7 +217,12 @@ def handle_event():
     is_update = check_interaction_is_update(bucket_name, object_name)
 
     # Extract all milestones
-    milestones = extract_milestones(metadata, gcs_uri, is_update=is_update)
+    milestones = extract_milestones(
+        metadata,
+        gcs_uri,
+        redact_pii_enabled=REDACT_PII,
+        is_update=is_update
+    )
     if not milestones:
         logger.info(f"No milestones parsed from metadata file: {gcs_uri}")
         return "No milestone events found in metadata file", 200

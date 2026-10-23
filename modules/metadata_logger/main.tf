@@ -159,6 +159,11 @@ resource "google_cloud_run_v2_service" "metadata_logger" {
       }
 
       env {
+        name  = "REDACT_PII"
+        value = tostring(var.redact_pii)
+      }
+
+      env {
         name = "PATH_CONFIGS"
         value = jsonencode([
           for uri, parsed in local.parsed_paths : {

@@ -61,6 +61,9 @@ variable "metadata_logger" {
     # The identifier for custom logs.
     custom_log_name = optional(string, "contactcenteraiplatform.googleapis.com%2Fmetadata")
 
+    # Whether to redact PII fields (phone_number, first_name, last_name, name, email) in extracted milestone logs.
+    redact_pii = optional(bool, true)
+
     # Configuration for the interaction state tracking GCS bucket.
     state_bucket = optional(object({
       create_bucket  = optional(bool, true)

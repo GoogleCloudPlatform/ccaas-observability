@@ -333,5 +333,47 @@ class TestMetadataLoggerApp(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         self.assertIn(b"Failed writing to Cloud Logging API", response.data)
 
+    @patch("main.storage_client")
+    @patch("main.get_logging_client")
+    @patch("main.extract_milestones")
+    @patch("main.format_as_log_entry")
+    def test_handle_event_redact_pii_disabled(self, mock_format, mock_extract, mock_get_logging, mock_storage):
+        mock_bucket = MagicMock()
+        mock_blob = MagicMock()
+        mock_blob.download_as_text.return_value = '{"id": 123}'
+        mock_bucket.blob.return_value = mock_blob
+        mock_storage.bucket.return_value = mock_bucket
+
+        mock_logging_client = MagicMock()
+        mock_logger = MagicMock()
+        mock_batch = MagicMock()
+        mock_logger.batch.return_value.__enter__.return_value = mock_batch
+        mock_logging_client.logger.return_value = mock_logger
+        mock_get_logging.return_value = mock_logging_client
+
+        mock_extract.return_value = [{"event": "test"}]
+        mock_format.return_value = {
+            "timestamp": "2026-07-22T12:00:00Z",
+            "jsonPayload": {"event": "test"},
+            "severity": "INFO",
+            "insertId": "1",
+            "resource": {"type": "global", "labels": {}}
+        }
+
+        payload = {
+            "bucket": "test-bucket",
+            "name": "metadata/call-123.json"
+        }
+
+        with patch.object(main, "REDACT_PII", False):
+            response = self.app.post("/", json=payload)
+            self.assertEqual(response.status_code, 200)
+            mock_extract.assert_called_once_with(
+                {"id": 123},
+                "gs://test-bucket/metadata/call-123.json",
+                redact_pii_enabled=False,
+                is_update=None
+            )
+
 if __name__ == "__main__":
     unittest.main()

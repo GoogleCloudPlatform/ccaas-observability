@@ -314,5 +314,55 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
         self.assertEqual(log_entry["timestamp"], "2026-10-21T14:00:00Z")
         self.assertNotIn("2026-10-28", json.dumps(log_entry))
 
+    def test_redact_pii_enabled_and_disabled(self):
+        metadata = {
+            "id": 9999,
+            "call_type": "Voice Inbound (IVR)",
+            "participants": [
+                {
+                    "id": 1,
+                    "type": "end_user",
+                    "phone_number": "+15551234567",
+                    "connected_at": "2026-09-16T17:22:48.000-07:00"
+                }
+            ],
+            "transfers": [
+                {
+                    "id": 10,
+                    "created_at": "2026-09-16T17:23:00.000-07:00",
+                    "to_agent": {
+                        "id": 42,
+                        "first_name": "Alice",
+                        "last_name": "Smith",
+                        "name": "Alice Smith",
+                        "email": "alice@example.com"
+                    }
+                }
+            ]
+        }
+        gcs_uri = "gs://bucket/call-9999.json"
+
+        # Default (redact_pii_enabled=True)
+        redacted_milestones = extract_milestones(metadata, gcs_uri)
+        p_redacted = [m for m in redacted_milestones if m["event_name"] == "participant_connected"][0]
+        self.assertEqual(p_redacted["payload"]["event"]["payload"]["participant"]["phone_number"], "<REDACTED>")
+        t_redacted = [m for m in redacted_milestones if m["event_name"] == "session_transfer_started"][0]
+        to_agent_redacted = t_redacted["payload"]["event"]["payload"]["transfer"]["to_agent"]
+        self.assertEqual(to_agent_redacted["first_name"], "<REDACTED>")
+        self.assertEqual(to_agent_redacted["last_name"], "<REDACTED>")
+        self.assertEqual(to_agent_redacted["name"], "<REDACTED>")
+        self.assertEqual(to_agent_redacted["email"], "<REDACTED>")
+
+        # Disabled (redact_pii_enabled=False)
+        unredacted_milestones = extract_milestones(metadata, gcs_uri, redact_pii_enabled=False)
+        p_unredacted = [m for m in unredacted_milestones if m["event_name"] == "participant_connected"][0]
+        self.assertEqual(p_unredacted["payload"]["event"]["payload"]["participant"]["phone_number"], "+15551234567")
+        t_unredacted = [m for m in unredacted_milestones if m["event_name"] == "session_transfer_started"][0]
+        to_agent_unredacted = t_unredacted["payload"]["event"]["payload"]["transfer"]["to_agent"]
+        self.assertEqual(to_agent_unredacted["first_name"], "Alice")
+        self.assertEqual(to_agent_unredacted["last_name"], "Smith")
+        self.assertEqual(to_agent_unredacted["name"], "Alice Smith")
+        self.assertEqual(to_agent_unredacted["email"], "alice@example.com")
+
 if __name__ == "__main__":
     unittest.main()
