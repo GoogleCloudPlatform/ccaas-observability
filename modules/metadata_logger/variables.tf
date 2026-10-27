@@ -88,7 +88,7 @@ variable "state_bucket" {
     condition = var.state_bucket == null || (
       try(var.state_bucket.create_bucket, true) == false ? (
         try(var.state_bucket.name != null && var.state_bucket.name != "", false)
-      ) : (
+        ) : (
         try(var.state_bucket.location != null && var.state_bucket.location != "", false)
       )
     )
