@@ -26,6 +26,11 @@ variable "region" {
 variable "image_url" {
   type        = string
   description = "The container image path in Artifact Registry (e.g., us-central1-docker.pkg.dev/my-project/my-repo/ces-tracer:latest)."
+  nullable    = false
+  validation {
+    condition     = trimspace(var.image_url) != ""
+    error_message = "image_url must be set to the ces-tracer container image (set ces_tracer.image_url when enable_ces_tracer = true)."
+  }
 }
 
 variable "trace_project_id" {

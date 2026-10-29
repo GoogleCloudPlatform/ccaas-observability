@@ -71,9 +71,11 @@ project.
     *   `ces_tracer`: (object, optional) Configuration settings for the CXAS Tracer service (used when `enable_ces_tracer = true`):
         *   `project_id`: (string, optional) The GCP project ID hosting Dialogflow/CXAS, the Log Router sink, Pub/Sub, and Cloud Run (defaults to `project_id`).
         *   `region`: (string, optional) Location for the Cloud Run deployment (defaults to `"us-central1"`).
-        *   `image_url`: (string) The Artifact Registry URI of the compiled container image (e.g., `"europe-west1-docker.pkg.dev/.../ces-tracer:latest"`).
+        *   `image_url`: (string, required when `enable_ces_tracer = true`) The Artifact Registry URI of the compiled container image (e.g., `"europe-west1-docker.pkg.dev/.../ces-tracer:latest"`).
         *   `trace_project_id`: (string, optional) Target GCP project ID where Cloud Trace spans are written (defaults to the resolved CXAS project ID or `project_id`).
         *   `app_configs`: (list of object, optional) Static mappings from Dialogflow `ConversationProfile` to target CXAS App configurations (`conversation_profile`, `ces_project_id`, `ces_location`, `ces_app_id`, `trace_project_id`). When empty, CXAS apps are resolved dynamically via the Dialogflow `ConversationProfile` API.
+        *   `ack_deadline_seconds`: (number, optional) Ack deadline of the Pub/Sub push subscription (10–600), also used as the Cloud Run request timeout. Must exceed end-to-end trace processing time. Defaults to `300`.
+        *   `skip_if_trace_exists`: (boolean, optional) Whether to skip writing spans when the conversation's root span already exists in Cloud Trace (best-effort idempotency guard against Pub/Sub redeliveries). Defaults to `true`.
         *   `redact_pii`: (boolean, optional) Whether to redact user utterances in turn span display names and sensitive PII fields in span attributes. Defaults to `false`.
         *   `initial_delay_seconds`: (number, optional) Seconds to wait before querying Cloud Logging so final conversation log entries are indexed. Defaults to `2`.
         *   `grant_project_iam_roles`: (boolean, optional) Whether to automatically create project-level IAM role bindings. Defaults to `true`.
@@ -202,6 +204,8 @@ For detailed usage, local regression testing instructions, build steps, and link
 The `ces_tracing/` directory contains a Cloud Run-based distributed trace ingestion service (**CXAS Tracer**) for **CX Agent Studio (CXAS)**. Triggered via a Log Router sink and Pub/Sub push subscription whenever a Dialogflow `CompleteConversation` audit log is written, it resolves the target CXAS App (dynamically via `ConversationProfile` or via static overrides), fetches the CXAS conversation turns/spans (via `ces.googleapis.com`) and correlated Cloud Logging events (`cloudaudit.googleapis.com%2Fdata_access`, `dialogflow.googleapis.com%2Fincoming_call`, and `ces.googleapis.com%2Fresponses`), and exports the hierarchical trace to **Google Cloud Trace** with W3C `traceparent` tool span correlation.
 
 For build instructions, unit testing, and architecture details, see the [CXAS Tracing Service README](ces_tracing/README.md) and [CXAS Tracer Terraform Module README](modules/ces_tracer/README.md).
+
+> **Cost & privacy:** The CXAS Tracer requires Dialogflow Data Access audit logs to be enabled project-wide, which can significantly increase Cloud Logging ingestion volume (and cost) and stores conversation content in your log buckets. With the default `redact_pii = false`, user utterances also appear in Cloud Trace span names and attributes. See [Cost & Privacy Considerations](modules/ces_tracer/README.md#cost--privacy-considerations).
 
 ## Permissions
 

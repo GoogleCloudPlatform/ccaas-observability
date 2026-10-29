@@ -17,7 +17,17 @@ This module deploys the **CXAS Tracer** (`ces-tracer`) — a lightweight, secure
 ## Prerequisites
 
 1. **Container Image:** Before deploying the Terraform resources, build and push the Cloud Run container image to Artifact Registry. See the [CXAS Tracing Service README](../../ces_tracing/README.md) for instructions.
-2. **Dialogflow Data Access Audit Logs:** The `CompleteConversation` delivery pipeline and the Dialogflow operation spans require **Data Read / Data Write** Cloud Audit Logs to be enabled for `dialogflow.googleapis.com` in the target project (`IAM & Admin > Audit Logs > Dialogflow API`).
+2. **Dialogflow Data Access Audit Logs:** The `CompleteConversation` delivery pipeline and the Dialogflow operation spans require **Data Read / Data Write** Cloud Audit Logs to be enabled for `dialogflow.googleapis.com` in the target project (`IAM & Admin > Audit Logs > Dialogflow API`). Review the cost and privacy considerations below before enabling them.
+
+---
+
+## Cost & Privacy Considerations
+
+> **Warning:** Review these with the data owner before enabling the CXAS Tracer, even in non-production projects.
+
+* **Audit log volume and cost:** Data Read / Data Write audit logs apply to **all** Dialogflow API calls in the project, not only those of traced conversations. Streaming methods such as `BidiStreamingAnalyzeContent` and `AnalyzeContent` can produce a large number of entries per conversation, which increases Cloud Logging ingestion and storage cost. Consider adding [exclusion filters](https://cloud.google.com/logging/docs/routing/overview#exclusions) on the `_Default` sink for entries the tracer does not need, and estimate the impact on a representative traffic sample first.
+* **Conversation content in logs:** Dialogflow Data Access audit logs can contain request/response payloads, including end-user utterances and agent responses. They are retained according to the destination log bucket's retention policy (30 days for `_Default` by default) and are readable by anyone with `roles/logging.privateLogViewer` on the project.
+* **Conversation content in Cloud Trace:** With the default `redact_pii = false`, user utterances are written to turn span display names and span attributes, and are visible to anyone with Cloud Trace read access (e.g. `roles/cloudtrace.user`) on the trace project. Set `redact_pii = true` if traces may be viewed by people who should not see conversation content. Cloud Trace retains spans for 30 days.
 
 ---
 

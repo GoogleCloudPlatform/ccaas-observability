@@ -107,11 +107,6 @@ resource "google_service_account" "push_invoker_sa" {
   display_name = "CES Tracer Pub/Sub Push Invoker SA"
 }
 
-moved {
-  from = google_service_account.eventarc_trigger_sa
-  to   = google_service_account.push_invoker_sa
-}
-
 # Cloud Run v2 Service
 resource "google_cloud_run_v2_service" "ces_tracer" {
   name                = var.service_name
@@ -195,11 +190,6 @@ resource "google_cloud_run_v2_service_iam_member" "push_invoker" {
   name     = google_cloud_run_v2_service.ces_tracer.name
   role     = "roles/run.invoker"
   member   = "serviceAccount:${google_service_account.push_invoker_sa.email}"
-}
-
-moved {
-  from = google_cloud_run_v2_service_iam_member.eventarc_invoker
-  to   = google_cloud_run_v2_service_iam_member.push_invoker
 }
 
 # Pub/Sub topic receiving Dialogflow CompleteConversation audit log entries

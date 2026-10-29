@@ -110,7 +110,7 @@ variable "ces_tracer" {
     # The regional location to deploy the Cloud Run service.
     region = optional(string, "us-central1")
 
-    # The container image path in Artifact Registry for the ces-tracer Cloud Run service.
+    # The container image path in Artifact Registry for the ces-tracer Cloud Run service (required when enable_ces_tracer = true).
     image_url = optional(string)
 
     # Optional target Google Cloud project ID where Cloud Trace spans are written.
