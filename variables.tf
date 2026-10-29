@@ -99,12 +99,12 @@ variable "metadata_dashboards" {
 variable "enable_ces_tracer" {
   type        = bool
   default     = false
-  description = "Whether to enable the CES Tracer Cloud Run service and its audit log delivery pipeline (Log Router sink, Pub/Sub topic and push subscription)."
+  description = "Whether to enable the CXAS Tracer Cloud Run service and its audit log delivery pipeline (Log Router sink, Pub/Sub topic and push subscription)."
 }
 
 variable "ces_tracer" {
   type = object({
-    # The Google Cloud project ID hosting Dialogflow/CES, the Log Router sink, Pub/Sub, and the Cloud Run service (defaults to var.project_id).
+    # The Google Cloud project ID hosting Dialogflow/CXAS, the Log Router sink, Pub/Sub, and the Cloud Run service (defaults to var.project_id).
     project_id = optional(string)
 
     # The regional location to deploy the Cloud Run service.
@@ -116,7 +116,7 @@ variable "ces_tracer" {
     # Optional target Google Cloud project ID where Cloud Trace spans are written.
     trace_project_id = optional(string)
 
-    # Optional static mappings from Dialogflow ConversationProfile to target CES App configurations.
+    # Optional static mappings from Dialogflow ConversationProfile to target CXAS App configurations.
     app_configs = optional(list(object({
       conversation_profile = optional(string, "*")
       ces_project_id       = optional(string)
@@ -147,5 +147,5 @@ variable "ces_tracer" {
     service_name = optional(string, "ces-tracer")
   })
   default     = {}
-  description = "Configuration settings for the CES Tracer service."
+  description = "Configuration settings for the CXAS Tracer service."
 }

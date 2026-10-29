@@ -1,24 +1,24 @@
-# CES Tracing Service
+# CXAS Tracing Service
 
-This folder contains the source code, build scripts, and unit test suites for the **CES Tracer** service. The service runs as a lightweight Cloud Run container triggered by Dialogflow `CompleteConversation` Cloud Audit Logs delivered by a Log Router sink and Pub/Sub push subscription (or direct HTTP invocation). When a conversation finishes, the service:
+This folder contains the source code, build scripts, and unit test suites for the **CXAS Tracer** (`ces-tracer`) service. The service runs as a lightweight Cloud Run container triggered by Dialogflow `CompleteConversation` Cloud Audit Logs delivered by a Log Router sink and Pub/Sub push subscription (or direct HTTP invocation). When a conversation finishes, the service:
 
-1. Resolves the target **CX Agent Studio (CES)** app either dynamically from the Dialogflow `ConversationProfile` (`automatedAgentConfig.agent`) or via static configuration overrides (`APP_CONFIGS`). Non-CES conversations (e.g., standard Dialogflow CX agents) are automatically skipped.
-2. Fetches the completed CES conversation turns and nested spans from the CES v1 REST API (`ces.googleapis.com`).
+1. Resolves the target **CX Agent Studio (CXAS)** app either dynamically from the Dialogflow `ConversationProfile` (`automatedAgentConfig.agent`) or via static configuration overrides (`APP_CONFIGS`). Non-CXAS conversations (e.g., standard Dialogflow CX agents) are automatically skipped.
+2. Fetches the completed CXAS conversation turns and nested spans from the Customer Engagement Suite (CES) v1 REST API (`ces.googleapis.com`).
 3. Fetches correlated Cloud Logging entries for the session:
    * Dialogflow Cloud Audit Logs (`cloudaudit.googleapis.com%2Fdata_access`), grouping streaming operations (`BidiStreamingAnalyzeContent`) into operation spans and point events (`CreateConversation`, `CompleteConversation`) into short spans.
    * Dialogflow Telephony incoming call events (`dialogflow.googleapis.com%2Fincoming_call`, such as `connectCall` and `disconnectCall`).
-   * CES response logs (`ces.googleapis.com%2Fresponses`) to enrich turn spans with `turn_completed` status and supervisor issue detections (`supervisor.has_issue`, `supervisor.detection[i].issue_type`, `supervisor.detection[i].details`).
+   * CXAS response logs (`ces.googleapis.com%2Fresponses`) to enrich turn spans with `turn_completed` status and supervisor issue detections (`supervisor.has_issue`, `supervisor.detection[i].issue_type`, `supervisor.detection[i].details`).
 4. Exports the reconstructed hierarchical trace to **Google Cloud Trace** (`cloudtrace.googleapis.com` v2 `BatchWriteSpans`).
 
 ---
 
-## W3C `traceparent` Correlation with Downstream CES Tools
+## W3C `traceparent` Correlation with Downstream CXAS Tools
 
-To enable end-to-end distributed tracing across CES Python tools and downstream HTTP services (such as Cloud Run microservices), `ces-tracer` uses deterministic hashing:
+To enable end-to-end distributed tracing across CXAS Python tools and downstream HTTP services (such as Cloud Run microservices), `ces-tracer` uses deterministic hashing:
 
 * **Trace ID (128-bit / 32 hex chars):** `MD5(session_id)`
 * **Span ID (64-bit / 16 hex chars):** `SHA256(identifier)[:16]`
-* **Tool Call Span ID:** When a CES tool span contains the attribute `"tool call id"`, its span ID is computed as `SHA256(tool_call_id)[:16]`. When CES Python tools inject the W3C header `traceparent: 00-{MD5(session_id)}-{SHA256(function_call_id)[:16]}-01` on outbound HTTP requests, Google Cloud Trace automatically parents the downstream Cloud Run HTTP spans directly under the corresponding CES Tool span.
+* **Tool Call Span ID:** When a CXAS tool span contains the attribute `"tool call id"`, its span ID is computed as `SHA256(tool_call_id)[:16]`. When CXAS Python tools inject the W3C header `traceparent: 00-{MD5(session_id)}-{SHA256(function_call_id)[:16]}-01` on outbound HTTP requests, Google Cloud Trace automatically parents the downstream Cloud Run HTTP spans directly under the corresponding CXAS Tool span.
 
 ---
 

@@ -14,7 +14,7 @@
 
 variable "project_id" {
   type        = string
-  description = "The Google Cloud project ID hosting Dialogflow/CES, Eventarc, and the Cloud Run service."
+  description = "The Google Cloud project ID hosting Dialogflow/CXAS, the Log Router sink, Pub/Sub, and the Cloud Run service."
 }
 
 variable "region" {
@@ -30,7 +30,7 @@ variable "image_url" {
 
 variable "trace_project_id" {
   type        = string
-  description = "Optional target Google Cloud project ID where Cloud Trace spans are written. Defaults to the resolved CES project ID or project_id."
+  description = "Optional target Google Cloud project ID where Cloud Trace spans are written. Defaults to the resolved CXAS project ID or project_id."
   default     = null
 }
 
@@ -42,7 +42,7 @@ variable "app_configs" {
     ces_app_id           = string
     trace_project_id     = optional(string)
   }))
-  description = "Optional static mappings from Dialogflow ConversationProfile (full resource name, short ID, or '*' for default fallback) to target CES App configurations. When empty, CES apps are resolved dynamically from the Dialogflow ConversationProfile API."
+  description = "Optional static mappings from Dialogflow ConversationProfile (full resource name, short ID, or '*' for default fallback) to target CXAS App configurations. When empty, CXAS apps are resolved dynamically from the Dialogflow ConversationProfile API."
   default     = []
 }
 

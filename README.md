@@ -34,7 +34,7 @@ project.
 *   `metadata_logger`: Sets up the Cloud Run service, Eventarc or Pub/Sub trigger, GCS state tracking bucket, GCS permissions, and project IAM roles to ingest and parse session metadata uploads into structured milestone logs. *(Optional, conditionally enabled via `enable_metadata_logger`)*
 *   `metadata_calls_dashboard`: Creates logs-based metrics and a dashboard (`Calls Monitoring (Metadata Logs)`) built on structured milestone logs emitted by `metadata_logger`, covering call volumes, VA/human agent handled scorecards, queue wait durations, virtual agent session completions, and escalation deflections. *(Optional, conditionally enabled via `enable_metadata_dashboards`)*
 *   `metadata_chats_dashboard`: Creates logs-based metrics and a dashboard (`Chats Monitoring (Metadata Logs)`) built on structured milestone logs emitted by `metadata_logger`, covering chat volumes, VA/human agent handled scorecards, transfer wait durations, virtual agent session completions, and escalation deflections. *(Optional, conditionally enabled via `enable_metadata_dashboards`)*
-*   `ces_tracer`: Deploys a Cloud Run service fed by a Log Router sink and Pub/Sub push subscription on Dialogflow `CompleteConversation` audit logs that resolves the associated CX Agent Studio (CES) app, fetches completed conversation turns/spans and correlated Dialogflow/CES logs, and exports hierarchical distributed traces to Google Cloud Trace. *(Optional, conditionally enabled via `enable_ces_tracer`)*
+*   `ces_tracer`: Deploys the **CXAS Tracer** Cloud Run service fed by a Log Router sink and Pub/Sub push subscription on Dialogflow `CompleteConversation` audit logs that resolves the associated **CX Agent Studio (CXAS)** app, fetches completed conversation turns/spans and correlated Dialogflow/CXAS logs, and exports hierarchical distributed traces to Google Cloud Trace. *(Optional, conditionally enabled via `enable_ces_tracer`)*
 
 ## Creating the Dashboards and Metrics
 
@@ -67,13 +67,13 @@ project.
         *   `established_call_rate_upper_bound`: (number, optional) Upper bound for the metadata Calls dashboard rate gauge (defaults to `established_call_rate_upper_bound`).
         *   `escalated_chat_rate_upper_bound`: (number, optional) Upper bound for the metadata Chats dashboard rate gauge (defaults to `escalated_chat_rate_upper_bound`).
         *   `log_bucket`: (object, optional) The log bucket where metadata milestone logs are stored (`location` defaults to `"global"`, `name` defaults to `"_Default"`).
-    *   `enable_ces_tracer`: (boolean, optional) Whether to deploy the CES Tracer Cloud Run service and its Log Router sink / Pub/Sub delivery pipeline. Defaults to `false`.
-    *   `ces_tracer`: (object, optional) Configuration settings for the CES Tracer service (used when `enable_ces_tracer = true`):
-        *   `project_id`: (string, optional) The GCP project ID hosting Dialogflow/CES, the Log Router sink, Pub/Sub, and Cloud Run (defaults to `project_id`).
+    *   `enable_ces_tracer`: (boolean, optional) Whether to deploy the CXAS Tracer Cloud Run service and its Log Router sink / Pub/Sub delivery pipeline. Defaults to `false`.
+    *   `ces_tracer`: (object, optional) Configuration settings for the CXAS Tracer service (used when `enable_ces_tracer = true`):
+        *   `project_id`: (string, optional) The GCP project ID hosting Dialogflow/CXAS, the Log Router sink, Pub/Sub, and Cloud Run (defaults to `project_id`).
         *   `region`: (string, optional) Location for the Cloud Run deployment (defaults to `"us-central1"`).
-                *   `image_url`: (string) The Artifact Registry URI of the compiled container image (e.g., `"europe-west1-docker.pkg.dev/.../ces-tracer:latest"`).
-        *   `trace_project_id`: (string, optional) Target GCP project ID where Cloud Trace spans are written (defaults to the resolved CES project ID or `project_id`).
-        *   `app_configs`: (list of object, optional) Static mappings from Dialogflow `ConversationProfile` to target CES App configurations (`conversation_profile`, `ces_project_id`, `ces_location`, `ces_app_id`, `trace_project_id`). When empty, CES apps are resolved dynamically via the Dialogflow `ConversationProfile` API.
+        *   `image_url`: (string) The Artifact Registry URI of the compiled container image (e.g., `"europe-west1-docker.pkg.dev/.../ces-tracer:latest"`).
+        *   `trace_project_id`: (string, optional) Target GCP project ID where Cloud Trace spans are written (defaults to the resolved CXAS project ID or `project_id`).
+        *   `app_configs`: (list of object, optional) Static mappings from Dialogflow `ConversationProfile` to target CXAS App configurations (`conversation_profile`, `ces_project_id`, `ces_location`, `ces_app_id`, `trace_project_id`). When empty, CXAS apps are resolved dynamically via the Dialogflow `ConversationProfile` API.
         *   `redact_pii`: (boolean, optional) Whether to redact user utterances in turn span display names and sensitive PII fields in span attributes. Defaults to `false`.
         *   `initial_delay_seconds`: (number, optional) Seconds to wait before querying Cloud Logging so final conversation log entries are indexed. Defaults to `2`.
         *   `grant_project_iam_roles`: (boolean, optional) Whether to automatically create project-level IAM role bindings. Defaults to `true`.
@@ -114,7 +114,7 @@ project.
     # Set to true to deploy the metadata log-based Calls and Chats dashboards (defaults to false)
     enable_metadata_dashboards = true
 
-    # Set to true to deploy the CES Tracer service (defaults to false)
+    # Set to true to deploy the CXAS Tracer service (defaults to false)
     enable_ces_tracer = true
 
     ces_tracer = {
@@ -197,11 +197,11 @@ Beyond dashboards, this repository includes the `metadata_logging/` service. It 
 
 For detailed usage, local regression testing instructions, build steps, and link directories of all parsed milestones, see the [Metadata Logging Service README](metadata_logging/README.md).
 
-## CES Tracing Service
+## CXAS Tracing Service
 
-The `ces_tracing/` directory contains a Cloud Run-based distributed trace ingestion service for **CX Agent Studio (CES)**. Triggered via a Log Router sink and Pub/Sub push subscription whenever a Dialogflow `CompleteConversation` audit log is written, it resolves the target CES App (dynamically via `ConversationProfile` or via static overrides), fetches the CES conversation turns/spans and correlated Cloud Logging events (`cloudaudit.googleapis.com%2Fdata_access`, `dialogflow.googleapis.com%2Fincoming_call`, and `ces.googleapis.com%2Fresponses`), and exports the hierarchical trace to **Google Cloud Trace** with W3C `traceparent` tool span correlation.
+The `ces_tracing/` directory contains a Cloud Run-based distributed trace ingestion service (**CXAS Tracer**) for **CX Agent Studio (CXAS)**. Triggered via a Log Router sink and Pub/Sub push subscription whenever a Dialogflow `CompleteConversation` audit log is written, it resolves the target CXAS App (dynamically via `ConversationProfile` or via static overrides), fetches the CXAS conversation turns/spans (via `ces.googleapis.com`) and correlated Cloud Logging events (`cloudaudit.googleapis.com%2Fdata_access`, `dialogflow.googleapis.com%2Fincoming_call`, and `ces.googleapis.com%2Fresponses`), and exports the hierarchical trace to **Google Cloud Trace** with W3C `traceparent` tool span correlation.
 
-For build instructions, unit testing, and architecture details, see the [CES Tracing Service README](ces_tracing/README.md) and [CES Tracer Terraform Module README](modules/ces_tracer/README.md).
+For build instructions, unit testing, and architecture details, see the [CXAS Tracing Service README](ces_tracing/README.md) and [CXAS Tracer Terraform Module README](modules/ces_tracer/README.md).
 
 ## Permissions
 

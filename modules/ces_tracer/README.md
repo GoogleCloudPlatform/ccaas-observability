@@ -1,6 +1,6 @@
-# CES Tracer Terraform Module
+# CXAS Tracer Terraform Module
 
-This module deploys a lightweight, secure Cloud Run service (written in Python) and a Log Router sink → Pub/Sub push delivery pipeline inside a Dialogflow / CX Agent Studio (CES) project. Whenever a conversation finishes and emits a `google.cloud.dialogflow.v2beta1.Conversations.CompleteConversation` audit log, the service automatically resolves the associated CES App, retrieves the conversation turns and spans via the CES v1 REST API, correlates Dialogflow audit logs, `incoming_call` logs, and `ces.googleapis.com%2Fresponses` logs, and exports the reconstructed hierarchical trace to **Google Cloud Trace**.
+This module deploys the **CXAS Tracer** (`ces-tracer`) — a lightweight, secure Cloud Run service (written in Python) and a Log Router sink → Pub/Sub push delivery pipeline inside a Dialogflow / **CX Agent Studio (CXAS)** project. Whenever a conversation finishes and emits a `google.cloud.dialogflow.v2beta1.Conversations.CompleteConversation` audit log, the service automatically resolves the associated CXAS App, retrieves the conversation turns and spans via the Customer Engagement Suite (CES) v1 REST API (`ces.googleapis.com`), correlates Dialogflow audit logs, `incoming_call` logs, and `ces.googleapis.com%2Fresponses` logs, and exports the reconstructed hierarchical trace to **Google Cloud Trace**.
 
 ---
 
@@ -9,14 +9,14 @@ This module deploys a lightweight, secure Cloud Run service (written in Python) 
 1. **Log Router Sink → Pub/Sub Push Delivery:** A Log Router sink routes Dialogflow Data Access audit log entries matching `protoPayload.serviceName = "dialogflow.googleapis.com"` and `protoPayload.methodName:"Conversations.CompleteConversation"` (both `v2` and `v2beta1`) to a module-owned Pub/Sub topic. A module-owned push subscription (OIDC-authenticated) delivers each entry to Cloud Run with a configurable ack deadline (`ack_deadline_seconds`, default 300s), which is also used as the Cloud Run request timeout.
    > **Why not Eventarc?** Eventarc audit-log triggers deliver through an Eventarc-managed Pub/Sub subscription with a fixed 10s ack deadline that isn't configurable from Terraform. Building a trace takes longer than 10s (several Logging/CES API calls), so Pub/Sub treats every response, even HTTP 200, as a nack and redelivers the event repeatedly for up to 24 hours, duplicating spans.
    > **Idempotency:** Pub/Sub delivery is at-least-once. With `skip_if_trace_exists = true` (default), the service checks Cloud Trace for the conversation's root span before writing and skips if it's already there. Cloud Trace writes take a few seconds to become readable, so the guard is best-effort: near-simultaneous duplicates can still be written. Direct invocations can pass `"force": true` to re-trace.
-2. **Dynamic CES App Resolution:** By default, the service inspects `protoPayload.response.conversationProfile` from the `CompleteConversation` audit event, queries the Dialogflow `ConversationProfile` API (`automatedAgentConfig.agent`), and dynamically resolves the CES project, location, and app ID (`projects/{project}/locations/{location}/apps/{app}`). If the profile points to a non-CES agent (such as a standard Dialogflow CX agent), the service safely skips it. You can also provide static overrides or fallback mappings via `app_configs`.
-3. **W3C `traceparent` Correlation:** Uses `MD5(session_id)` for the 128-bit Trace ID and `SHA256(tool_call_id)[:16]` for CES Tool spans so that downstream Cloud Run services invoked by CES Python tools with W3C `traceparent` headers automatically appear as child spans under the corresponding CES Tool span in Cloud Trace.
+2. **Dynamic CXAS App Resolution:** By default, the service inspects `protoPayload.response.conversationProfile` from the `CompleteConversation` audit event, queries the Dialogflow `ConversationProfile` API (`automatedAgentConfig.agent`), and dynamically resolves the CXAS project, location, and app ID (`projects/{project}/locations/{location}/apps/{app}`). If the profile points to a non-CXAS agent (such as a standard Dialogflow CX agent), the service safely skips it. You can also provide static overrides or fallback mappings via `app_configs`.
+3. **W3C `traceparent` Correlation:** Uses `MD5(session_id)` for the 128-bit Trace ID and `SHA256(tool_call_id)[:16]` for CXAS Tool spans so that downstream Cloud Run services invoked by CXAS Python tools with W3C `traceparent` headers automatically appear as child spans under the corresponding CXAS Tool span in Cloud Trace.
 
 ---
 
 ## Prerequisites
 
-1. **Container Image:** Before deploying the Terraform resources, build and push the Cloud Run container image to Artifact Registry. See the [CES Tracing Service README](../../ces_tracing/README.md) for instructions.
+1. **Container Image:** Before deploying the Terraform resources, build and push the Cloud Run container image to Artifact Registry. See the [CXAS Tracing Service README](../../ces_tracing/README.md) for instructions.
 2. **Dialogflow Data Access Audit Logs:** The `CompleteConversation` delivery pipeline and the Dialogflow operation spans require **Data Read / Data Write** Cloud Audit Logs to be enabled for `dialogflow.googleapis.com` in the target project (`IAM & Admin > Audit Logs > Dialogflow API`).
 
 ---
@@ -68,11 +68,11 @@ terraform apply
 
 | Name | Type | Description | Default | Required |
 | :--- | :--- | :--- | :--- | :--- |
-| **project_id** | `string` | The Google Cloud project ID hosting Dialogflow/CES, the Log Router sink, Pub/Sub, and the Cloud Run service. | n/a | **yes** |
+| **project_id** | `string` | The Google Cloud project ID hosting Dialogflow/CXAS, the Log Router sink, Pub/Sub, and the Cloud Run service. | n/a | **yes** |
 | **region** | `string` | The region to deploy the Cloud Run service. | `"us-central1"` | no |
 | **image_url** | `string` | The container image path in Artifact Registry. | n/a | **yes** |
-| **trace_project_id** | `string` | Optional target Google Cloud project ID where Cloud Trace spans are written. Defaults to the resolved CES project ID or `project_id`. | `null` | no |
-| **app_configs** | `list(object)` | Optional static mappings from Dialogflow ConversationProfile to target CES App configurations (`conversation_profile`, `ces_project_id`, `ces_location`, `ces_app_id`, `trace_project_id`). | `[]` | no |
+| **trace_project_id** | `string` | Optional target Google Cloud project ID where Cloud Trace spans are written. Defaults to the resolved CXAS project ID or `project_id`. | `null` | no |
+| **app_configs** | `list(object)` | Optional static mappings from Dialogflow ConversationProfile to target CXAS App configurations (`conversation_profile`, `ces_project_id`, `ces_location`, `ces_app_id`, `trace_project_id`). | `[]` | no |
 | **ack_deadline_seconds** | `number` | Ack deadline of the Pub/Sub push subscription (10–600), also used as the Cloud Run request timeout. Must exceed end-to-end trace processing time. | `300` | no |
 | **skip_if_trace_exists** | `bool` | Skip writing spans if the conversation's root span already exists in Cloud Trace (best-effort idempotency). | `true` | no |
 | **redact_pii** | `bool` | Whether to redact user utterances in turn span display names and sensitive PII fields in span attributes. | `false` | no |
@@ -85,11 +85,11 @@ terraform apply
 
 | Name | Description |
 | :--- | :--- |
-| **cloud_run_url** | The HTTP endpoint URL of the deployed CES Tracer Cloud Run service. |
+| **cloud_run_url** | The HTTP endpoint URL of the deployed CXAS Tracer Cloud Run service. |
 | **runtime_service_account_email** | The email of the Cloud Run runtime service account. |
 | **trigger_service_account_email** | The email of the Pub/Sub push invoker service account. |
 | **pubsub_topic** | The Pub/Sub topic receiving Dialogflow CompleteConversation audit log entries. |
-| **pubsub_subscription** | The Pub/Sub push subscription delivering events to the CES Tracer service. |
+| **pubsub_subscription** | The Pub/Sub push subscription delivering events to the CXAS Tracer service. |
 | **log_sink_writer_identity** | The writer identity of the Log Router sink. |
 
 ---
@@ -99,10 +99,10 @@ terraform apply
 If you set `grant_project_iam_roles = false`, the module will skip provisioning IAM role bindings. You must externally grant:
 
 1. **Cloud Run Runtime Service Account (`${service_name}-run-sa@<PROJECT_ID>.iam.gserviceaccount.com`):**
-   * `roles/logging.viewer` on the Dialogflow/CES project(s)
-   * `roles/logging.privateLogViewer` on the Dialogflow/CES project(s) (required to read Data Access audit logs)
+   * `roles/logging.viewer` on the Dialogflow/CXAS project(s)
+   * `roles/logging.privateLogViewer` on the Dialogflow/CXAS project(s) (required to read Data Access audit logs)
    * `roles/dialogflow.reader` on the Dialogflow project
-   * `roles/ces.viewer` on the CES project(s)
+   * `roles/ces.viewer` on the CXAS project(s)
    * `roles/cloudtrace.agent` on the target Trace project(s)
    * `roles/cloudtrace.user` on the target Trace project(s) (idempotency guard reads existing traces)
 2. **Pub/Sub Push Invoker Service Account (`${service_name}-trigger-sa@<PROJECT_ID>.iam.gserviceaccount.com`):**

@@ -14,7 +14,7 @@
 
 output "cloud_run_url" {
   value       = google_cloud_run_v2_service.ces_tracer.uri
-  description = "The endpoint URL of the deployed CES Tracer Cloud Run service."
+  description = "The endpoint URL of the deployed CXAS Tracer Cloud Run service."
 }
 
 output "runtime_service_account_email" {
@@ -34,7 +34,7 @@ output "pubsub_topic" {
 
 output "pubsub_subscription" {
   value       = google_pubsub_subscription.complete_conversation.id
-  description = "The Pub/Sub push subscription delivering events to the CES Tracer service."
+  description = "The Pub/Sub push subscription delivering events to the CXAS Tracer service."
 }
 
 output "log_sink_writer_identity" {
