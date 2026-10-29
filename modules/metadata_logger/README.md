@@ -88,7 +88,7 @@ gcloud projects add-iam-policy-binding <CENTRAL_OBSERVABILITY_PROJECT_ID> \
 | **gcs_path_configs** | `map(object)` | A map of GCS path URIs (e.g. 'gs://bucket/path/') to their target logging configurations. | n/a | **yes** |
 | **image_url** | `string` | The container image path in Artifact Registry. | n/a | **yes** |
 | **custom_log_name** | `string` | The identifier for custom logs. | `"contactcenteraiplatform.googleapis.com%2Fmetadata"` | no |
-| **redact_pii** | `bool` | Whether to redact PII fields (`phone_number`, `first_name`, `last_name`, `name`, `email`) in extracted milestone logs. | `true` | no |
+| **redact_pii** | `bool` | Whether to redact PII in extracted milestone logs: `phone_number` wherever it appears, and `first_name`, `last_name`, `name`, and `email` in person objects (objects containing `first_name`, `last_name`, or `email`; other `name` fields such as queue names are kept). | `true` | no |
 | **grant_project_iam_roles** | `bool` | Whether to let the module automatically create project-level IAM role bindings. | `true` | no |
 | **enable_apis** | `bool` | Whether to let the module automatically enable necessary Google Cloud service APIs (run, eventarc, logging, storage, pubsub). | `true` | no |
 | **trigger_type** | `string` | The trigger type to use for GCS events. Supported values: `eventarc`, `pubsub`. | `"eventarc"` | no |

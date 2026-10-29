@@ -98,6 +98,6 @@ variable "state_bucket" {
 
 variable "redact_pii" {
   type        = bool
-  description = "Whether to redact PII fields (phone_number, first_name, last_name, name, email) in extracted milestone logs."
+  description = "Whether to redact PII in extracted milestone logs: phone_number wherever it appears, and first_name, last_name, name, and email in person objects (objects containing first_name, last_name, or email; other name fields such as queue names are kept)."
   default     = true
 }

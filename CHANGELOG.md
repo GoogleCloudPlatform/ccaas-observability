@@ -10,9 +10,13 @@
     *   **Reliability:** Best-effort idempotency guard that skips writing when the conversation's root span already exists (`skip_if_trace_exists`, bypassable with `"force": true` for direct invocations). Non-retryable `400 InvalidArgument` / `BadRequest` responses from Cloud Trace are acknowledged (`HTTP 200`) to prevent retry loops, while retryable errors still return `HTTP 500`.
     *   **Privacy & Factory Compatibility:** PII redaction of user utterances and sensitive span attributes, enabled by default (`redact_pii = true`). IAM bindings (including `roles/logging.privateLogViewer` for Data Access audit logs) and API enablement are gated by `grant_project_iam_roles` and `enable_apis`.
 
+**Bug Fixes & Improvements**
+*   **Metadata Logger — Configurable PII Redaction (`metadata_logging`, `modules/metadata_logger`):** PII redaction of extracted milestone logs can now be controlled via `metadata_logger.redact_pii` (`REDACT_PII` environment variable on the Cloud Run service). It defaults to `true`, preserving the previous always-on behavior. When enabled, `phone_number` is redacted wherever it appears, and `first_name`, `last_name`, `name`, and `email` are redacted in person objects (objects containing `first_name`, `last_name`, or `email`); other `name` fields, such as queue names, are kept. Any `REDACT_PII` value other than `false`, `0`, or `no` keeps redaction enabled.
+
 **Rollout & Upgrade Instructions**
 *   **CXAS Tracer (optional, PREVIEW):** Enable Data Read / Data Write audit logs for `dialogflow.googleapis.com` in the Dialogflow project. Build and push the `ces-tracer` image using `ces_tracing/build_and_push.sh`, then set `enable_ces_tracer = true` and `ces_tracer.image_url`, and run `terraform apply`. See [`modules/ces_tracer/README.md`](modules/ces_tracer/README.md).
 *   Existing deployments that do not enable the CXAS Tracer are unaffected.
+*   **Metadata Logger PII Redaction:** No action required; redaction stays enabled by default. To disable it, build and push a new `metadata-logger` container image using `metadata_logging/build_and_push.sh` (older images ignore `REDACT_PII` and always redact), update `metadata_logger.image_url`, set `metadata_logger.redact_pii = false`, and run `terraform apply`.
 
 ---
 
