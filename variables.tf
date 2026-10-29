@@ -132,7 +132,7 @@ variable "ces_tracer" {
     skip_if_trace_exists = optional(bool, true)
 
     # Whether to redact user utterances in turn span display names and sensitive PII fields in span attributes.
-    redact_pii = optional(bool, false)
+    redact_pii = optional(bool, true)
 
     # Number of seconds to wait before querying Cloud Logging so final conversation log entries are indexed.
     initial_delay_seconds = optional(number, 2)

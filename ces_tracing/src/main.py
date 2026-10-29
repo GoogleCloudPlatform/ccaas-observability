@@ -48,7 +48,7 @@ app = Flask(__name__)
 PROJECT_ID = os.getenv("PROJECT_ID", "")
 TRACE_PROJECT_ID = os.getenv("TRACE_PROJECT_ID", "")
 APP_CONFIGS_STR = os.getenv("APP_CONFIGS", "[]")
-REDACT_PII = os.getenv("REDACT_PII", "false").strip().lower() in ("true", "1", "yes")
+REDACT_PII = os.getenv("REDACT_PII", "true").strip().lower() in ("true", "1", "yes")
 INITIAL_DELAY_SECONDS = float(os.getenv("INITIAL_DELAY_SECONDS", "2.0"))
 SKIP_IF_TRACE_EXISTS = os.getenv("SKIP_IF_TRACE_EXISTS", "true").strip().lower() in ("true", "1", "yes")
 

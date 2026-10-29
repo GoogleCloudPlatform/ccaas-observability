@@ -70,7 +70,7 @@ variable "skip_if_trace_exists" {
 variable "redact_pii" {
   type        = bool
   description = "Whether to redact user utterances in turn span display names and sensitive PII fields in span attributes."
-  default     = false
+  default     = true
 }
 
 variable "initial_delay_seconds" {
