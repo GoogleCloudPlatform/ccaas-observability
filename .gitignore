@@ -9,6 +9,7 @@ tfplan*
 # Variables
 project.auto.tfvars
 zip_repo.sh
+generate_dashboard.py
 
 # Python cache
 __pycache__/
