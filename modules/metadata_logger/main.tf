@@ -35,8 +35,8 @@ locals {
   create_state_bucket  = local.state_bucket_enabled && coalesce(try(var.state_bucket.create_bucket, null), true)
   state_bucket_name = local.state_bucket_enabled ? (
     local.create_state_bucket
-      ? coalesce(try(var.state_bucket.name, null), "${var.storage_project_id}-${var.service_name}-state")
-      : try(var.state_bucket.name, null)
+    ? coalesce(try(var.state_bucket.name, null), "${var.storage_project_id}-${var.service_name}-state")
+    : try(var.state_bucket.name, null)
   ) : null
 }
 
@@ -142,9 +142,9 @@ resource "google_project_iam_member" "gcs_pubsub_publisher" {
 
 # Cloud Run service instance
 resource "google_cloud_run_v2_service" "metadata_logger" {
-  name     = var.service_name
-  project  = var.storage_project_id
-  location = var.region
+  name                = var.service_name
+  project             = var.storage_project_id
+  location            = var.region
   deletion_protection = false
 
   template {

@@ -87,11 +87,65 @@ variable "metadata_dashboards" {
     log_bucket = optional(object({
       location = string
       name     = string
-    }), {
+      }), {
       location = "global"
       name     = "_Default"
     })
   })
   default     = {}
   description = "Configuration settings for the metadata log-based dashboards."
+}
+
+variable "enable_ces_tracer" {
+  type        = bool
+  default     = false
+  description = "Whether to enable the CXAS Tracer Cloud Run service and its audit log delivery pipeline (Log Router sink, Pub/Sub topic and push subscription)."
+}
+
+variable "ces_tracer" {
+  type = object({
+    # The Google Cloud project ID hosting Dialogflow/CXAS, the Log Router sink, Pub/Sub, and the Cloud Run service (defaults to var.project_id).
+    project_id = optional(string)
+
+    # The regional location to deploy the Cloud Run service.
+    region = optional(string, "us-central1")
+
+    # The container image path in Artifact Registry for the ces-tracer Cloud Run service (required when enable_ces_tracer = true).
+    image_url = optional(string)
+
+    # Optional target Google Cloud project ID where Cloud Trace spans are written.
+    trace_project_id = optional(string)
+
+    # Optional static mappings from Dialogflow ConversationProfile to target CXAS App configurations.
+    app_configs = optional(list(object({
+      conversation_profile = optional(string, "*")
+      ces_project_id       = optional(string)
+      ces_location         = string
+      ces_app_id           = string
+      trace_project_id     = optional(string)
+    })), [])
+
+    # Ack deadline (seconds) of the Pub/Sub push subscription; also used as the Cloud Run request timeout.
+    ack_deadline_seconds = optional(number, 300)
+
+    # Whether to skip writing spans when a trace for the conversation already exists (best-effort idempotency).
+    skip_if_trace_exists = optional(bool, true)
+
+    # Whether to redact user utterances in turn span display names and sensitive PII fields in span attributes.
+    redact_pii = optional(bool, true)
+
+    # Number of seconds to wait before querying Cloud Logging so final conversation log entries are indexed.
+    initial_delay_seconds = optional(number, 2)
+
+    # Whether to let the ces_tracer module automatically create project-level IAM role bindings.
+    grant_project_iam_roles = optional(bool, true)
+
+    # Whether to let the ces_tracer module automatically enable project APIs.
+    enable_apis = optional(bool, true)
+
+    # The name of the Cloud Run service and prefix for related resources.
+    service_name = optional(string, "ces-tracer")
+  })
+  default     = {}
+  description = "Configuration settings for the CXAS Tracer service."
 }

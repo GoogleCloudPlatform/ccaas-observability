@@ -1,3 +1,21 @@
+## Unreleased
+
+**New Features & Modules**
+*   **CXAS Tracer — PREVIEW (`ces_tracing`, `modules/ces_tracer`):** Added a Cloud Run service and Terraform module that rebuild completed **CX Agent Studio (CXAS)** conversations as hierarchical distributed traces in Google Cloud Trace.
+    > **PREVIEW:** The CXAS Tracer is a preview feature. Its configuration surface, span structure, attribute names, and trace/span ID derivation may change in backwards-incompatible ways in future releases. Validate it in a non-production environment before relying on it. It is disabled by default (`enable_ces_tracer = false`).
+    *   **Audit Log Delivery Pipeline:** A Log Router sink routes Dialogflow `Conversations.CompleteConversation` Data Access audit logs (`v2` and `v2beta1`) to a module-owned Pub/Sub topic and OIDC-authenticated push subscription. The ack deadline is configurable (`ack_deadline_seconds`, default 300s) and is also used as the Cloud Run request timeout. Eventarc audit-log triggers are intentionally not used: their managed subscription has a fixed 10s ack deadline, shorter than trace processing time, which causes endless redeliveries and duplicated spans.
+    *   **CXAS App Resolution:** Resolves the target CXAS app dynamically from the Dialogflow ConversationProfile (`automatedAgentConfig.agent`), skipping non-CXAS agents, or from static `app_configs` mappings. Project numbers in agent references are converted to project IDs via Cloud Resource Manager, because Cloud Logging and Cloud Trace require project IDs.
+    *   **Trace Reconstruction:** Builds a conversation root span with Dialogflow operation spans (`CreateConversation`, `CreateParticipant`, `BidiStreamingAnalyzeContent`/`AnalyzeContent`, `CompleteConversation`), Dialogflow Telephony `incoming_call` events, and per-turn CXAS spans (LLM, TTS, VAD, tools, callbacks, data store search). Turns are enriched with CXAS response log data (`turn_completed`, supervisor issue detections).
+    *   **W3C Trace Context Correlation:** Uses deterministic IDs (Trace ID = `MD5(session_id)`, Span ID = `SHA-256[:16]`, tool spans keyed by `tool call id`) so downstream services called by CXAS Python tools with W3C `traceparent` headers can be correlated with the conversation trace.
+    *   **Reliability:** Best-effort idempotency guard that skips writing when the conversation's root span already exists (`skip_if_trace_exists`, bypassable with `"force": true` for direct invocations). Non-retryable `400 InvalidArgument` / `BadRequest` responses from Cloud Trace are acknowledged (`HTTP 200`) to prevent retry loops, while retryable errors still return `HTTP 500`.
+    *   **Privacy & Factory Compatibility:** PII redaction of user utterances and sensitive span attributes, enabled by default (`redact_pii = true`). IAM bindings (including `roles/logging.privateLogViewer` for Data Access audit logs) and API enablement are gated by `grant_project_iam_roles` and `enable_apis`.
+
+**Rollout & Upgrade Instructions**
+*   **CXAS Tracer (optional, PREVIEW):** Enable Data Read / Data Write audit logs for `dialogflow.googleapis.com` in the Dialogflow project. Build and push the `ces-tracer` image using `ces_tracing/build_and_push.sh`, then set `enable_ces_tracer = true` and `ces_tracer.image_url`, and run `terraform apply`. See [`modules/ces_tracer/README.md`](modules/ces_tracer/README.md).
+*   Existing deployments that do not enable the CXAS Tracer are unaffected.
+
+---
+
 ## Release 2026-09.1
 
 **Bug Fixes & Improvements**

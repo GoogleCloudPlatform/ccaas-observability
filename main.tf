@@ -77,5 +77,19 @@ module "ccaas_metadata_chats_dashboard" {
   log_bucket                      = var.metadata_dashboards.log_bucket
 }
 
-
-
+module "ces_tracer" {
+  count                   = var.enable_ces_tracer ? 1 : 0
+  source                  = "./modules/ces_tracer"
+  project_id              = coalesce(var.ces_tracer.project_id, var.project_id)
+  region                  = var.ces_tracer.region
+  image_url               = var.ces_tracer.image_url
+  trace_project_id        = var.ces_tracer.trace_project_id
+  app_configs             = var.ces_tracer.app_configs
+  redact_pii              = var.ces_tracer.redact_pii
+  ack_deadline_seconds    = var.ces_tracer.ack_deadline_seconds
+  skip_if_trace_exists    = var.ces_tracer.skip_if_trace_exists
+  initial_delay_seconds   = var.ces_tracer.initial_delay_seconds
+  grant_project_iam_roles = var.ces_tracer.grant_project_iam_roles
+  enable_apis             = var.ces_tracer.enable_apis
+  service_name            = var.ces_tracer.service_name
+}

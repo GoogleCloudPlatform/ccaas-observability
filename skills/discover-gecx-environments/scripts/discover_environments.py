@@ -261,7 +261,7 @@ def discover_conversation_profiles(project_id, token, target_locations):
     return profiles
 
 
-INSIGHTS_SUPPORTED_LOCATIONS = {
+INSIGHTS_SUPPORTED_LOCATIONS = frozenset({
     "us",
     "eu",
     "us-central1",
@@ -281,7 +281,7 @@ INSIGHTS_SUPPORTED_LOCATIONS = {
     "asia-southeast2",
     "australia-southeast1",
     "me-west1",
-}
+})
 
 
 def _extract_generators(gen_data, loc):
