@@ -95,3 +95,9 @@ variable "state_bucket" {
     error_message = "When state_bucket.create_bucket is false, a pre-existing state_bucket.name must be provided. When create_bucket is true, state_bucket.location must be specified."
   }
 }
+
+variable "redact_pii" {
+  type        = bool
+  description = "Whether to redact PII in extracted milestone logs: phone_number wherever it appears, and first_name, last_name, name, and email in person objects (objects containing first_name, last_name, or email; other name fields such as queue names are kept)."
+  default     = true
+}

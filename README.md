@@ -55,6 +55,7 @@ project.
         *   `region`: (string, optional) Location for the Cloud Run deployment (defaults to `"us-central1"`).
         *   `image_url`: (string) The Artifact Registry URI of the compiled container image (e.g. `"europe-docker.pkg.dev/.../metadata-logger:latest"`).
         *   `custom_log_name`: (string, optional) Override log name for extracted milestones in Cloud Logging (defaults to `"contactcenteraiplatform.googleapis.com%2Fmetadata"`).
+        *   `redact_pii`: (boolean, optional) Whether to redact PII in extracted milestone logs: `phone_number` wherever it appears, and `first_name`, `last_name`, `name`, and `email` in person objects (objects containing `first_name`, `last_name`, or `email`; other `name` fields such as queue names are kept). Defaults to `true`; set to `false` only if everyone with access to the destination log bucket may see this data.
         *   `path_configs`: (map of object) A mapping of source GCS path URIs (e.g., `"gs://bucket/path/"`) to target Contact Center resources (with `ccaas_project_id`, `ccaas_resource_location`, and `ccaas_resource_id`).
         *   `state_bucket`: (object, optional) Configuration for the interaction state tracking GCS bucket used to suppress duplicate milestones on metadata re-exports (`create_bucket`, `name`, `location`, `retention_days`).
         *   `grant_project_iam_roles`: (boolean, optional) Whether to automatically create project-level IAM role bindings. Defaults to `true`.
