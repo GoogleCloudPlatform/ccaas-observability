@@ -1,6 +1,6 @@
-# GECX (Gemini Enterprise for Customer Experience) Overview
+# Gemini for customer experience Overview
 
-**GECX** stands for **Gemini Enterprise for Customer Experience**. It is a comprehensive suite of Google Cloud products designed for end-to-end Customer Experience, Conversational AI, and Contact Center operations.
+**Gemini for customer experience** (**Gemini for CX**; formerly Gemini Enterprise for Customer Experience, or GECX) is a comprehensive suite of Google Cloud products designed for end-to-end Customer Experience, Conversational AI, and Contact Center operations.
 
 Because these products generally do not have comprehensive CLI support in `gcloud`, native REST API calls authenticated with Google OAuth tokens (`Authorization: Bearer $(gcloud auth print-access-token)`) are used for querying and discovering resources.
 
@@ -103,12 +103,12 @@ Because these products generally do not have comprehensive CLI support in `gclou
 
 ---
 
-### 4. Contact Center Insights
-* **Description**: Conversation intelligence platform for call/chat recording ingestion, transcription, LLM summarization (`generators`), and QA scorecards.
+### 4. CX Insights
+* **Description**: Conversation intelligence platform (formerly Contact Center AI Insights / CCAI Insights; the API name is unchanged) for call/chat recording ingestion, transcription, LLM summarization (`generators`), and QA scorecards.
 * **API Service**: `contactcenterinsights.googleapis.com`
 * **Regionalization & Multi-Location Topology**:
   * Both regional (`us-central1`, `europe-west1`, etc.) and multi-regional (`us`, `eu`) endpoints require the `<LOCATION>-` hostname prefix (e.g., `https://us-central1-contactcenterinsights.googleapis.com/v1/...` or `https://us-contactcenterinsights.googleapis.com/v1/...`). Calling the unprefixed `contactcenterinsights.googleapis.com` hostname for non-`us-central1` locations fails with `HTTP 400 INVALID_ARGUMENT (Location Mismatch)`.
-  * A single GECX project frequently uses **multiple Insights locations concurrently** (`insights.locations`):
+  * A single Gemini for CX project frequently uses **multiple Insights locations concurrently** (`insights.locations`):
     1. **Direct Dialogflow CX / CES Runtime Export** (e.g. `locations/us`): Conversation IDs match the Dialogflow Conversation ID / CES `labels.session_id` **1:1** (`conversations/<SESSION_ID>`), and `agentId` matches the CES `app_id`.
     2. **CCaaS Post-Interaction Upload** (e.g. `locations/us-central1`): Conversation IDs are formatted as `call-<ID>` or `chat-<ID>` (hyphenated CCaaS `tracker_id`) and carry structured `labels` (`labels.id`, `labels.dialogflow_conversation_id_1`, `labels.out_ticket_id`) bridging CCaaS, Dialogflow/CES, and CRM tickets.
 * **Discovery Endpoints**:

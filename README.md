@@ -1,6 +1,6 @@
-# GECX Monitoring Dashboards & Observability Toolkit
+# Gemini for customer experience: Monitoring Dashboards & Observability Toolkit
 
-This repository provides an observability toolkit for **Gemini Enterprise for Customer Experience (GECX)**, including Cloud Monitoring dashboards and logs-based metrics for Google CCaaS (calls, chats, errors, platform updates, and metadata milestones) and Dialogflow (Flow, Playbooks & Sentiment), an automated CCaaS Metadata Logging service, interaction tracing utilities, and agent skills for environment discovery and log analysis.
+This repository provides an observability toolkit for **Gemini for CX** (formerly Gemini Enterprise for Customer Experience, or GECX), including Cloud Monitoring dashboards and logs-based metrics for Google CCaaS (calls, chats, errors, platform updates, and metadata milestones) and Dialogflow (Flow, Playbooks & Sentiment), an automated CCaaS Metadata Logging service, interaction tracing utilities, and agent skills for environment discovery and log analysis.
 
 The dashboards, logs-based metrics, and metadata logging infrastructure are managed via
 [Terraform](https://registry.terraform.io/providers/hashicorp/google/latest).
@@ -169,12 +169,12 @@ terraform destroy
 2.  Run `terraform plan` to see the proposed changes.
 3.  Run `terraform apply` to apply the changes.
 
-## GECX Observability Agent Skills
+## Gemini for CX Observability Agent Skills
 
-The `skills/` directory contains reusable agent skills and scripts for discovering GECX topologies and querying Cloud Logging across GECX products:
+The `skills/` directory contains reusable agent skills and scripts for discovering Gemini for CX topologies and querying Cloud Logging across Gemini for CX products. Skill, directory, and configuration file names keep the legacy `gecx` identifier for backwards compatibility:
 
-*   **Environment Discovery (`skills/discover-gecx-environments`):** Automatically discovers CCaaS contact centers, Dialogflow CX agents, Dialogflow Conversation Profiles, CX Agent Studio (CES) apps, Contact Center Insights settings and summarization generators, and central log destinations across GCP projects via native REST APIs. Generates and updates a local `gecx_environments.yaml` configuration file based on [gecx_environments.yaml.sample](gecx_environments.yaml.sample).
-*   **Log Query & Correlation (`skills/query-gecx-logs`):** Provides diagnostic workflows and ready-to-use Cloud Logging and BigQuery Log Analytics SQL query templates for analyzing CCaaS session lifecycles, Dialogflow Telephony (`incoming_call` via Phone Gateway and SIP Telephony Integration), virtual agent sessions, Contact Center Insights ingestion/update logs, and cross-product interaction correlation.
+*   **Environment Discovery (`skills/discover-gecx-environments`):** Automatically discovers CCaaS contact centers, Dialogflow CX agents, Dialogflow Conversation Profiles, CX Agent Studio (CES) apps, CX Insights settings and summarization generators, and central log destinations across GCP projects via native REST APIs. Generates and updates a local `gecx_environments.yaml` configuration file based on [gecx_environments.yaml.sample](gecx_environments.yaml.sample).
+*   **Log Query & Correlation (`skills/query-gecx-logs`):** Provides diagnostic workflows and ready-to-use Cloud Logging and BigQuery Log Analytics SQL query templates for analyzing CCaaS session lifecycles, Dialogflow Telephony (`incoming_call` via Phone Gateway and SIP Telephony Integration), virtual agent sessions, CX Insights ingestion/update logs, and cross-product interaction correlation.
 
 ## Interaction Tracing Scripts
 

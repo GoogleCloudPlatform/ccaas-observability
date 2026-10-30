@@ -1,16 +1,18 @@
 ---
 name: discover-gecx-environments
 description: >-
-  Discovers available GECX (CCaaS/Dialogflow/CXAS/Insights) environments using
-  native GECX REST APIs, and initializes or updates
+  Discovers available GECX (Gemini for customer experience / Gemini for CX,
+  formerly Gemini Enterprise for Customer Experience) environments
+  (CCaaS/Dialogflow/CXAS/CX Insights, formerly Contact Center Insights / CCAI
+  Insights) using native GECX REST APIs, and initializes or updates
   gecx_environments.yaml from gecx_environments.yaml.sample.
 ---
 
-# GECX Environment Discovery Skill
+# GECX (Gemini for CX) Environment Discovery Skill
 
-This skill discovers available **GECX (Gemini Enterprise for Customer Experience)** environments, extracts product resources using native Google Cloud REST APIs, and maintains the workspace environment configuration in [gecx_environments.yaml](../../gecx_environments.yaml).
+This skill discovers available **Gemini for customer experience** (Gemini for CX, also referred to as GECX or Gemini Enterprise for Customer Experience) environments, extracts product resources using native Google Cloud REST APIs, and maintains the workspace environment configuration in [gecx_environments.yaml](../../gecx_environments.yaml).
 
-For product background and endpoint specifications, see the [GECX Reference Guide](references/gecx_overview.md).
+For product background and endpoint specifications, see the [Gemini for CX Reference Guide](references/gecx_overview.md).
 
 To query or investigate Cloud Logging logs for discovered environments, use the [query-gecx-logs](../query-gecx-logs/SKILL.md) skill.
 
@@ -54,14 +56,14 @@ python3 skills/discover-gecx-environments/scripts/discover_environments.py \
    - Queries regional endpoints (e.g. `us-central1-dialogflow.googleapis.com`) and `global` to list deployed CX agents, start flows, and audio export GCS destinations.
 3. **Dialogflow Conversation Profiles (`conversation_profiles`)**: Queries `https://dialogflow.googleapis.com/v2beta1/projects/<project>/locations/<location>/conversationProfiles` across discovered locations. Conversation Profiles serve as the integration bridge between voice/chat ingestion layers (**Google CCaaS** or **Dialogflow Telephony** via Phone Gateway / SIP Trunks) and downstream **Dialogflow CX agents** or **CES apps**.
 4. **Aggregate Logs Project (`aggregate_logs_project_id`)**: Queries Cloud Logging sinks in the infrastructure project to detect sinks (like `ccaas-logs-project`) exporting to dedicated central logging projects.
-5. **Contact Center Insights (`insights`)**: Queries `https://<location>-contactcenterinsights.googleapis.com/v1/projects/<project>/locations/<location>/settings`, conversations, and generators to discover active Insights locations, conversation TTL, and summarization generators.
-6. **Components (`components`)**: Identifies enabled GECX products (`ccaas`, `dialogflow`, `cxas`, `insights`).
+5. **CX Insights (`insights`)**: Queries `https://<location>-contactcenterinsights.googleapis.com/v1/projects/<project>/locations/<location>/settings`, conversations, and generators to discover active Insights locations, conversation TTL, and summarization generators.
+6. **Components (`components`)**: Identifies enabled Gemini for CX products (`ccaas`, `dialogflow`, `cxas`, `insights`).
 
 ---
 
 ## Native API Queries
 
-Because GECX products generally lack native `gcloud` subcommands, query REST APIs directly with Google OAuth credentials and `X-goog-user-project` headers:
+Because Gemini for CX products generally lack native `gcloud` subcommands, query REST APIs directly with Google OAuth credentials and `X-goog-user-project` headers:
 
 ### 1. Contact Center as a Service (CCaaS)
 ```bash
@@ -123,7 +125,7 @@ curl -s \
   "https://ces.googleapis.com/v1/projects/<PROJECT_ID>/locations/<LOCATION>/apps"
 ```
 
-### 5. Contact Center Insights
+### 5. CX Insights
 * **API Service**: `contactcenterinsights.googleapis.com` (regional endpoints require `<LOCATION>-contactcenterinsights.googleapis.com`)
 
 **Discover settings (TTL, retention):**
@@ -156,7 +158,7 @@ environments:
     description: "<Description of environment>"
     default_project_id: "<GCP_PROJECT_ID>" # Default GCP project for environment resources
     aggregate_logs_project_id: "<LOGS_PROJECT_ID>" # Optional: Central aggregate logging project (if configured)
-    components:                           # Enabled GECX products
+    components:                           # Enabled Gemini for CX products
       - ccaas
       - dialogflow
       - cxas
@@ -178,7 +180,7 @@ environments:
       - id: "00000000-0000-0000-0000-000000000000"
         location: "us"
         display_name: "Customer Support Assistant"
-    insights:                             # Discovered Contact Center Insights configuration
+    insights:                             # Discovered CX Insights configuration
       location: "us-central1"
       locations:                          # All active Insights locations (e.g. regional CCaaS upload + multi-region CES/DF export)
         - "us-central1"
