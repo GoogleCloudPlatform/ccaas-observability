@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-GECX Environment Discovery Script
-Discovers GECX (CCaaS, Dialogflow, CXAS, Insights) environment resources using
+Gemini for CX Environment Discovery Script
+Discovers Gemini for customer experience (CCaaS, Dialogflow, CXAS, CX Insights) environment resources using
 native Google Cloud REST APIs and Logging sinks, and populates or updates
 gecx_environments.yaml based on gecx_environments.yaml.sample.
 """
@@ -300,7 +300,7 @@ def _extract_generators(gen_data, loc):
 
 
 def discover_insights_resources(project_id, token, target_locations):
-    """Discovers Contact Center Insights (contactcenterinsights.googleapis.com) settings and resources."""
+    """Discovers CX Insights (contactcenterinsights.googleapis.com) settings and resources."""
     if not token:
         return None
 
@@ -430,13 +430,13 @@ def discover_environment(project_id, env_name=None):
             candidate_locations.add(app["location"])
     candidate_locations.add("us")
 
-    # 6. Discover Contact Center Insights
-    print(f"[*] Querying Contact Center Insights API (contactcenterinsights.googleapis.com)...")
+    # 6. Discover CX Insights
+    print(f"[*] Querying CX Insights API (contactcenterinsights.googleapis.com)...")
     insights_config = discover_insights_resources(project_id, token, candidate_locations)
     if insights_config:
         components.add("insights")
         locs_display = insights_config.get("locations") or [insights_config.get("location")]
-        print(f"    Found Contact Center Insights in location(s): {', '.join(locs_display)}.")
+        print(f"    Found CX Insights in location(s): {', '.join(locs_display)}.")
 
     env_config = {
         "description": f"{env_name.capitalize()} environment (discovered)",
@@ -489,8 +489,8 @@ def update_config_file(config_path, sample_path, env_name, env_config, set_defau
         config_data["default_environment"] = env_name
 
     header = (
-        "# GECX Observability Environment Configuration\n"
-        "# This file is read by GECX skills and helper scripts to resolve environment-specific\n"
+        "# Gemini for CX Observability Environment Configuration\n"
+        "# This file is read by Gemini for CX skills and helper scripts to resolve environment-specific\n"
         "# project IDs, locations, and resource identifiers without hardcoding them in skills.\n\n"
     )
 
@@ -502,7 +502,7 @@ def update_config_file(config_path, sample_path, env_name, env_config, set_defau
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Discover GECX environment resources via native Google Cloud REST APIs.")
+    parser = argparse.ArgumentParser(description="Discover Gemini for CX environment resources via native Google Cloud REST APIs.")
     parser.add_argument("--project", required=True, help="GCP Project ID to inspect (e.g., ccaip-probing-infra-u8xi7u).")
     parser.add_argument("--env-name", help="Environment key name (e.g., probing). Defaults to auto-deduced name.")
     parser.add_argument("--config-path", default="gecx_environments.yaml", help="Path to gecx_environments.yaml.")

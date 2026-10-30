@@ -1,6 +1,6 @@
-# GECX Advanced Logging Recipes & Cookbook
+# Gemini for customer experience: Advanced Logging Recipes & Cookbook
 
-This reference provides advanced, deep-dive query recipes for **GECX (CCaaS, Dialogflow CX, and CES / CX Agent Studio)**. For environment discovery and standard product log streams, see [SKILL.md](../SKILL.md).
+This reference provides advanced, deep-dive query recipes for **Gemini for CX** (CCaaS, Dialogflow CX, and CES / CX Agent Studio). For environment discovery and standard product log streams, see [SKILL.md](../SKILL.md).
 
 ---
 
@@ -72,7 +72,7 @@ jsonPayload.message:"CRM"' \
   --format=json
 ```
 
-### C. Correlating CCaaS, Dialogflow CX / CES, and Contact Center Insights
+### C. Correlating CCaaS, Dialogflow CX / CES, and CX Insights
 
 When a customer interaction traverses both a Virtual Agent (Dialogflow CX / CES) and CCaaS, **two separate Insights Conversation resources are created** (often in different Insights locations within the same GCP project). They are **not** merged into a single Insights record; instead, the CCaaS-uploaded conversation references the Virtual Agent conversation via a foreign-key label (`labels.dialogflow_conversation_id_1`):
 
@@ -305,7 +305,7 @@ GROUP BY
   model_name;
 ```
 
-### D. Contact Center Insights Ingestion Error Breakdown
+### D. CX Insights Ingestion Error Breakdown
 ```sql
 SELECT
   protoPayload.methodName AS api_method,

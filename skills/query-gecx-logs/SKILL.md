@@ -1,14 +1,16 @@
 ---
 name: query-gecx-logs
 description: >-
-  Queries, filters, and analyzes Google Cloud Logging for GECX products (CCaaS / CCAIP,
-  Dialogflow CX/ES, CES / CX Agent Studio, and Contact Center Insights). Resolves
+  Queries, filters, and analyzes Google Cloud Logging for GECX (Gemini for customer
+  experience / Gemini for CX, formerly Gemini Enterprise for Customer Experience)
+  products (CCaaS / CCAIP, Dialogflow CX/ES, CES / CX Agent Studio, and CX Insights,
+  formerly Contact Center Insights / CCAI Insights). Resolves
   target logs projects, contact center IDs, locations, and agents from gecx_environments.yaml.
 ---
 
-# Query GECX Cloud Logs Skill
+# Query GECX (Gemini for CX) Cloud Logs Skill
 
-This skill provides step-by-step instructions and query recipes for querying Google Cloud Logging for **GECX (Gemini Enterprise for Customer Experience)** products, including **CCaaS**, **Dialogflow**, **CES / CX Agent Studio**, and **Contact Center Insights**.
+This skill provides step-by-step instructions and query recipes for querying Google Cloud Logging for **Gemini for customer experience** (Gemini for CX, also referred to as GECX or Gemini Enterprise for Customer Experience) products, including **CCaaS**, **Dialogflow**, **CES / CX Agent Studio**, and **CX Insights**.
 
 For advanced recipes (cross-service correlation, SIP diagnostics, audio URIs, latency/token analytics, Log Analytics SQL), see the [Advanced Logging Queries Cookbook](references/logging_queries.md).
 
@@ -40,7 +42,7 @@ Before constructing queries, resolve the target environment topology:
    * **`dialogflow_agents`**: Discovered Dialogflow agent IDs and locations.
    * **`conversation_profiles`**: Discovered Dialogflow Conversation Profiles (linking CCaaS or Dialogflow Telephony [Phone Gateway / SIP Trunks] to Dialogflow CX agents or CES apps).
    * **`cxas_apps`**: Discovered CX Agent Studio app IDs and locations.
-   * **`insights`**: Discovered Contact Center Insights location, conversation TTL, and summarization generators.
+   * **`insights`**: Discovered CX Insights location, conversation TTL, and summarization generators.
 
 ---
 
@@ -197,8 +199,8 @@ gcloud logging read 'logName:"dialogflow.googleapis.com%2Fincoming_call"' \
 
 ---
 
-### 4. Contact Center Insights (CCAI Insights)
-Contact Center Insights processes call/chat recordings, runs transcription, generates AI summaries, and evaluates QA scorecards.
+### 4. CX Insights
+CX Insights (formerly Contact Center AI Insights / CCAI Insights) processes call/chat recordings, runs transcription, generates AI summaries, and evaluates QA scorecards.
 
 > [!TIP]
 > **Two Ingestion Paths & Multi-Location Topology**:
@@ -257,8 +259,8 @@ curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
 ## Step 3: Error Investigation & Triage
 
 > [!WARNING]
-> **Severity Pitfall in GECX / CCaaS**:
-> Many GECX services—especially CCaaS—do **not** log operational failures or customer-impacting errors at `ERROR` severity. Dropped interactions, webhook timeouts, failed agent transfers, and CRM sync errors are frequently logged at `INFO` or `DEFAULT` severity with details embedded in the JSON payload or text body.
+> **Severity Pitfall in Gemini for CX / CCaaS**:
+> Many Gemini for CX services—especially CCaaS—do **not** log operational failures or customer-impacting errors at `ERROR` severity. Dropped interactions, webhook timeouts, failed agent transfers, and CRM sync errors are frequently logged at `INFO` or `DEFAULT` severity with details embedded in the JSON payload or text body.
 > Filtering solely with `severity>=ERROR` will miss the majority of actual issues and give a false impression of health.
 
 ### 1. CCaaS Error & Failure Hunting
@@ -335,7 +337,7 @@ gcloud logging read 'logName:"ces.googleapis.com%2Fresponses"
 
 ---
 
-### 3. Contact Center Insights Ingestion & Update Failures
+### 3. CX Insights Ingestion & Update Failures
 
 #### A. Segmented Metadata Copy Failure (Code 9 - FAILED_PRECONDITION)
 When CCAIP uploads calls with segmented audio, `UpdateConversation` patches `metadataJson`. If the segment audio filename does not match `file::Basename(audio_uri)`, or if the call ended without an assigned agent/virtual agent (`agent_id` empty), Insights rejects the update with `"Failed to copy segmented metadata."`:
@@ -360,7 +362,7 @@ protoPayload.status.code=5' \
 ```
 
 #### C. General Insights Ingestion Failures
-Find all failing operations across Contact Center Insights:
+Find all failing operations across CX Insights:
 ```bash
 gcloud logging read 'protoPayload.serviceName="contactcenterinsights.googleapis.com"
 severity>=ERROR' \

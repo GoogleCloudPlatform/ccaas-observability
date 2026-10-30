@@ -1,7 +1,7 @@
-# GECX (CCaaS, Dialogflow, CXAS) Observability Environment Configuration Sample
+# Gemini for customer experience (CCaaS, Dialogflow, CXAS) Observability Environment Configuration Sample
 # Copy this file to `gecx_environments.yaml` or use the `discover-gecx-environments`
 # skill to automatically discover and populate resources using 
-# native GECX REST APIs (CCaaS, Dialogflow, CXAS/CES).
+# native Gemini for CX REST APIs (CCaaS, Dialogflow, CXAS/CES).
 
 default_environment: dev
 

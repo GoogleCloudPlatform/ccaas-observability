@@ -12,7 +12,7 @@ def main():
     parser.add_argument('--call_id', required=True, help='Call ID to trace')
     parser.add_argument('--lookback', type=int, default=60, help='Lookback period in minutes (default: 60)')
     parser.add_argument('--call_id_parameter', default='call_id', help='The session parameter name for the Call ID in Dialogflow (default: call_id)')
-    parser.add_argument('--insights_project_id', help='GCP Project ID for CCAI Insights API (defaults to virtual_agent_project_id if not set)')
+    parser.add_argument('--insights_project_id', help='GCP Project ID for CX Insights API (defaults to virtual_agent_project_id if not set)')
     parser.add_argument('--location', help='GCP location of the Contact Center resource')
     parser.add_argument('--out_file', help='Output file name for combined logs')
     parser.add_argument('--include_activity', action='store_true', help='Include activity logs in the Contact Center query')

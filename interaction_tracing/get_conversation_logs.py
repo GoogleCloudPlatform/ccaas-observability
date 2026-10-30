@@ -85,7 +85,7 @@ def main():
     group.add_argument('--conversation_id', help='Dialogflow Conversation ID')
     group.add_argument('--call_id', help='Call ID to map to Dialogflow Conversation ID')
     parser.add_argument('--call_id_parameter', default='call_id', help='The session parameter name containing the Call ID (default: call_id)')
-    parser.add_argument('--insights_project_id', help='GCP Project ID for CCAI Insights API (defaults to virtual_agent_project_id if not set)')
+    parser.add_argument('--insights_project_id', help='GCP Project ID for CX Insights API (defaults to virtual_agent_project_id if not set)')
     parser.add_argument('--lookback', type=int, default=180, help='Lookback period in minutes (default: 180)')
     parser.add_argument('--save_logs', action='store_true', help='Save the logs to a JSON file')
     args = parser.parse_args()

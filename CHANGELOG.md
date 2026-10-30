@@ -1,4 +1,6 @@
-## Unreleased
+## Release 2026-10
+
+> **Product rebranding:** References to **Gemini Enterprise for Customer Experience (GECX)** have been changed to **Gemini for customer experience** (**Gemini for CX**), and references to **Contact Center Insights / CCAI Insights** have been changed to **CX Insights**.
 
 **New Features & Modules**
 *   **CXAS Tracer — PREVIEW (`ces_tracing`, `modules/ces_tracer`):** Added a Cloud Run service and Terraform module that rebuild completed **CX Agent Studio (CXAS)** conversations as hierarchical distributed traces in Google Cloud Trace.
@@ -12,11 +14,13 @@
 
 **Bug Fixes & Improvements**
 *   **Metadata Logger — Configurable PII Redaction (`metadata_logging`, `modules/metadata_logger`):** PII redaction of extracted milestone logs can now be controlled via `metadata_logger.redact_pii` (`REDACT_PII` environment variable on the Cloud Run service). It defaults to `true`, preserving the previous always-on behavior. When enabled, `phone_number` is redacted wherever it appears, and `first_name`, `last_name`, `name`, and `email` are redacted in person objects (objects containing `first_name`, `last_name`, or `email`); other `name` fields, such as queue names, are kept. Any `REDACT_PII` value other than `false`, `0`, or `no` keeps redaction enabled.
+*   **Documentation — Product Rebranding:** Updated documentation, skill descriptions, and script help text to the new product branding: **Gemini for customer experience** (Gemini for CX) replaces Gemini Enterprise for Customer Experience / GECX, and **CX Insights** replaces Contact Center Insights / CCAI Insights. Technical identifiers are unchanged for backwards compatibility: the `discover-gecx-environments` and `query-gecx-logs` skill names, the `gecx_environments.yaml` configuration file, and Google Cloud API names (e.g. `contactcenterinsights.googleapis.com`).
 
 **Rollout & Upgrade Instructions**
 *   **CXAS Tracer (optional, PREVIEW):** Enable Data Read / Data Write audit logs for `dialogflow.googleapis.com` in the Dialogflow project. Build and push the `ces-tracer` image using `ces_tracing/build_and_push.sh`, then set `enable_ces_tracer = true` and `ces_tracer.image_url`, and run `terraform apply`. See [`modules/ces_tracer/README.md`](modules/ces_tracer/README.md).
 *   Existing deployments that do not enable the CXAS Tracer are unaffected.
 *   **Metadata Logger PII Redaction:** No action required; redaction stays enabled by default. To disable it, build and push a new `metadata-logger` container image using `metadata_logging/build_and_push.sh` (older images ignore `REDACT_PII` and always redact), update `metadata_logger.image_url`, set `metadata_logger.redact_pii = false`, and run `terraform apply`.
+*   **Product Rebranding:** No action required. Existing `gecx_environments.yaml` files, skill names, and Terraform inputs continue to work unchanged.
 
 ---
 
