@@ -439,6 +439,142 @@ class TestCESTransform(unittest.TestCase):
         self.assertEqual(turn_span["attributes"]["phone_number"], "<REDACTED>")
         self.assertEqual(turn_span["attributes"]["safe_metric"], 42)
 
+    @staticmethod
+    def _async_conv(turn1_children, turn2_children=None):
+        turns = [
+            {
+                "rootSpan": {
+                    "name": "root",
+                    "startTime": "2026-11-12T07:08:43.027Z",
+                    "endTime": "2026-11-12T07:08:45.909Z",
+                    "childSpans": turn1_children,
+                }
+            }
+        ]
+        if turn2_children is not None:
+            turns.append(
+                {
+                    "rootSpan": {
+                        "name": "root",
+                        "startTime": "2026-11-12T07:08:51.228Z",
+                        "endTime": "2026-11-12T07:08:54.821Z",
+                        "childSpans": turn2_children,
+                    }
+                }
+            )
+        return {"turnCount": len(turns), "turns": turns}
+
+    def test_llm_started_async_tool_has_no_duplicate_ids_and_run_nests_under_schedule(self):
+        # LLM-started async tool: CES reports the same tool call id on the
+        # scheduled span (Turn 1) and on the completed run (Turn 2).
+        tcid = "adk-00000000-0000-4000-8000-000000000001"
+        scheduled = {
+            "name": "Async Tool",
+            "startTime": "2026-11-12T07:08:43.592000Z",
+            "endTime": "2026-11-12T07:08:43.592100Z",
+            "attributes": {
+                "name": "get_active_region_monitoring",
+                "type": "PythonFunctionTool",
+                "tool call id": tcid,
+                "response": {"result": "pending"},
+            },
+        }
+        completed = {
+            "name": "Async Tool",
+            "startTime": "2026-11-12T07:08:43.592150Z",
+            "endTime": "2026-11-12T07:08:44.163000Z",
+            "attributes": {
+                "name": "get_active_region_monitoring",
+                "type": "PythonFunctionTool",
+                "tool call id": tcid,
+                "response": {"result": {"region": "europe-west1"}},
+            },
+        }
+        conv = self._async_conv([scheduled], [completed])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-async-llm")
+
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)), "span IDs must be unique")
+
+        async_spans = [s for s in spans if s["display_name"] == "Async Tool"]
+        sched_span = [s for s in async_spans if s["start_time"].microsecond == 592000][0]
+        run_span = [s for s in async_spans if s is not sched_span][0]
+
+        # The run keeps SHA256(tool call id) so downstream calls built from function_call_id attach to it.
+        self.assertEqual(run_span["span_id"], hash_to_span_id(tcid))
+        self.assertEqual(sched_span["span_id"], hash_to_span_id(f"{tcid}/scheduled"))
+        # Turn 1 -> scheduled -> run
+        self.assertEqual(sched_span["parent_span_id"], hash_to_span_id("sess-async-llm/turn/0"))
+        self.assertEqual(run_span["parent_span_id"], sched_span["span_id"])
+
+    def test_callback_started_async_tool_run_nests_under_schedule(self):
+        # Callback-started async tool: a BeforeAgent callback starts it; CES sets no
+        # tool call id on the scheduled span and a different one on the completed run.
+        scheduled = {
+            "name": "Async Tool",
+            "startTime": "2026-11-11T05:32:41.489655Z",
+            "endTime": "2026-11-11T05:32:41.489731Z",
+            "attributes": {
+                "name": "load_reference_data",
+                "type": "PythonFunctionTool",
+                "response": {"result": "pending"},
+            },
+        }
+        callback = {
+            "name": "Callback",
+            "startTime": "2026-11-11T05:32:41.469405Z",
+            "endTime": "2026-11-11T05:32:41.496979Z",
+            "attributes": {"stage": "BeforeAgent"},
+            "childSpans": [scheduled],
+        }
+        run_tcid = "parent-span-1111aaaa-tool-execution-2222bbbb"
+        completed = {
+            "name": "Async Tool",
+            "startTime": "2026-11-11T05:32:41.489746Z",
+            "endTime": "2026-11-11T05:32:43.238806Z",
+            "attributes": {
+                "name": "load_reference_data",
+                "type": "PythonFunctionTool",
+                "tool call id": run_tcid,
+                "response": {"result": {"status": "success"}},
+            },
+        }
+        conv = self._async_conv([callback], [completed])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-async-cb")
+
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)))
+        by_id = {s["span_id"]: s for s in spans}
+        run_span = by_id[hash_to_span_id(run_tcid)]
+        sched_span = by_id[run_span["parent_span_id"]]
+        self.assertEqual(sched_span["display_name"], "Async Tool")
+        self.assertEqual(sched_span["attributes"]["response"], '{"result":"pending"}')
+        # Scheduled span keeps its existing ID (it has no tool call id, so nothing collided).
+        callback_id = sched_span["parent_span_id"]
+        self.assertEqual(
+            sched_span["span_id"],
+            hash_to_span_id(f"{callback_id}/Async Tool/2026-11-11T05:32:41.489655Z"),
+        )
+
+    def test_scheduled_only_async_tool_is_unchanged(self):
+        # Async tools fired in the last turn (e.g. at hang-up) never get a completed span recorded.
+        tcid = "adk-00000000-0000-4000-8000-000000000002"
+        scheduled = {
+            "name": "Async Tool",
+            "startTime": "2026-11-10T11:30:20.032288Z",
+            "endTime": "2026-11-10T11:30:20.032312Z",
+            "attributes": {
+                "name": "start_verification",
+                "tool call id": tcid,
+                "response": {"result": "pending"},
+            },
+        }
+        conv = self._async_conv([scheduled])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-async-last")
+        sched_span = [s for s in spans if s["display_name"] == "Async Tool"][0]
+        self.assertEqual(sched_span["span_id"], hash_to_span_id(tcid))
+        self.assertEqual(sched_span["parent_span_id"], hash_to_span_id("sess-async-last/turn/0"))
+
 
 if __name__ == "__main__":
     unittest.main()
