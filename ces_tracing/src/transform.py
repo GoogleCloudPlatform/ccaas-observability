@@ -121,6 +121,57 @@ def tool_call_numbers(ces_spans: List[Dict[str, Any]]) -> Dict[int, int]:
     return numbers
 
 
+TRACEPARENT_RE = re.compile(
+    r"\b00-(?P<trace_id>[0-9a-f]{32})-(?P<span_id>[0-9a-f]{16})-[0-9a-f]{2}\b"
+)
+# Hint line a CXAS Python tool or callback prints for each child tool call it makes, e.g.
+# "traceparent tool=mcp_get_weather_ew1_get_weather 00-<trace_id>-<span_id>-01".
+TRACEPARENT_HINT_RE = re.compile(
+    r"traceparent tool=(?P<tool>\S+) 00-(?P<trace_id>[0-9a-f]{32})-(?P<span_id>[0-9a-f]{16})-[0-9a-f]{2}\b"
+)
+
+
+def parse_traceparent_hints(ces_span: Optional[Dict[str, Any]], trace_id: str) -> Dict[str, List[str]]:
+    """Returns tool name -> span IDs (in call order) from 'traceparent tool=...' lines in a span's stdout.
+
+    Only traceparents for the given trace are returned.
+    """
+    hints: Dict[str, List[str]] = {}
+    attrs = ces_span.get("attributes") if isinstance(ces_span, dict) else None
+    stdout = attrs.get("stdout") if isinstance(attrs, dict) else None
+    if isinstance(stdout, str):
+        for m in TRACEPARENT_HINT_RE.finditer(stdout):
+            if m.group("trace_id") == trace_id:
+                hints.setdefault(m.group("tool"), []).append(m.group("span_id"))
+    return hints
+
+
+def propagated_span_id(
+    ces_span: Dict[str, Any], trace_id: str, hints: Dict[str, List[str]], call_number: int
+) -> Optional[str]:
+    """Returns the span ID CXAS actually propagated downstream for a child tool span, if known.
+
+    1. OpenAPI tools: a 'traceparent' argument (declared 'in: header') is recorded by CES in
+       attributes['args'].
+    2. Any tool (needed for MCP, whose custom headers are not recorded): the call_number-th
+       'traceparent tool=<name> ...' hint printed by the calling Python tool or callback.
+    The traceparent's trace ID must match this conversation's trace ID.
+    """
+    attrs = ces_span.get("attributes")
+    if not isinstance(attrs, dict) or ces_span.get("name") != "Tool":
+        return None
+    args = attrs.get("args")
+    if isinstance(args, dict) and isinstance(args.get("traceparent"), str):
+        m = TRACEPARENT_RE.search(args["traceparent"])
+        if m and m.group("trace_id") == trace_id:
+            return m.group("span_id")
+    tool_name = attrs.get("name")
+    sent = hints.get(tool_name) if isinstance(tool_name, str) else None
+    if sent and 0 < call_number <= len(sent):
+        return sent[call_number - 1]
+    return None
+
+
 ASYNC_TOOL_SPAN_NAME = "Async Tool"
 # Max clock skew between the end of an async tool's "scheduled" span and the start of its
 # "completed" span (observed deltas are within +/- 1ms; allow some slack).
@@ -494,23 +545,35 @@ def _convert_children(
     redact_pii: bool = False,
     span_id_overrides: Optional[Dict[int, str]] = None,
     converted: Optional[Dict[int, Dict[str, Any]]] = None,
+    parent_ces_span: Optional[Dict[str, Any]] = None,
+    used_span_ids: Optional[set] = None,
 ) -> List[Dict[str, Any]]:
     """Recursively converts child CES spans into normalized Cloud Trace span dictionaries.
 
     span_id_overrides maps id(ces_span) to a precomputed span ID; converted (if given) is filled
-    with id(ces_span) -> converted span so callers can re-parent spans afterwards.
+    with id(ces_span) -> converted span so callers can re-parent spans afterwards. parent_ces_span
+    is the CES span whose childSpans are being converted (its stdout may carry traceparent hints).
+    used_span_ids collects assigned IDs so a propagated ID is never adopted twice.
     """
     spans: List[Dict[str, Any]] = []
     if not isinstance(ces_spans, list):
         return spans
+    if used_span_ids is None:
+        used_span_ids = set()
 
     call_numbers = tool_call_numbers(ces_spans)
+    hints = parse_traceparent_hints(parent_ces_span, trace_id)
     for ces_span in ces_spans:
         if not isinstance(ces_span, dict):
             continue
-        span_id = (span_id_overrides or {}).get(id(ces_span)) or get_span_id(
-            ces_span, parent_span_id, call_numbers.get(id(ces_span), 1)
-        )
+        call_number = call_numbers.get(id(ces_span), 1)
+        span_id = (span_id_overrides or {}).get(id(ces_span))
+        if not span_id:
+            adopted = propagated_span_id(ces_span, trace_id, hints, call_number)
+            span_id = adopted if adopted and adopted not in used_span_ids else None
+        if not span_id:
+            span_id = get_span_id(ces_span, parent_span_id, call_number)
+        used_span_ids.add(span_id)
         pb_span = _convert_ces_span(
             ces_span,
             project_id=project_id,
@@ -535,6 +598,8 @@ def _convert_children(
                     redact_pii=redact_pii,
                     span_id_overrides=span_id_overrides,
                     converted=converted,
+                    parent_ces_span=ces_span,
+                    used_span_ids=used_span_ids,
                 )
             )
     return spans
@@ -832,6 +897,7 @@ def convert_to_trace_spans(
     async_pairs = pair_async_tool_spans(turns)
     async_overrides = async_span_id_overrides(async_pairs)
     converted: Dict[int, Dict[str, Any]] = {}
+    used_span_ids = {s["span_id"] for s in spans}
 
     for i, turn in enumerate(turns):
         if not isinstance(turn, dict):
@@ -904,6 +970,8 @@ def convert_to_trace_spans(
                     redact_pii=redact_pii,
                     span_id_overrides=async_overrides,
                     converted=converted,
+                    parent_ces_span=turn_root_span,
+                    used_span_ids=used_span_ids,
                 )
             )
 

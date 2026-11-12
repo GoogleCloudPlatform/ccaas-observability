@@ -603,6 +603,90 @@ class TestCESTransform(unittest.TestCase):
             self.assertEqual(by_start[start]["span_id"], hash_to_span_id(key))
             self.assertEqual(by_start[start]["parent_span_id"], wrapper_id)
 
+    def _callback_with_child_tools(self, children, stdout=None):
+        callback = {
+            "name": "Callback",
+            "startTime": "2026-11-12T09:40:00.100000Z",
+            "endTime": "2026-11-12T09:40:01.000000Z",
+            "attributes": {"stage": "BeforeAgent"},
+            "childSpans": children,
+        }
+        if stdout is not None:
+            callback["attributes"]["stdout"] = stdout
+        return self._async_conv([callback])
+
+    @staticmethod
+    def _openapi_child(start, args, name="openapi_get_weather_ew1_getWeather", tool_type="OpenApiTool"):
+        return {
+            "name": "Tool",
+            "startTime": start,
+            "endTime": start.replace(".2", ".9"),
+            "attributes": {"name": name, "type": tool_type, "args": args},
+        }
+
+    def test_callback_invoked_openapi_tool_adopts_propagated_random_span_id(self):
+        # A callback has no function_call_id, so CXAS sends a random span ID in the OpenAPI
+        # 'traceparent' header argument, which CES records in attributes['args'].
+        session = "sess-callback-openapi"
+        trace_id = hash_to_trace_id(session)
+        random_span = "1f2e3d4c5b6a7980"
+        child = self._openapi_child(
+            "2026-11-12T09:40:00.200000Z",
+            {"city": "Zurich", "traceparent": f"00-{trace_id}-{random_span}-01"},
+        )
+        spans = convert_to_trace_spans(self._callback_with_child_tools([child]), [], [], [], "p", session)
+        tool = [s for s in spans if s["attributes"].get("type") == "OpenApiTool"][0]
+        self.assertEqual(tool["span_id"], random_span)
+
+    def test_propagated_span_id_for_another_trace_is_ignored(self):
+        session = "sess-other-trace"
+        child = self._openapi_child(
+            "2026-11-12T09:40:00.200000Z",
+            {"city": "Zurich", "traceparent": f"00-{'a' * 32}-1f2e3d4c5b6a7980-01"},
+        )
+        spans = convert_to_trace_spans(self._callback_with_child_tools([child]), [], [], [], "p", session)
+        tool = [s for s in spans if s["attributes"].get("type") == "OpenApiTool"][0]
+        self.assertEqual(
+            tool["span_id"],
+            hash_to_span_id(f"{tool['parent_span_id']}/openapi_get_weather_ew1_getWeather/1"),
+        )
+
+    def test_mcp_tools_adopt_span_ids_from_stdout_hints_in_call_order(self):
+        # MCP custom headers are not recorded by CES; the caller prints one hint line per call.
+        session = "sess-mcp-hints"
+        trace_id = hash_to_trace_id(session)
+        tool = "mcp_get_weather_ew1_get_weather"
+        stdout = (
+            f"traceparent tool={tool} 00-{trace_id}-aaaaaaaaaaaaaaa1-01\n"
+            f"traceparent tool={tool} 00-{trace_id}-aaaaaaaaaaaaaaa2-01\n"
+        )
+        children = [
+            self._openapi_child("2026-11-12T09:40:00.500000Z", {"city": "Tokyo"}, tool, "McpTool"),
+            self._openapi_child("2026-11-12T09:40:00.200000Z", {"city": "Paris"}, tool, "McpTool"),
+        ]
+        spans = convert_to_trace_spans(
+            self._callback_with_child_tools(children, stdout), [], [], [], "p", session
+        )
+        by_city = {
+            json.loads(s["attributes"]["args"])["city"]: s["span_id"]
+            for s in spans
+            if s["attributes"].get("type") == "McpTool"
+        }
+        self.assertEqual(by_city, {"Paris": "aaaaaaaaaaaaaaa1", "Tokyo": "aaaaaaaaaaaaaaa2"})
+
+    def test_same_propagated_span_id_sent_twice_is_adopted_once(self):
+        session = "sess-dup-propagated"
+        trace_id = hash_to_trace_id(session)
+        tp = f"00-{trace_id}-1f2e3d4c5b6a7980-01"
+        children = [
+            self._openapi_child("2026-11-12T09:40:00.200000Z", {"city": "Zurich", "traceparent": tp}),
+            self._openapi_child("2026-11-12T09:40:00.400000Z", {"city": "Zurich", "traceparent": tp}),
+        ]
+        spans = convert_to_trace_spans(self._callback_with_child_tools(children), [], [], [], "p", session)
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertIn("1f2e3d4c5b6a7980", ids)
+
     def test_scheduled_only_async_tool_is_unchanged(self):
         # Async tools fired in the last turn (e.g. at hang-up) never get a completed span recorded.
         tcid = "adk-00000000-0000-4000-8000-000000000002"
