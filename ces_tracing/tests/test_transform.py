@@ -66,7 +66,7 @@ class TestCESTransform(unittest.TestCase):
             hash_to_span_id(tool_call_id),
         )
 
-        # 2. Span named "Tool" without "tool call id" hashes "{parent_id}/{tool_name}"
+        # 2. Span named "Tool" without "tool call id" hashes "{parent_id}/{tool_name}/{call_number}"
         span_tool_by_name = {
             "name": "Tool",
             "startTime": "2026-10-02T10:00:01Z",
@@ -76,7 +76,11 @@ class TestCESTransform(unittest.TestCase):
         }
         self.assertEqual(
             get_span_id(span_tool_by_name, parent_id),
-            hash_to_span_id(f"{parent_id}/get_weather"),
+            hash_to_span_id(f"{parent_id}/get_weather/1"),
+        )
+        self.assertEqual(
+            get_span_id(span_tool_by_name, parent_id, 2),
+            hash_to_span_id(f"{parent_id}/get_weather/2"),
         )
 
         # 3. Other spans fall back to "{parent_id}/{name}/{startTime}"
@@ -555,6 +559,49 @@ class TestCESTransform(unittest.TestCase):
             sched_span["span_id"],
             hash_to_span_id(f"{callback_id}/Async Tool/2026-11-11T05:32:41.489655Z"),
         )
+
+    def test_repeated_child_tool_calls_are_numbered(self):
+        # A callback-started
+        # Python tool calls two OpenAPI tools twice each (listed out of start-time order here).
+        def call(name, start, end, args):
+            return {
+                "name": "Tool",
+                "startTime": start,
+                "endTime": end,
+                "attributes": {"name": name, "type": "OpenApiTool", "args": args},
+            }
+
+        sub, otp = "backend_getSubscriptions", "backend_getPurchases"
+        calls = [
+            call(sub, "2026-10-30T15:33:21.760965Z", "2026-10-30T15:33:31.481479Z", {"case_id": "C-1"}),
+            call(sub, "2026-10-30T15:33:12.376066Z", "2026-10-30T15:33:21.412377Z", {"chat_id": "1001"}),
+            call(otp, "2026-10-30T15:33:21.417628Z", "2026-10-30T15:33:21.754667Z", {"chat_id": "1001"}),
+            call(otp, "2026-10-30T15:33:31.488508Z", "2026-10-30T15:33:37.040612Z", {"case_id": "C-1"}),
+        ]
+        wrapper = {
+            "name": "Tool",
+            "startTime": "2026-10-30T15:33:12.318055Z",
+            "endTime": "2026-10-30T15:33:37.067584Z",
+            "attributes": {"name": "load_account_data", "type": "PythonFunctionTool"},
+            "childSpans": calls,
+        }
+        conv = self._async_conv([wrapper])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-repeat")
+
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)), "span IDs must be unique")
+
+        wrapper_id = hash_to_span_id(f"{hash_to_span_id('sess-repeat/turn/0')}/load_account_data/1")
+        by_start = {s["start_time"].isoformat(): s for s in spans}
+        expected = {
+            "2026-10-30T15:33:12.376066+00:00": f"{wrapper_id}/{sub}/1",
+            "2026-10-30T15:33:21.417628+00:00": f"{wrapper_id}/{otp}/1",
+            "2026-10-30T15:33:21.760965+00:00": f"{wrapper_id}/{sub}/2",
+            "2026-10-30T15:33:31.488508+00:00": f"{wrapper_id}/{otp}/2",
+        }
+        for start, key in expected.items():
+            self.assertEqual(by_start[start]["span_id"], hash_to_span_id(key))
+            self.assertEqual(by_start[start]["parent_span_id"], wrapper_id)
 
     def test_scheduled_only_async_tool_is_unchanged(self):
         # Async tools fired in the last turn (e.g. at hang-up) never get a completed span recorded.

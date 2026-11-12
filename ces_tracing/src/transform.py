@@ -67,7 +67,7 @@ def hash_to_span_id(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()[:16]
 
 
-def get_span_id(ces_span: Dict[str, Any], parent_span_id: str) -> str:
+def get_span_id(ces_span: Dict[str, Any], parent_span_id: str, call_number: int = 1) -> str:
     """Determines the deterministic 16-hex-char Span ID for a CES span.
 
     Priority:
@@ -75,7 +75,8 @@ def get_span_id(ces_span: Dict[str, Any], parent_span_id: str) -> str:
        This matches the W3C traceparent parent-id emitted by CES Python tools when invoking
        downstream HTTP services.
     2. If span name is 'Tool' and attributes['name'] is a non-empty string, hash
-       '{parent_span_id}/{tool_name}'.
+       '{parent_span_id}/{tool_name}/{call_number}', where call_number is 1 for the first call of
+       that tool under the same parent, 2 for the second, and so on (in start-time order).
     3. Fallback to hashing '{parent_span_id}/{span.name}/{span.startTime}'.
     """
     attrs = ces_span.get("attributes")
@@ -84,14 +85,40 @@ def get_span_id(ces_span: Dict[str, Any], parent_span_id: str) -> str:
         if isinstance(tool_call_id, str) and tool_call_id:
             return hash_to_span_id(tool_call_id)
 
-        if ces_span.get("name") == "Tool":
-            tool_name = attrs.get("name")
-            if isinstance(tool_name, str) and tool_name:
-                return hash_to_span_id(f"{parent_span_id}/{tool_name}")
+        tool_name = _child_tool_name(ces_span)
+        if tool_name:
+            return hash_to_span_id(f"{parent_span_id}/{tool_name}/{call_number}")
 
     span_name = ces_span.get("name", "")
     start_time = ces_span.get("startTime", "")
     return hash_to_span_id(f"{parent_span_id}/{span_name}/{start_time}")
+
+
+def _child_tool_name(ces_span: Dict[str, Any]) -> Optional[str]:
+    """Returns the tool name if the span's ID is derived from '{parent}/{tool_name}/{n}' (priority 2)."""
+    attrs = ces_span.get("attributes")
+    if not isinstance(attrs, dict) or ces_span.get("name") != "Tool":
+        return None
+    tool_call_id = attrs.get("tool call id")
+    if isinstance(tool_call_id, str) and tool_call_id:
+        return None
+    tool_name = attrs.get("name")
+    return tool_name if isinstance(tool_name, str) and tool_name else None
+
+
+def tool_call_numbers(ces_spans: List[Dict[str, Any]]) -> Dict[int, int]:
+    """Numbers sibling calls of the same tool 1, 2, 3, ... in start-time order.
+
+    Returns id(ces_span) -> call number for spans whose ID uses get_span_id priority 2.
+    """
+    tool_spans = [s for s in ces_spans if isinstance(s, dict) and _child_tool_name(s)]
+    numbers: Dict[int, int] = {}
+    counts: Dict[str, int] = {}
+    for span in sorted(tool_spans, key=lambda s: str(s.get("startTime", ""))):
+        name = _child_tool_name(span)
+        counts[name] = counts.get(name, 0) + 1
+        numbers[id(span)] = counts[name]
+    return numbers
 
 
 ASYNC_TOOL_SPAN_NAME = "Async Tool"
@@ -477,10 +504,13 @@ def _convert_children(
     if not isinstance(ces_spans, list):
         return spans
 
+    call_numbers = tool_call_numbers(ces_spans)
     for ces_span in ces_spans:
         if not isinstance(ces_span, dict):
             continue
-        span_id = (span_id_overrides or {}).get(id(ces_span)) or get_span_id(ces_span, parent_span_id)
+        span_id = (span_id_overrides or {}).get(id(ces_span)) or get_span_id(
+            ces_span, parent_span_id, call_numbers.get(id(ces_span), 1)
+        )
         pb_span = _convert_ces_span(
             ces_span,
             project_id=project_id,
