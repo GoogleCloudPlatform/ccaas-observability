@@ -18,7 +18,13 @@ To enable end-to-end distributed tracing across CXAS Python tools and downstream
 
 * **Trace ID (128-bit / 32 hex chars):** `MD5(session_id)`
 * **Span ID (64-bit / 16 hex chars):** `SHA256(identifier)[:16]`
-* **Tool Call Span ID:** When a CXAS tool span contains the attribute `"tool call id"`, its span ID is computed as `SHA256(tool_call_id)[:16]`. When CXAS Python tools inject the W3C header `traceparent: 00-{MD5(session_id)}-{SHA256(function_call_id)[:16]}-01` on outbound HTTP requests, Google Cloud Trace automatically parents the downstream Cloud Run HTTP spans directly under the corresponding CXAS Tool span.
+* **CXAS span IDs**, in order of precedence:
+  1. **Propagated `traceparent`:** for a child tool span (a tool called by a Python tool or callback), the span ID CXAS actually sent downstream, if its trace ID matches `MD5(session_id)`. For OpenAPI tools this is the `traceparent` argument (declared `in: header`), which CES records in the tool span's arguments. For MCP tools, whose custom headers are not recorded, it is the n-th `traceparent tool=<tool_name> <traceparent>` line printed by the calling Python tool or callback.
+  2. **Tool call ID:** when a CXAS span contains the attribute `"tool call id"`, `SHA256(tool_call_id)[:16]`. CES records an async tool twice (a short "scheduled" span and the completed run in a later turn); the completed run keeps this ID and is nested under the scheduled span, which gets `SHA256(f"{tool_call_id}/scheduled")[:16]`.
+  3. **Child tool call:** for a child tool span without a tool call ID, `SHA256(f"{parent_span_id}/{tool_name}/{n}")[:16]`, where `n` is 1 for the first call of that tool under the same parent, 2 for the second, and so on (in start-time order).
+  4. **Fallback:** `SHA256(f"{parent_span_id}/{span_name}/{start_time}")[:16]`.
+
+When a CXAS Python tool called by the LLM injects `traceparent: 00-{MD5(session_id)}-{SHA256(function_call_id)[:16]}-01` on its own outbound HTTP requests, or `00-{MD5(session_id)}-{SHA256(f"{SHA256(function_call_id)[:16]}/{tool_name}/{n}")[:16]}-01` on the n-th call of a child OpenAPI or MCP tool, Google Cloud Trace parents the downstream Cloud Run HTTP spans directly under the corresponding CXAS span. Tools called from callbacks have no `function_call_id`; they can send any span ID, as long as it is propagated as described in 1.
 
 ---
 

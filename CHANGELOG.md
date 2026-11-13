@@ -1,3 +1,19 @@
+## Unreleased
+
+**Bug Fixes & Improvements**
+*   **CXAS Tracer — Span ID Fixes (`ces_tracing`, PREVIEW):** Fixed duplicate span IDs and broken parent links in traces rebuilt by the CXAS Tracer. Cloud Trace never overwrites a span (writing an existing span ID stores an additional copy), so colliding IDs showed up as duplicated spans, and mismatched IDs left downstream spans without a parent.
+    *   **Async Tools:** CXAS records an async tool call twice, a short "scheduled" span (response `{"result": "pending"}`) and a "completed" span for the background run in a later turn, and both carry the same `tool call id` when the LLM starts the tool. The completed span now keeps `SHA-256(tool call id)[:16]`, so downstream calls made by the tool still attach to it, and the scheduled span gets `SHA-256("{tool call id}/scheduled")[:16]`. The completed span is nested under its scheduled span (`Turn → Async Tool (scheduled) → Async Tool (run)`). Callback-started async tools, which only carry a `tool call id` on the completed span, are paired by tool name and start time.
+    *   **Repeated Child Tool Calls:** A Python tool or callback calling the same OpenAPI or MCP tool more than once (one lookup per item, retries, regional failover) produced child tool spans with the same ID. Child tool spans without a `tool call id` are now keyed by `{parent span ID}/{tool name}/{n}`, where `n` is 1 for the first call of that tool under the same parent, 2 for the second, and so on, in start-time order.
+    *   **Downstream Correlation Without a Function Call ID:** Tools invoked from callbacks have no `function_call_id`, so CXAS cannot derive a deterministic span ID and propagates a random one; downstream spans then pointed at a parent that did not exist in the trace. The tracer now uses the span ID CXAS actually propagated to a child tool: the OpenAPI `traceparent` argument (declared `in: header`), which CXAS records in the tool span's arguments, or, for MCP tools, whose custom headers are not recorded, a `traceparent tool=<tool_name> <traceparent>` line printed by the calling Python tool or callback. A propagated ID is only used if its trace ID matches the conversation's trace ID and it is not already used in the trace; otherwise the derived IDs apply as before.
+
+**Rollout & Upgrade Instructions**
+*   **CXAS Tracer:** Build and push a new `ces-tracer` container image using `ces_tracing/build_and_push.sh`, update `ces_tracer.image_url` in your Terraform configuration (or run `gcloud run services update`), and redeploy the Cloud Run service.
+*   **Python Tools Propagating `traceparent` to Child Tools:** Update your tracing helper to derive child span IDs as `SHA-256("{wrapper span ID}/{tool name}/{n}")[:16]`, counting calls per child tool within one tool execution starting at 1. OpenAPI child tools keep correlating with the previous derivation, because the tracer uses the `traceparent` argument that was sent; MCP child tools need the new derivation or the `traceparent tool=...` stdout line.
+*   **Tools Called From Callbacks:** To correlate their downstream calls, pass a `traceparent` (trace ID `MD5(session_id)`, any span ID) as the OpenAPI `traceparent` header argument, or print `traceparent tool=<tool_name> <traceparent>` for MCP tools.
+*   **Existing Traces:** Conversations traced before the upgrade keep their previous span IDs. Do not re-trace them with `"force": true`; Cloud Trace keeps the existing spans, so the conversation would show both the old and the new spans.
+
+---
+
 ## Release 2026-10
 
 > **Product rebranding:** References to **Gemini Enterprise for Customer Experience (GECX)** have been changed to **Gemini for customer experience** (**Gemini for CX**), and references to **Contact Center Insights / CCAI Insights** have been changed to **CX Insights**.

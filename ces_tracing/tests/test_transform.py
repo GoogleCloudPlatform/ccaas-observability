@@ -66,7 +66,7 @@ class TestCESTransform(unittest.TestCase):
             hash_to_span_id(tool_call_id),
         )
 
-        # 2. Span named "Tool" without "tool call id" hashes "{parent_id}/{tool_name}"
+        # 2. Span named "Tool" without "tool call id" hashes "{parent_id}/{tool_name}/{call_number}"
         span_tool_by_name = {
             "name": "Tool",
             "startTime": "2026-10-02T10:00:01Z",
@@ -76,7 +76,11 @@ class TestCESTransform(unittest.TestCase):
         }
         self.assertEqual(
             get_span_id(span_tool_by_name, parent_id),
-            hash_to_span_id(f"{parent_id}/get_weather"),
+            hash_to_span_id(f"{parent_id}/get_weather/1"),
+        )
+        self.assertEqual(
+            get_span_id(span_tool_by_name, parent_id, 2),
+            hash_to_span_id(f"{parent_id}/get_weather/2"),
         )
 
         # 3. Other spans fall back to "{parent_id}/{name}/{startTime}"
@@ -438,6 +442,269 @@ class TestCESTransform(unittest.TestCase):
         self.assertEqual(turn_span["attributes"]["user_input"], "<REDACTED>")
         self.assertEqual(turn_span["attributes"]["phone_number"], "<REDACTED>")
         self.assertEqual(turn_span["attributes"]["safe_metric"], 42)
+
+    @staticmethod
+    def _async_conv(turn1_children, turn2_children=None):
+        turns = [
+            {
+                "rootSpan": {
+                    "name": "root",
+                    "startTime": "2026-11-12T07:08:43.027Z",
+                    "endTime": "2026-11-12T07:08:45.909Z",
+                    "childSpans": turn1_children,
+                }
+            }
+        ]
+        if turn2_children is not None:
+            turns.append(
+                {
+                    "rootSpan": {
+                        "name": "root",
+                        "startTime": "2026-11-12T07:08:51.228Z",
+                        "endTime": "2026-11-12T07:08:54.821Z",
+                        "childSpans": turn2_children,
+                    }
+                }
+            )
+        return {"turnCount": len(turns), "turns": turns}
+
+    def test_llm_started_async_tool_has_no_duplicate_ids_and_run_nests_under_schedule(self):
+        # LLM-started async tool: CES reports the same tool call id on the
+        # scheduled span (Turn 1) and on the completed run (Turn 2).
+        tcid = "adk-00000000-0000-4000-8000-000000000001"
+        scheduled = {
+            "name": "Async Tool",
+            "startTime": "2026-11-12T07:08:43.592000Z",
+            "endTime": "2026-11-12T07:08:43.592100Z",
+            "attributes": {
+                "name": "get_active_region_monitoring",
+                "type": "PythonFunctionTool",
+                "tool call id": tcid,
+                "response": {"result": "pending"},
+            },
+        }
+        completed = {
+            "name": "Async Tool",
+            "startTime": "2026-11-12T07:08:43.592150Z",
+            "endTime": "2026-11-12T07:08:44.163000Z",
+            "attributes": {
+                "name": "get_active_region_monitoring",
+                "type": "PythonFunctionTool",
+                "tool call id": tcid,
+                "response": {"result": {"region": "europe-west1"}},
+            },
+        }
+        conv = self._async_conv([scheduled], [completed])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-async-llm")
+
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)), "span IDs must be unique")
+
+        async_spans = [s for s in spans if s["display_name"] == "Async Tool"]
+        sched_span = [s for s in async_spans if s["start_time"].microsecond == 592000][0]
+        run_span = [s for s in async_spans if s is not sched_span][0]
+
+        # The run keeps SHA256(tool call id) so downstream calls built from function_call_id attach to it.
+        self.assertEqual(run_span["span_id"], hash_to_span_id(tcid))
+        self.assertEqual(sched_span["span_id"], hash_to_span_id(f"{tcid}/scheduled"))
+        # Turn 1 -> scheduled -> run
+        self.assertEqual(sched_span["parent_span_id"], hash_to_span_id("sess-async-llm/turn/0"))
+        self.assertEqual(run_span["parent_span_id"], sched_span["span_id"])
+
+    def test_callback_started_async_tool_run_nests_under_schedule(self):
+        # Callback-started async tool: a BeforeAgent callback starts it; CES sets no
+        # tool call id on the scheduled span and a different one on the completed run.
+        scheduled = {
+            "name": "Async Tool",
+            "startTime": "2026-11-11T05:32:41.489655Z",
+            "endTime": "2026-11-11T05:32:41.489731Z",
+            "attributes": {
+                "name": "load_reference_data",
+                "type": "PythonFunctionTool",
+                "response": {"result": "pending"},
+            },
+        }
+        callback = {
+            "name": "Callback",
+            "startTime": "2026-11-11T05:32:41.469405Z",
+            "endTime": "2026-11-11T05:32:41.496979Z",
+            "attributes": {"stage": "BeforeAgent"},
+            "childSpans": [scheduled],
+        }
+        run_tcid = "parent-span-1111aaaa-tool-execution-2222bbbb"
+        completed = {
+            "name": "Async Tool",
+            "startTime": "2026-11-11T05:32:41.489746Z",
+            "endTime": "2026-11-11T05:32:43.238806Z",
+            "attributes": {
+                "name": "load_reference_data",
+                "type": "PythonFunctionTool",
+                "tool call id": run_tcid,
+                "response": {"result": {"status": "success"}},
+            },
+        }
+        conv = self._async_conv([callback], [completed])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-async-cb")
+
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)))
+        by_id = {s["span_id"]: s for s in spans}
+        run_span = by_id[hash_to_span_id(run_tcid)]
+        sched_span = by_id[run_span["parent_span_id"]]
+        self.assertEqual(sched_span["display_name"], "Async Tool")
+        self.assertEqual(sched_span["attributes"]["response"], '{"result":"pending"}')
+        # Scheduled span keeps its existing ID (it has no tool call id, so nothing collided).
+        callback_id = sched_span["parent_span_id"]
+        self.assertEqual(
+            sched_span["span_id"],
+            hash_to_span_id(f"{callback_id}/Async Tool/2026-11-11T05:32:41.489655Z"),
+        )
+
+    def test_repeated_child_tool_calls_are_numbered(self):
+        # A callback-started
+        # Python tool calls two OpenAPI tools twice each (listed out of start-time order here).
+        def call(name, start, end, args):
+            return {
+                "name": "Tool",
+                "startTime": start,
+                "endTime": end,
+                "attributes": {"name": name, "type": "OpenApiTool", "args": args},
+            }
+
+        sub, otp = "backend_getSubscriptions", "backend_getPurchases"
+        calls = [
+            call(sub, "2026-10-30T15:33:21.760965Z", "2026-10-30T15:33:31.481479Z", {"case_id": "C-1"}),
+            call(sub, "2026-10-30T15:33:12.376066Z", "2026-10-30T15:33:21.412377Z", {"chat_id": "1001"}),
+            call(otp, "2026-10-30T15:33:21.417628Z", "2026-10-30T15:33:21.754667Z", {"chat_id": "1001"}),
+            call(otp, "2026-10-30T15:33:31.488508Z", "2026-10-30T15:33:37.040612Z", {"case_id": "C-1"}),
+        ]
+        wrapper = {
+            "name": "Tool",
+            "startTime": "2026-10-30T15:33:12.318055Z",
+            "endTime": "2026-10-30T15:33:37.067584Z",
+            "attributes": {"name": "load_account_data", "type": "PythonFunctionTool"},
+            "childSpans": calls,
+        }
+        conv = self._async_conv([wrapper])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-repeat")
+
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)), "span IDs must be unique")
+
+        wrapper_id = hash_to_span_id(f"{hash_to_span_id('sess-repeat/turn/0')}/load_account_data/1")
+        by_start = {s["start_time"].isoformat(): s for s in spans}
+        expected = {
+            "2026-10-30T15:33:12.376066+00:00": f"{wrapper_id}/{sub}/1",
+            "2026-10-30T15:33:21.417628+00:00": f"{wrapper_id}/{otp}/1",
+            "2026-10-30T15:33:21.760965+00:00": f"{wrapper_id}/{sub}/2",
+            "2026-10-30T15:33:31.488508+00:00": f"{wrapper_id}/{otp}/2",
+        }
+        for start, key in expected.items():
+            self.assertEqual(by_start[start]["span_id"], hash_to_span_id(key))
+            self.assertEqual(by_start[start]["parent_span_id"], wrapper_id)
+
+    def _callback_with_child_tools(self, children, stdout=None):
+        callback = {
+            "name": "Callback",
+            "startTime": "2026-11-12T09:40:00.100000Z",
+            "endTime": "2026-11-12T09:40:01.000000Z",
+            "attributes": {"stage": "BeforeAgent"},
+            "childSpans": children,
+        }
+        if stdout is not None:
+            callback["attributes"]["stdout"] = stdout
+        return self._async_conv([callback])
+
+    @staticmethod
+    def _openapi_child(start, args, name="openapi_get_weather_ew1_getWeather", tool_type="OpenApiTool"):
+        return {
+            "name": "Tool",
+            "startTime": start,
+            "endTime": start.replace(".2", ".9"),
+            "attributes": {"name": name, "type": tool_type, "args": args},
+        }
+
+    def test_callback_invoked_openapi_tool_adopts_propagated_random_span_id(self):
+        # A callback has no function_call_id, so CXAS sends a random span ID in the OpenAPI
+        # 'traceparent' header argument, which CES records in attributes['args'].
+        session = "sess-callback-openapi"
+        trace_id = hash_to_trace_id(session)
+        random_span = "1f2e3d4c5b6a7980"
+        child = self._openapi_child(
+            "2026-11-12T09:40:00.200000Z",
+            {"city": "Zurich", "traceparent": f"00-{trace_id}-{random_span}-01"},
+        )
+        spans = convert_to_trace_spans(self._callback_with_child_tools([child]), [], [], [], "p", session)
+        tool = [s for s in spans if s["attributes"].get("type") == "OpenApiTool"][0]
+        self.assertEqual(tool["span_id"], random_span)
+
+    def test_propagated_span_id_for_another_trace_is_ignored(self):
+        session = "sess-other-trace"
+        child = self._openapi_child(
+            "2026-11-12T09:40:00.200000Z",
+            {"city": "Zurich", "traceparent": f"00-{'a' * 32}-1f2e3d4c5b6a7980-01"},
+        )
+        spans = convert_to_trace_spans(self._callback_with_child_tools([child]), [], [], [], "p", session)
+        tool = [s for s in spans if s["attributes"].get("type") == "OpenApiTool"][0]
+        self.assertEqual(
+            tool["span_id"],
+            hash_to_span_id(f"{tool['parent_span_id']}/openapi_get_weather_ew1_getWeather/1"),
+        )
+
+    def test_mcp_tools_adopt_span_ids_from_stdout_hints_in_call_order(self):
+        # MCP custom headers are not recorded by CES; the caller prints one hint line per call.
+        session = "sess-mcp-hints"
+        trace_id = hash_to_trace_id(session)
+        tool = "mcp_get_weather_ew1_get_weather"
+        stdout = (
+            f"traceparent tool={tool} 00-{trace_id}-aaaaaaaaaaaaaaa1-01\n"
+            f"traceparent tool={tool} 00-{trace_id}-aaaaaaaaaaaaaaa2-01\n"
+        )
+        children = [
+            self._openapi_child("2026-11-12T09:40:00.500000Z", {"city": "Tokyo"}, tool, "McpTool"),
+            self._openapi_child("2026-11-12T09:40:00.200000Z", {"city": "Paris"}, tool, "McpTool"),
+        ]
+        spans = convert_to_trace_spans(
+            self._callback_with_child_tools(children, stdout), [], [], [], "p", session
+        )
+        by_city = {
+            json.loads(s["attributes"]["args"])["city"]: s["span_id"]
+            for s in spans
+            if s["attributes"].get("type") == "McpTool"
+        }
+        self.assertEqual(by_city, {"Paris": "aaaaaaaaaaaaaaa1", "Tokyo": "aaaaaaaaaaaaaaa2"})
+
+    def test_same_propagated_span_id_sent_twice_is_adopted_once(self):
+        session = "sess-dup-propagated"
+        trace_id = hash_to_trace_id(session)
+        tp = f"00-{trace_id}-1f2e3d4c5b6a7980-01"
+        children = [
+            self._openapi_child("2026-11-12T09:40:00.200000Z", {"city": "Zurich", "traceparent": tp}),
+            self._openapi_child("2026-11-12T09:40:00.400000Z", {"city": "Zurich", "traceparent": tp}),
+        ]
+        spans = convert_to_trace_spans(self._callback_with_child_tools(children), [], [], [], "p", session)
+        ids = [s["span_id"] for s in spans]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertIn("1f2e3d4c5b6a7980", ids)
+
+    def test_scheduled_only_async_tool_is_unchanged(self):
+        # Async tools fired in the last turn (e.g. at hang-up) never get a completed span recorded.
+        tcid = "adk-00000000-0000-4000-8000-000000000002"
+        scheduled = {
+            "name": "Async Tool",
+            "startTime": "2026-11-10T11:30:20.032288Z",
+            "endTime": "2026-11-10T11:30:20.032312Z",
+            "attributes": {
+                "name": "start_verification",
+                "tool call id": tcid,
+                "response": {"result": "pending"},
+            },
+        }
+        conv = self._async_conv([scheduled])
+        spans = convert_to_trace_spans(conv, [], [], [], "p", "sess-async-last")
+        sched_span = [s for s in spans if s["display_name"] == "Async Tool"][0]
+        self.assertEqual(sched_span["span_id"], hash_to_span_id(tcid))
+        self.assertEqual(sched_span["parent_span_id"], hash_to_span_id("sess-async-last/turn/0"))
 
 
 if __name__ == "__main__":

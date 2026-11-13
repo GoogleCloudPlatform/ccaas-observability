@@ -20,7 +20,7 @@ import hashlib
 import json
 import logging
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger("ces_tracer_transform")
 
@@ -67,7 +67,7 @@ def hash_to_span_id(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()[:16]
 
 
-def get_span_id(ces_span: Dict[str, Any], parent_span_id: str) -> str:
+def get_span_id(ces_span: Dict[str, Any], parent_span_id: str, call_number: int = 1) -> str:
     """Determines the deterministic 16-hex-char Span ID for a CES span.
 
     Priority:
@@ -75,7 +75,8 @@ def get_span_id(ces_span: Dict[str, Any], parent_span_id: str) -> str:
        This matches the W3C traceparent parent-id emitted by CES Python tools when invoking
        downstream HTTP services.
     2. If span name is 'Tool' and attributes['name'] is a non-empty string, hash
-       '{parent_span_id}/{tool_name}'.
+       '{parent_span_id}/{tool_name}/{call_number}', where call_number is 1 for the first call of
+       that tool under the same parent, 2 for the second, and so on (in start-time order).
     3. Fallback to hashing '{parent_span_id}/{span.name}/{span.startTime}'.
     """
     attrs = ces_span.get("attributes")
@@ -84,14 +85,196 @@ def get_span_id(ces_span: Dict[str, Any], parent_span_id: str) -> str:
         if isinstance(tool_call_id, str) and tool_call_id:
             return hash_to_span_id(tool_call_id)
 
-        if ces_span.get("name") == "Tool":
-            tool_name = attrs.get("name")
-            if isinstance(tool_name, str) and tool_name:
-                return hash_to_span_id(f"{parent_span_id}/{tool_name}")
+        tool_name = _child_tool_name(ces_span)
+        if tool_name:
+            return hash_to_span_id(f"{parent_span_id}/{tool_name}/{call_number}")
 
     span_name = ces_span.get("name", "")
     start_time = ces_span.get("startTime", "")
     return hash_to_span_id(f"{parent_span_id}/{span_name}/{start_time}")
+
+
+def _child_tool_name(ces_span: Dict[str, Any]) -> Optional[str]:
+    """Returns the tool name if the span's ID is derived from '{parent}/{tool_name}/{n}' (priority 2)."""
+    attrs = ces_span.get("attributes")
+    if not isinstance(attrs, dict) or ces_span.get("name") != "Tool":
+        return None
+    tool_call_id = attrs.get("tool call id")
+    if isinstance(tool_call_id, str) and tool_call_id:
+        return None
+    tool_name = attrs.get("name")
+    return tool_name if isinstance(tool_name, str) and tool_name else None
+
+
+def tool_call_numbers(ces_spans: List[Dict[str, Any]]) -> Dict[int, int]:
+    """Numbers sibling calls of the same tool 1, 2, 3, ... in start-time order.
+
+    Returns id(ces_span) -> call number for spans whose ID uses get_span_id priority 2.
+    """
+    tool_spans = [s for s in ces_spans if isinstance(s, dict) and _child_tool_name(s)]
+    numbers: Dict[int, int] = {}
+    counts: Dict[str, int] = {}
+    for span in sorted(tool_spans, key=lambda s: str(s.get("startTime", ""))):
+        name = _child_tool_name(span)
+        counts[name] = counts.get(name, 0) + 1
+        numbers[id(span)] = counts[name]
+    return numbers
+
+
+TRACEPARENT_RE = re.compile(
+    r"\b00-(?P<trace_id>[0-9a-f]{32})-(?P<span_id>[0-9a-f]{16})-[0-9a-f]{2}\b"
+)
+# Hint line a CXAS Python tool or callback prints for each child tool call it makes, e.g.
+# "traceparent tool=mcp_get_weather_ew1_get_weather 00-<trace_id>-<span_id>-01".
+TRACEPARENT_HINT_RE = re.compile(
+    r"traceparent tool=(?P<tool>\S+) 00-(?P<trace_id>[0-9a-f]{32})-(?P<span_id>[0-9a-f]{16})-[0-9a-f]{2}\b"
+)
+
+
+def parse_traceparent_hints(ces_span: Optional[Dict[str, Any]], trace_id: str) -> Dict[str, List[str]]:
+    """Returns tool name -> span IDs (in call order) from 'traceparent tool=...' lines in a span's stdout.
+
+    Only traceparents for the given trace are returned.
+    """
+    hints: Dict[str, List[str]] = {}
+    attrs = ces_span.get("attributes") if isinstance(ces_span, dict) else None
+    stdout = attrs.get("stdout") if isinstance(attrs, dict) else None
+    if isinstance(stdout, str):
+        for m in TRACEPARENT_HINT_RE.finditer(stdout):
+            if m.group("trace_id") == trace_id:
+                hints.setdefault(m.group("tool"), []).append(m.group("span_id"))
+    return hints
+
+
+def propagated_span_id(
+    ces_span: Dict[str, Any], trace_id: str, hints: Dict[str, List[str]], call_number: int
+) -> Optional[str]:
+    """Returns the span ID CXAS actually propagated downstream for a child tool span, if known.
+
+    1. OpenAPI tools: a 'traceparent' argument (declared 'in: header') is recorded by CES in
+       attributes['args'].
+    2. Any tool (needed for MCP, whose custom headers are not recorded): the call_number-th
+       'traceparent tool=<name> ...' hint printed by the calling Python tool or callback.
+    The traceparent's trace ID must match this conversation's trace ID.
+    """
+    attrs = ces_span.get("attributes")
+    if not isinstance(attrs, dict) or ces_span.get("name") != "Tool":
+        return None
+    args = attrs.get("args")
+    if isinstance(args, dict) and isinstance(args.get("traceparent"), str):
+        m = TRACEPARENT_RE.search(args["traceparent"])
+        if m and m.group("trace_id") == trace_id:
+            return m.group("span_id")
+    tool_name = attrs.get("name")
+    sent = hints.get(tool_name) if isinstance(tool_name, str) else None
+    if sent and 0 < call_number <= len(sent):
+        return sent[call_number - 1]
+    return None
+
+
+ASYNC_TOOL_SPAN_NAME = "Async Tool"
+# Max clock skew between the end of an async tool's "scheduled" span and the start of its
+# "completed" span (observed deltas are within +/- 1ms; allow some slack).
+ASYNC_PAIRING_TOLERANCE = timedelta(milliseconds=50)
+
+
+def _is_pending_async_span(ces_span: Dict[str, Any]) -> bool:
+    """Returns True for the 'scheduled' span CES records when an async tool is started."""
+    attrs = ces_span.get("attributes")
+    if not isinstance(attrs, dict):
+        return False
+    response = attrs.get("response")
+    return isinstance(response, dict) and response.get("result") == "pending"
+
+
+def _iter_spans(span: Any):
+    """Yields a CES span and all of its descendants."""
+    if not isinstance(span, dict):
+        return
+    yield span
+    for child in span.get("childSpans") or []:
+        yield from _iter_spans(child)
+
+
+def pair_async_tool_spans(
+    turns: List[Dict[str, Any]]
+) -> List[Tuple[Dict[str, Any], Dict[str, Any]]]:
+    """Pairs each completed 'Async Tool' span with the 'scheduled' span that started it.
+
+    CES records an async tool twice: a ~0ms 'scheduled' span (response {"result": "pending"})
+    in the turn that started it, and a 'completed' span (the background run, starting where the
+    scheduled span ends) in a later turn. Pairing uses:
+    1. the shared 'tool call id' (LLM-started async tools), else
+    2. the same tool name, choosing the latest unpaired scheduled span that started no later
+       than the completed span (callback-started async tools, where CES only sets a tool call
+       id on the completed span).
+
+    Returns a list of (completed_span, scheduled_span) pairs.
+    """
+    scheduled: List[Tuple[Dict[str, Any], int]] = []
+    completed: List[Tuple[Dict[str, Any], int]] = []
+    for turn_idx, turn in enumerate(turns):
+        if not isinstance(turn, dict):
+            continue
+        for span in _iter_spans(turn.get("rootSpan")):
+            if span.get("name") != ASYNC_TOOL_SPAN_NAME:
+                continue
+            (scheduled if _is_pending_async_span(span) else completed).append((span, turn_idx))
+
+    def attrs_of(span: Dict[str, Any]) -> Dict[str, Any]:
+        return span.get("attributes") if isinstance(span.get("attributes"), dict) else {}
+
+    pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]] = []
+    used: set = set()
+    for done, done_turn in completed:
+        done_attrs = attrs_of(done)
+        done_tcid = done_attrs.get("tool call id")
+        done_start = parse_time(done.get("startTime"))
+        match = None
+        if isinstance(done_tcid, str) and done_tcid:
+            for sched, _ in scheduled:
+                if id(sched) not in used and attrs_of(sched).get("tool call id") == done_tcid:
+                    match = sched
+                    break
+        if match is None and done_start is not None:
+            best_start = None
+            for sched, sched_turn in scheduled:
+                if id(sched) in used or sched_turn > done_turn:
+                    continue
+                sched_attrs = attrs_of(sched)
+                if sched_attrs.get("name") != done_attrs.get("name"):
+                    continue
+                sched_tcid = sched_attrs.get("tool call id")
+                if isinstance(sched_tcid, str) and sched_tcid and sched_tcid != done_tcid:
+                    continue
+                sched_start = parse_time(sched.get("startTime"))
+                if sched_start is None or sched_start > done_start + ASYNC_PAIRING_TOLERANCE:
+                    continue
+                if best_start is None or sched_start > best_start:
+                    match, best_start = sched, sched_start
+        if match is not None:
+            used.add(id(match))
+            pairs.append((done, match))
+    return pairs
+
+
+def async_span_id_overrides(
+    pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]]
+) -> Dict[int, str]:
+    """Gives a scheduled span that shares its 'tool call id' with its completed span a distinct ID.
+
+    The completed span (the actual run) keeps SHA256(tool_call_id) so downstream calls made by the
+    async tool with a traceparent derived from context.function_call_id attach to it; the
+    scheduled span gets SHA256('{tool_call_id}/scheduled'). Keyed by id(scheduled_span).
+    """
+    overrides: Dict[int, str] = {}
+    for done, sched in pairs:
+        done_attrs = done.get("attributes") if isinstance(done.get("attributes"), dict) else {}
+        sched_attrs = sched.get("attributes") if isinstance(sched.get("attributes"), dict) else {}
+        tcid = sched_attrs.get("tool call id")
+        if isinstance(tcid, str) and tcid and tcid == done_attrs.get("tool call id"):
+            overrides[id(sched)] = hash_to_span_id(f"{tcid}/scheduled")
+    return overrides
 
 
 def parse_conversation_resource(resource_name: str) -> Optional[Dict[str, str]]:
@@ -360,16 +543,37 @@ def _convert_children(
     parent_span_id: str,
     fallback_start: datetime,
     redact_pii: bool = False,
+    span_id_overrides: Optional[Dict[int, str]] = None,
+    converted: Optional[Dict[int, Dict[str, Any]]] = None,
+    parent_ces_span: Optional[Dict[str, Any]] = None,
+    used_span_ids: Optional[set] = None,
 ) -> List[Dict[str, Any]]:
-    """Recursively converts child CES spans into normalized Cloud Trace span dictionaries."""
+    """Recursively converts child CES spans into normalized Cloud Trace span dictionaries.
+
+    span_id_overrides maps id(ces_span) to a precomputed span ID; converted (if given) is filled
+    with id(ces_span) -> converted span so callers can re-parent spans afterwards. parent_ces_span
+    is the CES span whose childSpans are being converted (its stdout may carry traceparent hints).
+    used_span_ids collects assigned IDs so a propagated ID is never adopted twice.
+    """
     spans: List[Dict[str, Any]] = []
     if not isinstance(ces_spans, list):
         return spans
+    if used_span_ids is None:
+        used_span_ids = set()
 
+    call_numbers = tool_call_numbers(ces_spans)
+    hints = parse_traceparent_hints(parent_ces_span, trace_id)
     for ces_span in ces_spans:
         if not isinstance(ces_span, dict):
             continue
-        span_id = get_span_id(ces_span, parent_span_id)
+        call_number = call_numbers.get(id(ces_span), 1)
+        span_id = (span_id_overrides or {}).get(id(ces_span))
+        if not span_id:
+            adopted = propagated_span_id(ces_span, trace_id, hints, call_number)
+            span_id = adopted if adopted and adopted not in used_span_ids else None
+        if not span_id:
+            span_id = get_span_id(ces_span, parent_span_id, call_number)
+        used_span_ids.add(span_id)
         pb_span = _convert_ces_span(
             ces_span,
             project_id=project_id,
@@ -380,6 +584,8 @@ def _convert_children(
             redact_pii=redact_pii,
         )
         spans.append(pb_span)
+        if converted is not None:
+            converted[id(ces_span)] = pb_span
         child_spans = ces_span.get("childSpans")
         if isinstance(child_spans, list) and child_spans:
             spans.extend(
@@ -390,6 +596,10 @@ def _convert_children(
                     parent_span_id=span_id,
                     fallback_start=pb_span["start_time"],
                     redact_pii=redact_pii,
+                    span_id_overrides=span_id_overrides,
+                    converted=converted,
+                    parent_ces_span=ces_span,
+                    used_span_ids=used_span_ids,
                 )
             )
     return spans
@@ -683,6 +893,12 @@ def convert_to_trace_spans(
         if isinstance(t_idx, (int, float)) and not isinstance(t_idx, bool):
             ces_turn_logs[int(t_idx)] = entry
 
+    # Async tools are recorded twice by CES (scheduled + completed); pair them up front.
+    async_pairs = pair_async_tool_spans(turns)
+    async_overrides = async_span_id_overrides(async_pairs)
+    converted: Dict[int, Dict[str, Any]] = {}
+    used_span_ids = {s["span_id"] for s in spans}
+
     for i, turn in enumerate(turns):
         if not isinstance(turn, dict):
             continue
@@ -752,8 +968,20 @@ def convert_to_trace_spans(
                     parent_span_id=turn_span_id,
                     fallback_start=pb_span["start_time"],
                     redact_pii=redact_pii,
+                    span_id_overrides=async_overrides,
+                    converted=converted,
+                    parent_ces_span=turn_root_span,
+                    used_span_ids=used_span_ids,
                 )
             )
+
+    # Re-parent each completed async tool span (the background run) under the scheduled span that
+    # started it, so the trace shows Turn N -> Async Tool (scheduled) -> Async Tool (run).
+    for done, sched in async_pairs:
+        done_span = converted.get(id(done))
+        sched_span = converted.get(id(sched))
+        if done_span is not None and sched_span is not None:
+            done_span["parent_span_id"] = sched_span["span_id"]
 
     return spans
 
