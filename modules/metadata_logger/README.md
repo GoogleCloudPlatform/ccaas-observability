@@ -46,7 +46,7 @@ metadata_logger = {
   image_url          = "us-central1-docker.pkg.dev/my-gcs-storage-project/my-repo/metadata-logger:latest"
 
   path_configs = {
-    "gs://ccaip-iva-artifact-9a/metadata/" = {
+    "gs://my-ccaas-artifacts-bucket/metadata/" = {
       ccaas_project_id        = "my-gcs-storage-project"
       ccaas_resource_location = "us-central1"
       ccaas_resource_id       = "iva"

@@ -17,7 +17,7 @@
   "rating": null,
   "has_feedback": false,
   "out_ticket_id": null,
-  "out_ticket_url": "https://media.ccaiplatform.com/v1/download/88900e6a-76cd-449d-87c6-0524afdbf877",
+  "out_ticket_url": "https://media.ccaiplatform.com/v1/download/00000000-0000-4000-8000-000000000001",
   "is_out_ticket_account": false,
   "fail_reason": null,
   "provider_type": "twilio_conversations",

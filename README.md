@@ -106,7 +106,7 @@ project.
         retention_days = 30
       }
       path_configs = {
-        "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/" = {
+        "gs://<CCAAS_ARTIFACT_BUCKET>/<CCAAS_INSTANCE_FOLDER>/metadata/" = {
           ccaas_project_id        = "<TARGET_PROJECT_ID>"
           ccaas_resource_location = "europe-west1"
           ccaas_resource_id       = "iva"

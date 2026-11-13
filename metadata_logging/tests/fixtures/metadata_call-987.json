@@ -18,11 +18,11 @@
   "rating": null,
   "has_feedback": false,
   "voip_provider": "deprecated",
-  "out_ticket_id": "500ak00001nkg4MAAQ",
-  "out_ticket_url": "https://crm.example.com/lightning/r/Case/500ak00001nkg4MAAQ/view",
+  "out_ticket_id": "500000000000002AAA",
+  "out_ticket_url": "https://crm.example.com/lightning/r/Case/500000000000002AAA/view",
   "is_out_ticket_account": false,
   "verified": false,
-  "recording_url": "https://crm.example.com/sfc/servlet.shepherd/version/download/068ak00000G9TrBAAV",
+  "recording_url": "https://crm.example.com/sfc/servlet.shepherd/version/download/068000000000002AAA",
   "recording_permission": "granted",
   "voicemail_reason": "not_voicemail",
   "deflection": "no_deflection",
@@ -58,7 +58,7 @@
   "end_user": {
     "id": 42,
     "identifier": "91237416-3705-4a43-b3d5-a99278016d75",
-    "out_contact_id": "003ak00000ipFq5AAE"
+    "out_contact_id": "003000000000001AAA"
   },
   "photos": [],
   "videos": [],

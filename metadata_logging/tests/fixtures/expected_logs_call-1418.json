@@ -4,7 +4,7 @@
     "jsonPayload": {
       "event": {
         "name": "call_created",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -19,20 +19,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:12:51Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "ec76f24bce9bcc1310148870f625bdb4",
     "jsonPayload": {
       "event": {
         "name": "call_queued",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -47,20 +47,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:28Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "4b0273736c725e3acbce017e78c86cc2",
     "jsonPayload": {
       "event": {
         "name": "call_assigned",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -75,20 +75,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:31Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "a66dd67e52e0ea70135e3ab503d0017a",
     "jsonPayload": {
       "event": {
         "name": "call_connected",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -103,20 +103,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:13:36Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "35554b5041de316946030923440db7cb",
     "jsonPayload": {
       "event": {
         "name": "call_ended",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -147,20 +147,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:46Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "9f78ff2c4316f2e7eb3cafe5eb383212",
     "jsonPayload": {
       "event": {
         "name": "call_updated",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -175,20 +175,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:58Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "a860225d05e7353e9e2638658733d6f8",
     "jsonPayload": {
       "event": {
         "name": "virtual_agent_session_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -223,20 +223,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:13:36Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "296cd604b7859df2186e92b1c0ca2492",
     "jsonPayload": {
       "event": {
         "name": "virtual_agent_session_ended",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -278,20 +278,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:26Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "5f69a834f01749251c97339b8d27e0d2",
     "jsonPayload": {
       "event": {
         "name": "consumer_handle_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -309,20 +309,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:12:51Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "963bdd1ead34ceeda87765bad9f70cb7",
     "jsonPayload": {
       "event": {
         "name": "consumer_handle_ended",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -342,20 +342,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:58Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "f140dfb9f6e6cea5c4e45a7becffc73e",
     "jsonPayload": {
       "event": {
         "name": "consumer_in_menu_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -376,20 +376,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:12:51Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "93f605c9d83c0586dda5d3e0f005bf2f",
     "jsonPayload": {
       "event": {
         "name": "consumer_in_menu_ended",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -412,20 +412,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:13:28Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "d63381f3f0f137e6bd06c7a13f5135cf",
     "jsonPayload": {
       "event": {
         "name": "participant_connected",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -457,20 +457,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:12:51Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "07c8f6056e90391a23d0ec7570a679fa",
     "jsonPayload": {
       "event": {
         "name": "participant_left",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -507,20 +507,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:58Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "5bf69f87a3add8d68dcd3afcb11ee774",
     "jsonPayload": {
       "event": {
         "name": "participant_connected",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -568,20 +568,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:13:36Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "d4d1e2dde3f4bc472253eaff8ad2994d",
     "jsonPayload": {
       "event": {
         "name": "participant_left",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -634,20 +634,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:26Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "ca7857d6fa3a7e3391e20a3f8146ad46",
     "jsonPayload": {
       "event": {
         "name": "participant_connected",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -693,20 +693,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:37Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "2ae5d69cdc359a141e663f7ff06582ed",
     "jsonPayload": {
       "event": {
         "name": "participant_left",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -757,20 +757,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:09Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "f2f69fd781aef72a2762770fd32dab0b",
     "jsonPayload": {
       "event": {
         "name": "participant_connected",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -819,20 +819,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:26Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "d75d4286254949f0c412f7a64306baf9",
     "jsonPayload": {
       "event": {
         "name": "participant_left",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -886,20 +886,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:46Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "9a9e8a5cf62ac0479d9cc3ca5196e1e0",
     "jsonPayload": {
       "event": {
         "name": "participant_connected",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -932,20 +932,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:48Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "669a15673554438e498467d980656e8a",
     "jsonPayload": {
       "event": {
         "name": "participant_left",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -983,20 +983,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:36Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "e7ad13b02ad2a2736971ea0cfe57f355",
     "jsonPayload": {
       "event": {
         "name": "recording_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1028,20 +1028,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:41Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "0a8520a91c3eb8971e2c2c6e7833b5e5",
     "jsonPayload": {
       "event": {
         "name": "queue_entry_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1065,20 +1065,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:29Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "5967db34065253556e4fb96d20723b7f",
     "jsonPayload": {
       "event": {
         "name": "queue_entry_completed",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1108,20 +1108,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:38Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "54b8bf1edfd65536d0be1cd95eaba659",
     "jsonPayload": {
       "event": {
         "name": "queue_entry_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1145,20 +1145,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:03Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "1a35ffe25aa4c0549762309bbcf51e50",
     "jsonPayload": {
       "event": {
         "name": "queue_entry_completed",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1188,20 +1188,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:21Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "e6e90ec473d918351f533b0641e6aa44",
     "jsonPayload": {
       "event": {
         "name": "session_transfer_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1253,20 +1253,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:03Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "2be54cb476bbdc16d7f30be393e184b8",
     "jsonPayload": {
       "event": {
         "name": "session_transfer_connected",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1322,20 +1322,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:26Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "4a555d752b1edbafafb26212ab015e58",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1363,20 +1363,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:14:37Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "b1c1fee1369c5609aa54eeaeb7aa22aa",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_completed",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1408,20 +1408,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:09Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "7f58fcfcd3266b9a0180f01a0e7728cc",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1449,20 +1449,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:09Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "b59e0fa57b6d62f6cc4acf4c0097adc4",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_completed",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1494,20 +1494,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:17Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "6f2d5b9f9df582c850ef3e838bb72193",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1535,20 +1535,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:15:26Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "979db39f7774e67c527401dbc262fdbb",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_completed",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1580,20 +1580,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:46Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "c0d6305394b9a6d8bb1edcb7ca17a936",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1621,20 +1621,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:46Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "2f16ce76ede8f3a9791b4132efe25e5d",
     "jsonPayload": {
       "event": {
         "name": "agent_handle_completed",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1666,20 +1666,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:52Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "6828ee30e466bd2225b2f86d95c58147",
     "jsonPayload": {
       "event": {
         "name": "csat_session_started",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1701,20 +1701,20 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:47Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   },
   {
     "insertId": "08725495257ce90b1804f8acf8bf0485",
     "jsonPayload": {
       "event": {
         "name": "csat_session_completed",
-        "gcs_source": "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
         "payload": {
           "call": {
             "id": 1418,
@@ -1739,12 +1739,12 @@
       "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
       "labels": {
         "location": "europe-west1",
-        "resource_container": "ccaip-probing-infra-u8xi7u",
+        "resource_container": "example-ccaas-project",
         "resource_id": "iva"
       }
     },
     "timestamp": "2026-03-23T20:16:57Z",
     "severity": "INFO",
-    "logName": "projects/ccaip-probing-infra-u8xi7u/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
   }
 ]

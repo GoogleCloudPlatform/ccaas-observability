@@ -37,7 +37,7 @@ resource "google_logging_metric" "ccaas_version_updates" {
     labels {
       key         = "domain_prefix"
       value_type  = "STRING"
-      description = "CCaaS tenant domain prefix (e.g. yt-biztech, yt-delorean-uat)."
+      description = "CCaaS tenant domain prefix (e.g. acme-prod, acme-uat)."
     }
   }
 
