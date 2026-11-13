@@ -1,0 +1,1750 @@
+[
+  {
+    "insertId": "4575e79e5fd51d5d078b26edd1d29f40",
+    "jsonPayload": {
+      "event": {
+        "name": "call_created",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: call_created (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:12:51Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "ec76f24bce9bcc1310148870f625bdb4",
+    "jsonPayload": {
+      "event": {
+        "name": "call_queued",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: call_queued (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:28Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "4b0273736c725e3acbce017e78c86cc2",
+    "jsonPayload": {
+      "event": {
+        "name": "call_assigned",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: call_assigned (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:31Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "a66dd67e52e0ea70135e3ab503d0017a",
+    "jsonPayload": {
+      "event": {
+        "name": "call_connected",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: call_connected (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:13:36Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "35554b5041de316946030923440db7cb",
+    "jsonPayload": {
+      "event": {
+        "name": "call_ended",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en",
+            "status": "finished"
+          },
+          "details": {
+            "rating": 5,
+            "feedback": null,
+            "fail_reason": "nothing",
+            "fail_details": null,
+            "sub_status": null,
+            "disconnected_by": "disconnected_by_agent",
+            "wait_duration": 27,
+            "call_duration": 126,
+            "hold_duration": 5,
+            "in_queue_wait_time_va": null,
+            "automation_redirection": null,
+            "has_virtual_agent_handle": true,
+            "has_human_agent_handle": true
+          }
+        }
+      },
+      "message": "Milestone: call_ended (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:46Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "9f78ff2c4316f2e7eb3cafe5eb383212",
+    "jsonPayload": {
+      "event": {
+        "name": "call_updated",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: call_updated (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:58Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "a860225d05e7353e9e2638658733d6f8",
+    "jsonPayload": {
+      "event": {
+        "name": "virtual_agent_session_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "virtual_agent": {
+            "id": 6,
+            "name": "ccaas_escalation_va",
+            "va_alias": null,
+            "avatar_url": "https://avatar.example.com/virtual_agent/avatar/6/avatar.png"
+          },
+          "virtual_agent_session": {
+            "id": 1069,
+            "virtual_agent": {
+              "id": 6,
+              "name": "ccaas_escalation_va",
+              "va_alias": null,
+              "avatar_url": "https://avatar.example.com/virtual_agent/avatar/6/avatar.png"
+            },
+            "initiated_by": "end_user",
+            "menu_path_id": 30,
+            "menu_path": "test_va_escalations",
+            "lang": "en",
+            "transfer": false
+          }
+        }
+      },
+      "message": "Milestone: virtual_agent_session_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:13:36Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "296cd604b7859df2186e92b1c0ca2492",
+    "jsonPayload": {
+      "event": {
+        "name": "virtual_agent_session_ended",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "virtual_agent": {
+            "id": 6,
+            "name": "ccaas_escalation_va",
+            "va_alias": null,
+            "avatar_url": "https://avatar.example.com/virtual_agent/avatar/6/avatar.png"
+          },
+          "virtual_agent_session": {
+            "id": 1069,
+            "virtual_agent": {
+              "id": 6,
+              "name": "ccaas_escalation_va",
+              "va_alias": null,
+              "avatar_url": "https://avatar.example.com/virtual_agent/avatar/6/avatar.png"
+            },
+            "call_duration": 50,
+            "escalation_reason": "by_virtual_agent",
+            "finish_reason": "escalated",
+            "sentiment": 52,
+            "response_count": 3,
+            "fallback_response_count": 0,
+            "initiated_by": "end_user",
+            "menu_path_id": 30,
+            "menu_path": "test_va_escalations",
+            "lang": "en",
+            "transfer": false,
+            "transfer_id": null
+          }
+        }
+      },
+      "message": "Milestone: virtual_agent_session_ended (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:26Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "5f69a834f01749251c97339b8d27e0d2",
+    "jsonPayload": {
+      "event": {
+        "name": "consumer_handle_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "consumer_handle": {
+            "id": 997
+          }
+        }
+      },
+      "message": "Milestone: consumer_handle_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:12:51Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "963bdd1ead34ceeda87765bad9f70cb7",
+    "jsonPayload": {
+      "event": {
+        "name": "consumer_handle_ended",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "consumer_handle": {
+            "id": 997,
+            "call_duration": 247,
+            "hold_duration": 13
+          }
+        }
+      },
+      "message": "Milestone: consumer_handle_ended (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:58Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "f140dfb9f6e6cea5c4e45a7becffc73e",
+    "jsonPayload": {
+      "event": {
+        "name": "consumer_in_menu_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "consumer_in_menu": {
+            "id": 1188,
+            "menu_path_id": null,
+            "menu_path": "/",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: consumer_in_menu_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:12:51Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "93f605c9d83c0586dda5d3e0f005bf2f",
+    "jsonPayload": {
+      "event": {
+        "name": "consumer_in_menu_ended",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "consumer_in_menu": {
+            "id": 1188,
+            "duration": 37,
+            "event": "finished",
+            "menu_path_id": null,
+            "menu_path": "/",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: consumer_in_menu_ended (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:13:28Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "8584171c7439f6b8dec3cfd72dda702c",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_connected",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2915,
+            "type": "end_user",
+            "entry_type": "queue_or_transfer",
+            "user_id": null,
+            "end_user_id": 42,
+            "virtual_agent_id": null,
+            "phone_number": "+15550100100",
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "call_id": 1418,
+            "hold_duration": 13,
+            "agent_assist": null,
+            "virtual_agent": null
+          }
+        }
+      },
+      "message": "Milestone: participant_connected (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:12:51Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "015148e6040158260f45ea37019911f3",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_left",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2915,
+            "type": "end_user",
+            "entry_type": "queue_or_transfer",
+            "user_id": null,
+            "end_user_id": 42,
+            "virtual_agent_id": null,
+            "status": "finished",
+            "fail_reason": "nothing",
+            "phone_number": "+15550100100",
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "call_id": 1418,
+            "call_duration": 247,
+            "hold_duration": 13,
+            "agent_assist": null,
+            "virtual_agent": null,
+            "adapter_fail_code": null,
+            "adapter_fail_message": null
+          }
+        }
+      },
+      "message": "Milestone: participant_left (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:58Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "5bf69f87a3add8d68dcd3afcb11ee774",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_connected",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2916,
+            "type": "virtual_agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": null,
+            "end_user_id": null,
+            "virtual_agent_id": 6,
+            "virtual_agent_params": {
+              "payload_menu_id": "4",
+              "payload_escalation_reason": "by_virtual_agent",
+              "payload_action": "escalation",
+              "payload_type": "action",
+              "call_id": 1418,
+              "ani": "+15550100100",
+              "dnis": "+15550100300",
+              "queue_id": 25,
+              "lang": "en",
+              "application": "ccaip-incub-stg-br6n03v",
+              "escalation_type": "custom_payload",
+              "tenant": "ccaip-incub-stg-br6n03v",
+              "concat": "_"
+            },
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "call_id": 1418,
+            "hold_duration": null,
+            "agent_assist": null,
+            "virtual_agent": {
+              "conversation_id": "103HyRtV2H6STKbPL6lIZ5Hcg"
+            }
+          }
+        }
+      },
+      "message": "Milestone: participant_connected (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:13:36Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "d4d1e2dde3f4bc472253eaff8ad2994d",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_left",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2916,
+            "type": "virtual_agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": null,
+            "end_user_id": null,
+            "virtual_agent_id": 6,
+            "virtual_agent_params": {
+              "payload_menu_id": "4",
+              "payload_escalation_reason": "by_virtual_agent",
+              "payload_action": "escalation",
+              "payload_type": "action",
+              "call_id": 1418,
+              "ani": "+15550100100",
+              "dnis": "+15550100300",
+              "queue_id": 25,
+              "lang": "en",
+              "application": "ccaip-incub-stg-br6n03v",
+              "escalation_type": "custom_payload",
+              "tenant": "ccaip-incub-stg-br6n03v",
+              "concat": "_"
+            },
+            "status": "finished",
+            "fail_reason": "nothing",
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "call_id": 1418,
+            "call_duration": 50,
+            "hold_duration": null,
+            "agent_assist": null,
+            "virtual_agent": {
+              "conversation_id": "103HyRtV2H6STKbPL6lIZ5Hcg"
+            },
+            "adapter_fail_code": null,
+            "adapter_fail_message": null
+          }
+        }
+      },
+      "message": "Milestone: participant_left (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:26Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "6a723e2003e8e68716ac6b41506ee2ad",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_connected",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2917,
+            "type": "agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": 5,
+            "end_user_id": null,
+            "virtual_agent_id": null,
+            "sip_headers": null,
+            "location": {
+              "created_at": "2025-10-17T15:32:47Z",
+              "id": 2,
+              "lang": "en",
+              "location": "en-US",
+              "pop_settings": {
+                "twilio": [],
+                "nexmo": [],
+                "telnyx": []
+              },
+              "updated_at": "2025-10-17T15:32:47Z"
+            },
+            "location_id": 2,
+            "email": "jane.smith@example.com",
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "middle_name": null,
+            "teams": [],
+            "call_id": 1418,
+            "hold_duration": null,
+            "agent_assist": null,
+            "virtual_agent": null
+          }
+        }
+      },
+      "message": "Milestone: participant_connected (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:37Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "875034efab7b902b6444b64c98df235d",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_left",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2917,
+            "type": "agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": 5,
+            "end_user_id": null,
+            "virtual_agent_id": null,
+            "status": "finished",
+            "fail_reason": "nothing",
+            "sip_headers": null,
+            "location": {
+              "created_at": "2025-10-17T15:32:47Z",
+              "id": 2,
+              "lang": "en",
+              "location": "en-US",
+              "pop_settings": {
+                "twilio": [],
+                "nexmo": [],
+                "telnyx": []
+              },
+              "updated_at": "2025-10-17T15:32:47Z"
+            },
+            "location_id": 2,
+            "email": "jane.smith@example.com",
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "middle_name": null,
+            "teams": [],
+            "call_id": 1418,
+            "call_duration": 32,
+            "hold_duration": null,
+            "agent_assist": null,
+            "virtual_agent": null,
+            "adapter_fail_code": null,
+            "adapter_fail_message": null
+          }
+        }
+      },
+      "message": "Milestone: participant_left (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:09Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "9c9ef47705309a3c7d6b63c24a0330b9",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_connected",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2918,
+            "type": "agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": 5,
+            "end_user_id": null,
+            "virtual_agent_id": null,
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "location": {
+              "created_at": "2025-10-17T15:32:47Z",
+              "id": 2,
+              "lang": "en",
+              "location": "en-US",
+              "pop_settings": {
+                "twilio": [],
+                "nexmo": [],
+                "telnyx": []
+              },
+              "updated_at": "2025-10-17T15:32:47Z"
+            },
+            "location_id": 2,
+            "email": "jane.smith@example.com",
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "middle_name": null,
+            "teams": [],
+            "call_id": 1418,
+            "hold_duration": 50,
+            "agent_assist": null,
+            "virtual_agent": null
+          }
+        }
+      },
+      "message": "Milestone: participant_connected (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:26Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "53262230c6901a04abd65f4aa71b6002",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_left",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2918,
+            "type": "agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": 5,
+            "end_user_id": null,
+            "virtual_agent_id": null,
+            "status": "finished",
+            "fail_reason": "nothing",
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "location": {
+              "created_at": "2025-10-17T15:32:47Z",
+              "id": 2,
+              "lang": "en",
+              "location": "en-US",
+              "pop_settings": {
+                "twilio": [],
+                "nexmo": [],
+                "telnyx": []
+              },
+              "updated_at": "2025-10-17T15:32:47Z"
+            },
+            "location_id": 2,
+            "email": "jane.smith@example.com",
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "middle_name": null,
+            "teams": [],
+            "call_id": 1418,
+            "call_duration": 80,
+            "hold_duration": 50,
+            "agent_assist": null,
+            "virtual_agent": null,
+            "adapter_fail_code": null,
+            "adapter_fail_message": null
+          }
+        }
+      },
+      "message": "Milestone: participant_left (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:46Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "9a9e8a5cf62ac0479d9cc3ca5196e1e0",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_connected",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2919,
+            "type": "task_virtual_agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": null,
+            "end_user_id": null,
+            "virtual_agent_id": 15,
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "call_id": 1418,
+            "hold_duration": null,
+            "agent_assist": null,
+            "virtual_agent": {
+              "conversation_id": "103Fk3GhZjORM6UqmdIJD2jqg"
+            }
+          }
+        }
+      },
+      "message": "Milestone: participant_connected (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:48Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "669a15673554438e498467d980656e8a",
+    "jsonPayload": {
+      "event": {
+        "name": "participant_left",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "participant": {
+            "id": 2919,
+            "type": "task_virtual_agent",
+            "entry_type": "queue_or_transfer",
+            "user_id": null,
+            "end_user_id": null,
+            "virtual_agent_id": 15,
+            "status": "finished",
+            "fail_reason": "nothing",
+            "sip_headers": {
+              "P-Attestation-Indicator": "A",
+              "P-Origination-ID": "96bf53ff-ac44-4ce8-94d1-129bbe7ddc2d"
+            },
+            "call_id": 1418,
+            "call_duration": 48,
+            "hold_duration": null,
+            "agent_assist": null,
+            "virtual_agent": {
+              "conversation_id": "103Fk3GhZjORM6UqmdIJD2jqg"
+            },
+            "adapter_fail_code": null,
+            "adapter_fail_message": null
+          }
+        }
+      },
+      "message": "Milestone: participant_left (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:36Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "e7ad13b02ad2a2736971ea0cfe57f355",
+    "jsonPayload": {
+      "event": {
+        "name": "recording_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "recording_id": 1085,
+          "recording_type": "default",
+          "recording": {
+            "id": 1085,
+            "call_id": 1418,
+            "conference_sid": "1a251a25-534d-412b-b4b9-8245462c9125",
+            "recording_type": "default",
+            "redaction_times": [
+              {
+                "start": "2026-03-23T20:15:35Z",
+                "start_agent_id": 5,
+                "end": "2026-03-23T20:15:38Z",
+                "duration": 2.94,
+                "end_agent_id": 5
+              }
+            ]
+          }
+        }
+      },
+      "message": "Milestone: recording_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:41Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "0a8520a91c3eb8971e2c2c6e7833b5e5",
+    "jsonPayload": {
+      "event": {
+        "name": "queue_entry_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "queue_entry": {
+            "id": 324,
+            "lang": "en",
+            "menu_path_id": 4,
+            "menu_path": "va-escalation_menu_id",
+            "service_level_abandon_time_threshold": 8,
+            "service_level_target_percent": 90,
+            "service_level_target_time": 60
+          }
+        }
+      },
+      "message": "Milestone: queue_entry_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:29Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "5967db34065253556e4fb96d20723b7f",
+    "jsonPayload": {
+      "event": {
+        "name": "queue_entry_completed",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "queue_entry": {
+            "id": 324,
+            "agent_id": 5,
+            "lang": "en",
+            "menu_path_id": 4,
+            "menu_path": "va-escalation_menu_id",
+            "queue_duration": 9,
+            "transfer_cold": null,
+            "transfer": false,
+            "transfer_id": null,
+            "service_level_abandon_time_threshold": 8,
+            "service_level_event": "in_sla",
+            "service_level_target_percent": 90,
+            "service_level_target_time": 60
+          }
+        }
+      },
+      "message": "Milestone: queue_entry_completed (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:38Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "54b8bf1edfd65536d0be1cd95eaba659",
+    "jsonPayload": {
+      "event": {
+        "name": "queue_entry_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "queue_entry": {
+            "id": 325,
+            "lang": "en",
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "service_level_abandon_time_threshold": 8,
+            "service_level_target_percent": 90,
+            "service_level_target_time": 60
+          }
+        }
+      },
+      "message": "Milestone: queue_entry_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:03Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "1a35ffe25aa4c0549762309bbcf51e50",
+    "jsonPayload": {
+      "event": {
+        "name": "queue_entry_completed",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "queue_entry": {
+            "id": 325,
+            "agent_id": 5,
+            "lang": "en",
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "queue_duration": 18,
+            "transfer_cold": true,
+            "transfer": true,
+            "transfer_id": 12,
+            "service_level_abandon_time_threshold": 8,
+            "service_level_event": "in_sla",
+            "service_level_target_percent": 90,
+            "service_level_target_time": 60
+          }
+        }
+      },
+      "message": "Milestone: queue_entry_completed (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:21Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "77ffcea24a2ddba780902bb9d822e281",
+    "jsonPayload": {
+      "event": {
+        "name": "session_transfer_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "transfer": {
+            "id": 12,
+            "deflection": "no_deflection",
+            "answer_type_path": "manual_to_manual",
+            "from_menu_path": {
+              "items_count": 1,
+              "name": "va-escalation_menu_id",
+              "materialized_path": "4"
+            },
+            "to_menu_path": {
+              "items_count": 2,
+              "name": "menu-path-test/optional-dispositions_menu-8",
+              "materialized_path": "6/8"
+            },
+            "from_agent": {
+              "id": 5,
+              "agent_number": null,
+              "email": "jane.smith@example.com",
+              "name": "Jane Smith",
+              "last_name": "Smith",
+              "first_name": "Jane",
+              "avatar_url": "https://avatar.example.com/user/avatar/5/avatar.png"
+            },
+            "to_agent": {
+              "id": 5,
+              "agent_number": null,
+              "email": "jane.smith@example.com",
+              "name": "Jane Smith",
+              "last_name": "Smith",
+              "first_name": "Jane",
+              "avatar_url": "https://avatar.example.com/user/avatar/5/avatar.png"
+            },
+            "from_virtual_agent": null,
+            "to_virtual_agent": null,
+            "from_queue_priority_level": 0,
+            "to_queue_priority_level": 0
+          }
+        }
+      },
+      "message": "Milestone: session_transfer_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:03Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "49efd1bb2277bfbe0d5cb65fbbf76368",
+    "jsonPayload": {
+      "event": {
+        "name": "session_transfer_connected",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "transfer": {
+            "id": 12,
+            "status": "transferred",
+            "fail_reason": "nothing",
+            "call_duration": 87,
+            "wait_duration": 18,
+            "deflection": "no_deflection",
+            "answer_type_path": "manual_to_manual",
+            "from_menu_path": {
+              "items_count": 1,
+              "name": "va-escalation_menu_id",
+              "materialized_path": "4"
+            },
+            "to_menu_path": {
+              "items_count": 2,
+              "name": "menu-path-test/optional-dispositions_menu-8",
+              "materialized_path": "6/8"
+            },
+            "from_agent": {
+              "id": 5,
+              "agent_number": null,
+              "email": "jane.smith@example.com",
+              "name": "Jane Smith",
+              "last_name": "Smith",
+              "first_name": "Jane",
+              "avatar_url": "https://avatar.example.com/user/avatar/5/avatar.png"
+            },
+            "to_agent": {
+              "id": 5,
+              "agent_number": null,
+              "email": "jane.smith@example.com",
+              "name": "Jane Smith",
+              "last_name": "Smith",
+              "first_name": "Jane",
+              "avatar_url": "https://avatar.example.com/user/avatar/5/avatar.png"
+            },
+            "from_virtual_agent": null,
+            "to_virtual_agent": null,
+            "from_queue_priority_level": 0,
+            "to_queue_priority_level": 0
+          }
+        }
+      },
+      "message": "Milestone: session_transfer_connected (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:26Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "4a555d752b1edbafafb26212ab015e58",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 307,
+            "agent_id": 5,
+            "menu_path_id": 4,
+            "menu_path": "va-escalation_menu_id",
+            "lang": "en",
+            "barged": false,
+            "transfer": false,
+            "transfer_id": null,
+            "transfer_cold": null,
+            "scheduled_at": null,
+            "assigned_connection_duration": 6
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:14:37Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "b1c1fee1369c5609aa54eeaeb7aa22aa",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_completed",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 307,
+            "agent_id": 5,
+            "acw_duration": 0,
+            "bcw_duration": 0,
+            "call_duration": 32,
+            "menu_path_id": 4,
+            "menu_path": "va-escalation_menu_id",
+            "lang": "en",
+            "barged": false,
+            "transfer": false,
+            "transfer_id": null,
+            "transfer_cold": null,
+            "scheduled_at": null,
+            "hold_duration": 5,
+            "assigned_connection_duration": 6
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_completed (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:09Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "7f58fcfcd3266b9a0180f01a0e7728cc",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 308,
+            "agent_id": 5,
+            "menu_path_id": 4,
+            "menu_path": "va-escalation_menu_id",
+            "lang": "en",
+            "barged": false,
+            "transfer": false,
+            "transfer_id": null,
+            "transfer_cold": null,
+            "scheduled_at": null,
+            "assigned_connection_duration": 0
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:09Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "b59e0fa57b6d62f6cc4acf4c0097adc4",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_completed",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 308,
+            "agent_id": 5,
+            "acw_duration": 8,
+            "bcw_duration": 0,
+            "call_duration": 0,
+            "menu_path_id": 4,
+            "menu_path": "va-escalation_menu_id",
+            "lang": "en",
+            "barged": false,
+            "transfer": false,
+            "transfer_id": null,
+            "transfer_cold": null,
+            "scheduled_at": null,
+            "hold_duration": null,
+            "assigned_connection_duration": 0
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_completed (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:17Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "6f2d5b9f9df582c850ef3e838bb72193",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 309,
+            "agent_id": 5,
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "lang": "en",
+            "barged": false,
+            "transfer": true,
+            "transfer_id": 12,
+            "transfer_cold": true,
+            "scheduled_at": null,
+            "assigned_connection_duration": 5
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:15:26Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "979db39f7774e67c527401dbc262fdbb",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_completed",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 309,
+            "agent_id": 5,
+            "acw_duration": 0,
+            "bcw_duration": 0,
+            "call_duration": 80,
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "lang": "en",
+            "barged": false,
+            "transfer": true,
+            "transfer_id": 12,
+            "transfer_cold": true,
+            "scheduled_at": null,
+            "hold_duration": 0,
+            "assigned_connection_duration": 5
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_completed (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:46Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "c0d6305394b9a6d8bb1edcb7ca17a936",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 310,
+            "agent_id": 5,
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "lang": "en",
+            "barged": false,
+            "transfer": true,
+            "transfer_id": 12,
+            "transfer_cold": null,
+            "scheduled_at": null,
+            "assigned_connection_duration": 0
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:46Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "2f16ce76ede8f3a9791b4132efe25e5d",
+    "jsonPayload": {
+      "event": {
+        "name": "agent_handle_completed",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "agent_handle": {
+            "id": 310,
+            "agent_id": 5,
+            "acw_duration": 6,
+            "bcw_duration": 0,
+            "call_duration": 0,
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "lang": "en",
+            "barged": false,
+            "transfer": true,
+            "transfer_id": 12,
+            "transfer_cold": null,
+            "scheduled_at": null,
+            "hold_duration": null,
+            "assigned_connection_duration": 0
+          }
+        }
+      },
+      "message": "Milestone: agent_handle_completed (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:52Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "6828ee30e466bd2225b2f86d95c58147",
+    "jsonPayload": {
+      "event": {
+        "name": "csat_session_started",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "csat_session": {
+            "id": 80,
+            "type": "csat",
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "lang": "en"
+          }
+        }
+      },
+      "message": "Milestone: csat_session_started (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:47Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  },
+  {
+    "insertId": "08725495257ce90b1804f8acf8bf0485",
+    "jsonPayload": {
+      "event": {
+        "name": "csat_session_completed",
+        "gcs_source": "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json",
+        "payload": {
+          "call": {
+            "id": 1418,
+            "type": "Voice Inbound (IVR)",
+            "lang": "en"
+          },
+          "csat_session": {
+            "id": 80,
+            "duration": 10,
+            "type": "csat",
+            "event": "finished",
+            "menu_path_id": 8,
+            "menu_path": "menu-path-test/optional-dispositions_menu-8",
+            "lang": "en",
+            "rating": 5
+          }
+        }
+      },
+      "message": "Milestone: csat_session_completed (call 1418)"
+    },
+    "resource": {
+      "type": "contactcenteraiplatform.googleapis.com/ContactCenter",
+      "labels": {
+        "location": "europe-west1",
+        "resource_container": "example-ccaas-project",
+        "resource_id": "iva"
+      }
+    },
+    "timestamp": "2026-03-23T20:16:57Z",
+    "severity": "INFO",
+    "logName": "projects/example-ccaas-project/logs/contactcenteraiplatform.googleapis.com%2Fmetadata"
+  }
+]
