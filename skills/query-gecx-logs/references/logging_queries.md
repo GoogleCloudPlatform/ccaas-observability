@@ -111,7 +111,7 @@ When CCaaS (`ccai-insights-sa`, `Ruby` client) uploads completed calls or chats 
 | **CCaaS Event Logs** (`%2Fevents`) | `labels.tracker_id`<br>`jsonPayload.event.payload.participant.df_conversation_id` | `"chat_5580"`<br>`"119DaI5v0mCR1ywyTMSEjg0gw"` |
 | **Insights `UploadConversation` Audit Log** | `protoPayload.request.conversationId`<br>*(Note: `protoPayload.resourceName` is the parent location, NOT the conversation path)* | `"chat-5580"` |
 | **Insights `Get`/`UpdateConversation` Audit Log** | `protoPayload.resourceName` | `".../locations/us-central1/conversations/chat-5580"` |
-| **Insights Conversation Resource (`labels`)** | `labels.id` (CCaaS numeric ID)<br>`labels.dialogflow_conversation_id_1` (DF / CES Session ID)<br>`labels.out_ticket_id` (CRM / Salesforce Case ID) | `"5580"`<br>`"119DaI5v0mCR1ywyTMSEjg0gw"`<br>`"500DF00000PTvCiYAL"` |
+| **Insights Conversation Resource (`labels`)** | `labels.id` (CCaaS numeric ID)<br>`labels.dialogflow_conversation_id_1` (DF / CES Session ID)<br>`labels.out_ticket_id` (CRM / Salesforce Case ID) | `"5580"`<br>`"119DaI5v0mCR1ywyTMSEjg0gw"`<br>`"500000000000001AAA"` |
 
 1. **Trace the Insights `UploadConversation` / `UpdateConversation` audit logs by structured `conversationId`**:
    ```bash

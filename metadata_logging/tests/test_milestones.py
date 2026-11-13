@@ -13,7 +13,7 @@ from transform import extract_milestones, format_as_log_entry, is_metadata_updat
 class TestCCaASMilestoneExtraction(unittest.TestCase):
     def setUp(self):
         self.examples_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "fixtures"))
-        self.project_id = "ccaip-probing-infra-u8xi7u"
+        self.project_id = "example-ccaas-project"
         self.location = "europe-west1"
         self.resource_id = "iva"
 
@@ -48,15 +48,15 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
         self.assertEqual(actual_logs, expected_logs, f"Parsed log entries differ from expected golden output for {fixture_name}")
 
     def test_call_1418_milestones(self):
-        gcs_uri = "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-1418.json"
+        gcs_uri = "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json"
         self.run_regression_test("metadata_call-1418.json", "expected_logs_call-1418.json", gcs_uri)
 
     def test_call_987_milestones(self):
-        gcs_uri = "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/call-987.json"
+        gcs_uri = "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-987.json"
         self.run_regression_test("metadata_call-987.json", "expected_logs_call-987.json", gcs_uri)
 
     def test_chat_135_milestones(self):
-        gcs_uri = "gs://ccaip-iva-artifact-9a/iva-prober-gxjs4ra.ew1/metadata/chat-135.json"
+        gcs_uri = "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/chat-135.json"
         self.run_regression_test("metadata_chat-135.json", "expected_logs_chat-135.json", gcs_uri)
 
     def test_insert_id_stable_across_gcs_uri(self):

@@ -503,7 +503,7 @@ def update_config_file(config_path, sample_path, env_name, env_config, set_defau
 
 def main():
     parser = argparse.ArgumentParser(description="Discover Gemini for CX environment resources via native Google Cloud REST APIs.")
-    parser.add_argument("--project", required=True, help="GCP Project ID to inspect (e.g., ccaip-probing-infra-u8xi7u).")
+    parser.add_argument("--project", required=True, help="GCP Project ID to inspect (e.g., my-ccaas-project).")
     parser.add_argument("--env-name", help="Environment key name (e.g., probing). Defaults to auto-deduced name.")
     parser.add_argument("--config-path", default="gecx_environments.yaml", help="Path to gecx_environments.yaml.")
     parser.add_argument("--sample-path", default="gecx_environments.yaml.sample", help="Path to sample file.")

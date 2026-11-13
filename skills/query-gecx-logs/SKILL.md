@@ -209,7 +209,7 @@ CX Insights (formerly Contact Center AI Insights / CCAI Insights) processes call
 > 2. **CCaaS Post-Interaction Upload** (uploaded to the **CCaaS Insights target location**, e.g., `us-central1`): CCaaS uploads completed interactions via `UploadConversation` as `call-<ID>` or `chat-<ID>` (hyphenated CCaaS `labels.tracker_id="call_<ID>"` / `"chat_<ID>"`) and attaches structured correlation labels on the Insights Conversation resource:
 >    * `labels.id`: Numeric CCaaS interaction ID (e.g. `"5580"`)
 >    * `labels.dialogflow_conversation_id_1`: Linked Dialogflow / CES session ID (e.g. `"119DaI5v0mCR1ywyTMSEjg0gw"`, which links directly to the Path 1 Insights conversation in the agent/app's location!)
->    * `labels.out_ticket_id`: External CRM / Salesforce ticket ID (e.g. `"500DF00000PTvCiYAL"`)
+>    * `labels.out_ticket_id`: External CRM / Salesforce ticket ID (e.g. `"500000000000001AAA"`)
 
 #### A. Audit Logs (Data Access & Admin Activity)
 Captures conversation uploads, metadata updates, retrieval, deletion, and analysis operations:
