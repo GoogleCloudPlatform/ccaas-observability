@@ -153,15 +153,37 @@ def normalize_timestamps(obj):
         return [normalize_timestamps(item) for item in obj]
     return obj
 
+REDACTED = "<REDACTED>"
+
+# Keys holding phone numbers, compared after normalization (lowercase, without "_" and "-"), so that
+# e.g. phone_number, phoneNumber, caller-id and callerId all match.
+PHONE_KEYS = {"phonenumber", "phone", "mobile", "ani", "dnis", "callerid", "fromnumber", "tonumber"}
+# Keys whose whole value is redacted: SIP headers are carrier/origination data and may carry caller ID.
+REDACTED_OBJECT_KEYS = {"sipheaders"}
+# Keys redacted inside person objects (dicts containing any of PERSON_MARKER_KEYS).
+PERSON_KEYS = {"first_name", "middle_name", "last_name", "name", "email"}
+PERSON_MARKER_KEYS = {"first_name", "middle_name", "last_name", "email"}
+
+
+def _normalize_key(key):
+    return key.lower().replace("_", "").replace("-", "") if isinstance(key, str) else key
+
+
 def redact_pii_fields(val):
+    """Redacts PII in a milestone payload (values that are None stay None).
+
+    - Phone numbers: any key in PHONE_KEYS (e.g. phone_number, ani, dnis, callerId), at any depth.
+    - SIP headers: the whole value of any sip_headers key.
+    - Person objects (dicts with first_name, middle_name, last_name or email): first_name,
+      middle_name, last_name, name and email.
+    """
     if isinstance(val, dict):
-        is_person = "first_name" in val or "last_name" in val or "email" in val
+        is_person = any(k in val for k in PERSON_MARKER_KEYS)
         new_dict = {}
         for k, v in val.items():
-            if is_person and k in ["first_name", "last_name", "name", "email"]:
-                new_dict[k] = "<REDACTED>" if v is not None else v
-            elif k == "phone_number":
-                new_dict[k] = "<REDACTED>" if v is not None else v
+            norm = _normalize_key(k)
+            if (is_person and k in PERSON_KEYS) or norm in PHONE_KEYS or norm in REDACTED_OBJECT_KEYS:
+                new_dict[k] = REDACTED if v is not None else v
             else:
                 new_dict[k] = redact_pii_fields(v)
         return new_dict

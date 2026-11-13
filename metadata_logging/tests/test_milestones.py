@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import json
 import unittest
@@ -8,7 +9,11 @@ src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
 
-from transform import extract_milestones, format_as_log_entry, is_metadata_update
+from transform import extract_milestones, format_as_log_entry, is_metadata_update, redact_pii_fields
+
+E164_RE = re.compile(r"\+\d{8,15}")
+EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+FIXTURES = ("call-1418", "call-987", "chat-135")
 
 class TestCCaASMilestoneExtraction(unittest.TestCase):
     def setUp(self):
@@ -17,23 +22,11 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
         self.location = "europe-west1"
         self.resource_id = "iva"
 
-    def run_regression_test(self, fixture_name, expected_name, gcs_uri):
-        fixture_path = os.path.join(self.examples_dir, fixture_name)
-        expected_path = os.path.join(self.examples_dir, expected_name)
-
-        # Load fixture metadata
-        with open(fixture_path, "r") as f:
+    def build_log_entries(self, fixture_name, gcs_uri, redact_pii_enabled=True):
+        with open(os.path.join(self.examples_dir, fixture_name), "r") as f:
             metadata = json.load(f)
-
-        # Load expected logs
-        with open(expected_path, "r") as f:
-            expected_logs = json.load(f)
-
-        # Extract milestones
-        extracted = extract_milestones(metadata, gcs_uri)
-        
-        # Format milestones as log entries
-        actual_logs = [
+        extracted = extract_milestones(metadata, gcs_uri, redact_pii_enabled=redact_pii_enabled)
+        return [
             format_as_log_entry(
                 m,
                 project_id=self.project_id,
@@ -42,6 +35,16 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
             )
             for m in extracted
         ]
+
+    def run_regression_test(self, fixture_name, expected_name, gcs_uri, redact_pii_enabled=True):
+        expected_path = os.path.join(self.examples_dir, expected_name)
+
+        # Load expected logs
+        with open(expected_path, "r") as f:
+            expected_logs = json.load(f)
+
+        # Extract milestones and format them as log entries
+        actual_logs = self.build_log_entries(fixture_name, gcs_uri, redact_pii_enabled)
 
         # Verify exact match
         self.assertEqual(len(actual_logs), len(expected_logs), f"Mismatch in number of log entries for {fixture_name}")
@@ -363,6 +366,105 @@ class TestCCaASMilestoneExtraction(unittest.TestCase):
         self.assertEqual(to_agent_unredacted["last_name"], "Smith")
         self.assertEqual(to_agent_unredacted["name"], "Alice Smith")
         self.assertEqual(to_agent_unredacted["email"], "alice@example.com")
+
+    def test_call_1418_unredacted_output_is_unchanged(self):
+        # Golden output generated before the redaction rules were extended: opting out of
+        # redaction must keep producing exactly the same log entries.
+        gcs_uri = "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json"
+        self.run_regression_test(
+            "metadata_call-1418.json", "expected_logs_call-1418_unredacted.json", gcs_uri,
+            redact_pii_enabled=False,
+        )
+
+    def test_call_1418_redacts_ani_dnis_and_sip_headers(self):
+        gcs_uri = "gs://example-ccaas-artifacts/example-tenant.ew1/metadata/call-1418.json"
+        participants = [
+            e["jsonPayload"]["event"]["payload"]["participant"]
+            for e in self.build_log_entries("metadata_call-1418.json", gcs_uri)
+            if "participant" in e["jsonPayload"]["event"]["payload"]
+        ]
+        va_params = [p["virtual_agent_params"] for p in participants if p.get("virtual_agent_params")]
+        self.assertTrue(va_params, "fixture should contain virtual_agent_params")
+        for params in va_params:
+            self.assertEqual(params["ani"], "<REDACTED>")
+            self.assertEqual(params["dnis"], "<REDACTED>")
+            # Operational VA params are kept
+            self.assertEqual(params["escalation_type"], "custom_payload")
+        sip_headers = [p["sip_headers"] for p in participants if p.get("sip_headers") is not None]
+        self.assertTrue(sip_headers, "fixture should contain sip_headers")
+        self.assertTrue(all(h == "<REDACTED>" for h in sip_headers))
+
+        # With redaction disabled the original values are written
+        unredacted = [
+            e["jsonPayload"]["event"]["payload"]["participant"]
+            for e in self.build_log_entries("metadata_call-1418.json", gcs_uri, redact_pii_enabled=False)
+            if "participant" in e["jsonPayload"]["event"]["payload"]
+        ]
+        params = [p["virtual_agent_params"] for p in unredacted if p.get("virtual_agent_params")][0]
+        self.assertEqual(params["ani"], "+15550100100")
+        self.assertEqual(params["dnis"], "+15550100300")
+        headers = [p["sip_headers"] for p in unredacted if p.get("sip_headers") is not None][0]
+        self.assertEqual(headers["P-Attestation-Indicator"], "A")
+
+    def test_redact_pii_fields_phone_like_keys(self):
+        payload = {
+            "participant": {
+                "phone_number": "+15550100001",
+                "virtual_agent_params": {"ani": "+15550100002", "DNIS": "+15550100003", "lang": "en"},
+                "custom": {
+                    "callerId": "+15550100004",
+                    "caller-id": "+15550100005",
+                    "Caller_ID": "+15550100006",
+                    "from_number": "+15550100007",
+                    "toNumber": "+15550100008",
+                    "Phone": "+15550100009",
+                    "mobile": "+15550100010",
+                    "deep": [{"nested": {"phoneNumber": "+15550100011"}}],
+                    "phone_type": "mobile",
+                    "missing": {"ani": None},
+                },
+            }
+        }
+        redacted = redact_pii_fields(payload)
+        participant = redacted["participant"]
+        custom = participant["custom"]
+        self.assertEqual(participant["phone_number"], "<REDACTED>")
+        self.assertEqual(participant["virtual_agent_params"], {"ani": "<REDACTED>", "DNIS": "<REDACTED>", "lang": "en"})
+        for key in ("callerId", "caller-id", "Caller_ID", "from_number", "toNumber", "Phone", "mobile"):
+            self.assertEqual(custom[key], "<REDACTED>", key)
+        self.assertEqual(custom["deep"][0]["nested"]["phoneNumber"], "<REDACTED>")
+        # Keys that only contain a phone word are not redacted, and None stays None
+        self.assertEqual(custom["phone_type"], "mobile")
+        self.assertIsNone(custom["missing"]["ani"])
+
+    def test_redact_pii_fields_person_objects_and_sip_headers(self):
+        payload = {
+            "to_agent": {"first_name": "Alice", "middle_name": "B", "last_name": "Smith", "name": "Alice B Smith", "email": "alice@example.com", "id": 42},
+            "only_middle": {"middle_name": "B", "name": "Alice"},
+            "menu": {"name": "Main Menu"},
+            "sip_headers": {"P-Origination-ID": "abc", "From": "+15550100012"},
+            "no_headers": {"sip_headers": None},
+        }
+        redacted = redact_pii_fields(payload)
+        self.assertEqual(
+            redacted["to_agent"],
+            {"first_name": "<REDACTED>", "middle_name": "<REDACTED>", "last_name": "<REDACTED>", "name": "<REDACTED>", "email": "<REDACTED>", "id": 42},
+        )
+        # A dict with middle_name counts as a person object
+        self.assertEqual(redacted["only_middle"], {"middle_name": "<REDACTED>", "name": "<REDACTED>"})
+        # name outside person objects (e.g. menu or queue names) is kept
+        self.assertEqual(redacted["menu"], {"name": "Main Menu"})
+        self.assertEqual(redacted["sip_headers"], "<REDACTED>")
+        self.assertIsNone(redacted["no_headers"]["sip_headers"])
+
+    def test_redacted_fixture_output_contains_no_phone_numbers_or_emails(self):
+        # Guard test: with redaction on, no E.164 phone number or email may appear anywhere
+        # in the log entries produced for the repo fixtures.
+        for name in FIXTURES:
+            gcs_uri = f"gs://example-ccaas-artifacts/example-tenant.ew1/metadata/{name}.json"
+            text = json.dumps(self.build_log_entries(f"metadata_{name}.json", gcs_uri))
+            self.assertEqual(E164_RE.findall(text), [], f"phone number in redacted output for {name}")
+            self.assertEqual(EMAIL_RE.findall(text), [], f"email in redacted output for {name}")
 
 if __name__ == "__main__":
     unittest.main()

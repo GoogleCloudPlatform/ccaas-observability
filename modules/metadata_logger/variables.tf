@@ -98,6 +98,6 @@ variable "state_bucket" {
 
 variable "redact_pii" {
   type        = bool
-  description = "Whether to redact PII in extracted milestone logs: phone_number wherever it appears, and first_name, last_name, name, and email in person objects (objects containing first_name, last_name, or email; other name fields such as queue names are kept)."
+  description = "Whether to redact PII in extracted milestone logs: phone numbers under any phone-like key at any depth (phone_number, phone, mobile, ani, dnis, caller_id, from_number, to_number; matched case-insensitively, ignoring _, - and camelCase, e.g. callerId), whole sip_headers objects, and first_name, middle_name, last_name, name, and email in person objects (objects containing first_name, middle_name, last_name, or email; other name fields such as queue names are kept)."
   default     = true
 }
