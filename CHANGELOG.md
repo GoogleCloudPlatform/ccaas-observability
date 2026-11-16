@@ -1,4 +1,4 @@
-## Unreleased
+## Release 2026-10.1
 
 **Bug Fixes & Improvements**
 *   **CXAS Tracer — Span ID Fixes (`ces_tracing`, PREVIEW):** Fixed duplicate span IDs and broken parent links in traces rebuilt by the CXAS Tracer. Cloud Trace never overwrites a span (writing an existing span ID stores an additional copy), so colliding IDs showed up as duplicated spans, and mismatched IDs left downstream spans without a parent.
