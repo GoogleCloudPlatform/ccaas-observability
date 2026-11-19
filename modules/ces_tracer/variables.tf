@@ -100,3 +100,15 @@ variable "service_name" {
     error_message = "The service_name must be 20 characters or less to avoid exceeding service account ID limits."
   }
 }
+
+variable "vpc_access" {
+  type = object({
+    connector = optional(string)
+    egress    = optional(string, "ALL_TRAFFIC")
+    network   = optional(string)
+    subnet    = optional(string)
+    tags      = optional(list(string))
+  })
+  description = "Optional Direct VPC Egress or Serverless VPC Access connector configuration for the Cloud Run service (e.g., to route traffic inside a VPC-SC perimeter)."
+  default     = null
+}

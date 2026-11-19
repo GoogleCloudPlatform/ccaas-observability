@@ -90,6 +90,7 @@ terraform apply
 | **grant_project_iam_roles** | `bool` | Whether to let the module automatically create project-level IAM role bindings. | `true` | no |
 | **enable_apis** | `bool` | Whether to let the module automatically enable necessary Google Cloud service APIs. | `true` | no |
 | **service_name** | `string` | The name of the Cloud Run service and prefix for related resources (max 20 chars). | `"ces-tracer"` | no |
+| **vpc_access** | `object` | Optional Direct VPC Egress or Serverless VPC Access connector configuration for the Cloud Run service (`connector`, `egress`, `network`, `subnet`, `tags`). | `null` | no |
 
 ## Outputs
 
@@ -101,6 +102,32 @@ terraform apply
 | **pubsub_topic** | The Pub/Sub topic receiving Dialogflow CompleteConversation audit log entries. |
 | **pubsub_subscription** | The Pub/Sub push subscription delivering events to the CXAS Tracer service. |
 | **log_sink_writer_identity** | The writer identity of the Log Router sink. |
+
+---
+
+## VPC Egress (Organization Policies & VPC Service Controls)
+
+When an organization does not allow Cloud Run services to egress directly to the internet — for example, when an Organization Policy restricts Cloud Run VPC egress (such as `constraints/run.allowedVPCEgress`) or when the project is protected by a **VPC Service Controls** perimeter requiring outbound Google API calls (`logging.googleapis.com`, `cloudtrace.googleapis.com`, `ces.googleapis.com`, `dialogflow.googleapis.com`) to traverse a VPC with Private Google Access — configure `vpc_access` to attach the `ces-tracer` service to a VPC via **Direct VPC Egress** (using `network`/`subnet`) or a **Serverless VPC Access connector** (using `connector`).
+
+### Direct VPC Egress Example
+
+```hcl
+enable_ces_tracer = true
+
+ces_tracer = {
+  project_id = "my-ces-project"
+  region     = "europe-west1"
+  image_url  = "europe-west1-docker.pkg.dev/my-ces-project/my-repo/ces-tracer:latest"
+
+  vpc_access = {
+    network = "projects/my-network-project/global/networks/my-vpc"
+    subnet  = "projects/my-network-project/regions/europe-west1/subnetworks/my-subnet"
+    egress  = "ALL_TRAFFIC"
+    # connector = null (default)
+    # tags      = null (default)
+  }
+}
+```
 
 ---
 

@@ -170,6 +170,22 @@ resource "google_cloud_run_v2_service" "ces_tracer" {
     scaling {
       max_instance_count = 50
     }
+
+    dynamic "vpc_access" {
+      for_each = var.vpc_access == null ? [] : [var.vpc_access]
+      content {
+        connector = vpc_access.value.connector
+        egress    = vpc_access.value.egress
+        dynamic "network_interfaces" {
+          for_each = vpc_access.value.network == null && vpc_access.value.subnet == null ? [] : [vpc_access.value]
+          content {
+            network    = network_interfaces.value.network
+            subnetwork = network_interfaces.value.subnet
+            tags       = network_interfaces.value.tags
+          }
+        }
+      }
+    }
   }
 
   traffic {
