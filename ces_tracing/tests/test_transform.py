@@ -603,6 +603,24 @@ class TestCESTransform(unittest.TestCase):
             self.assertEqual(by_start[start]["span_id"], hash_to_span_id(key))
             self.assertEqual(by_start[start]["parent_span_id"], wrapper_id)
 
+    def test_redact_pii_keeps_tool_name_but_masks_name_inside_args(self):
+        # A span's own 'name' attribute is the tool name and stays readable; a 'name' key
+        # inside the tool's args (here the user's name) is still redacted.
+        tool = {
+            "name": "Tool",
+            "startTime": "2026-11-12T09:40:00.200000Z",
+            "endTime": "2026-11-12T09:40:00.300000Z",
+            "attributes": {
+                "name": "greet_user",
+                "type": "PythonFunctionTool",
+                "args": {"name": "Ada", "city": "Zurich"},
+            },
+        }
+        spans = convert_to_trace_spans(self._async_conv([tool]), [], [], [], "p", "sess-tool-name", redact_pii=True)
+        span = [s for s in spans if s["display_name"] == "Tool"][0]
+        self.assertEqual(span["attributes"]["name"], "greet_user")
+        self.assertEqual(json.loads(span["attributes"]["args"]), {"name": "<REDACTED>", "city": "Zurich"})
+
     def _callback_with_child_tools(self, children, stdout=None):
         callback = {
             "name": "Callback",

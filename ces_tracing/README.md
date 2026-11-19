@@ -31,7 +31,7 @@ When a CXAS Python tool called by the LLM injects `traceparent: 00-{MD5(session_
 ## Directory Structure
 
 * `src/`: The Python Flask application (`main.py`), transformation and correlation engine (`transform.py`), `Dockerfile`, and `requirements.txt`.
-* `tests/`: Unit test suites for trace span transformation (`test_transform.py`) and event handling / ConversationProfile resolution / idempotency guard (`test_main.py`).
+* `tests/`: Unit test suites for trace span transformation (`test_transform.py`), event handling / ConversationProfile resolution / idempotency guard (`test_main.py`), and golden-file conversation fixtures (`test_fixtures.py`), plus fixture helper scripts (`fetch_conversation.py`, `make_fixture.py`, `upload_fixture_trace.py`). See [`tests/README.md`](./tests/README.md).
 * `build_and_push.sh`: Build automation script to containerize and publish the service to Artifact Registry.
 
 ---

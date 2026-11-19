@@ -1,3 +1,14 @@
+## Unreleased
+
+**Bug Fixes & Improvements**
+*   **CXAS Tracer — Tool Names No Longer Redacted (`ces_tracing`, PREVIEW):** With `redact_pii = true` (the default), the `name` attribute of tool spans was replaced with `<REDACTED>`, so a trace did not show which tool a span belonged to. A span's own `name` attribute (the tool name) is now always written. A top-level `name` key inside a tool's arguments or response (for example a user's name) is still redacted (redaction remains one level deep inside JSON values). With `redact_pii = false`, the output is unchanged.
+*   **CXAS Tracer — Golden-File Fixture Tests (`ces_tracing/tests`):** Added regression tests that convert a recorded, scrubbed `GetConversation` response into a full expected trace, starting with a conversation in which `BeforeAgent` callbacks call an OpenAPI tool directly with a propagated `traceparent`. Added helper scripts to fetch a conversation (`fetch_conversation.py`, scrubbing enabled by default), build a fixture (`make_fixture.py`), and upload a fixture trace to Cloud Trace for viewing (`upload_fixture_trace.py`). See [`ces_tracing/tests/README.md`](ces_tracing/tests/README.md).
+
+**Rollout & Upgrade Instructions**
+*   **CXAS Tracer:** Build and push a new `ces-tracer` container image using `ces_tracing/build_and_push.sh`, update `ces_tracer.image_url` in your Terraform configuration (or run `gcloud run services update`), and redeploy the Cloud Run service. Tool names appear in traces written after the upgrade; existing traces are unchanged.
+
+---
+
 ## Release 2026-10.1
 
 **Bug Fixes & Improvements**

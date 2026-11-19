@@ -1,0 +1,2464 @@
+[
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/4fe098e1b6786fb8",
+    "spanId": "4fe098e1b6786fb8",
+    "displayName": {
+      "value": "Conversation: 119y0lNKWz2SUCExu2xYYAYFw"
+    },
+    "startTime": "2026-11-18T13:10:54.708038Z",
+    "endTime": "2026-11-18T13:13:16.168643Z",
+    "attributes": {
+      "attributeMap": {
+        "turn_count": {
+          "intValue": "10"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/ad70b02e37a4c9f1",
+    "spanId": "ad70b02e37a4c9f1",
+    "displayName": {
+      "value": "Turn 1"
+    },
+    "startTime": "2026-11-18T13:10:54.708038Z",
+    "endTime": "2026-11-18T13:10:59.451751Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "visitor id": {
+          "stringValue": {
+            "value": "00000000-0000-4000-8000-000000000001"
+          }
+        },
+        "perceived latency (ms)": {
+          "intValue": "1180"
+        },
+        "connection index": {
+          "intValue": "2"
+        },
+        "input types": {
+          "stringValue": {
+            "value": "[\"variables\"]"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/02fd490a3d556b80",
+    "spanId": "02fd490a3d556b80",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:10:54.780353Z",
+    "endTime": "2026-11-18T13:10:55.340288Z",
+    "parentSpanId": "ad70b02e37a4c9f1",
+    "attributes": {
+      "attributeMap": {
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "input token count": {
+          "intValue": "2694"
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "time to first chunk (ms)": {
+          "intValue": "416"
+        },
+        "output token count": {
+          "intValue": "26"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/f79fddf54bc42b8b",
+    "spanId": "f79fddf54bc42b8b",
+    "displayName": {
+      "value": "Async Tool"
+    },
+    "startTime": "2026-11-18T13:10:55.341765Z",
+    "endTime": "2026-11-18T13:10:55.341832Z",
+    "parentSpanId": "ad70b02e37a4c9f1",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":\"pending\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "get_active_region_monitoring"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-121b07e4-3c73-42e1-bbc3-a6ec96f6cb15"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/b5ea92e72e5ddec1",
+    "spanId": "b5ea92e72e5ddec1",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:10:55.341789Z",
+    "endTime": "2026-11-18T13:10:55.360191Z",
+    "parentSpanId": "ad70b02e37a4c9f1",
+    "attributes": {
+      "attributeMap": {
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-cd92086c-bac4-4fe2-ace1-4157c15523dd"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":\"Hello, friend!\"}"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"name\":\"<REDACTED>\"}"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "friend\n"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "greet_user"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/5532c8ff0df5313e",
+    "spanId": "5532c8ff0df5313e",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:10:55.361073Z",
+    "endTime": "2026-11-18T13:10:59.417928Z",
+    "parentSpanId": "ad70b02e37a4c9f1",
+    "attributes": {
+      "attributeMap": {
+        "thought token count": {
+          "intValue": "0"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "time to first chunk (ms)": {
+          "intValue": "598"
+        },
+        "time to first audio (ms)": {
+          "intValue": "598"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "input token count": {
+          "intValue": "2755"
+        },
+        "output token count": {
+          "intValue": "245"
+        },
+        "audio duration (ms)": {
+          "intValue": "9760"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/de73cedf3453e434",
+    "spanId": "de73cedf3453e434",
+    "displayName": {
+      "value": "Turn 2"
+    },
+    "startTime": "2026-11-18T13:11:05.720987Z",
+    "endTime": "2026-11-18T13:11:07.454311Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "input types": {
+          "stringValue": {
+            "value": "[\"variables\"]"
+          }
+        },
+        "perceived latency (ms)": {
+          "intValue": "593"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/4e66cf0c1ee632e6",
+    "spanId": "4e66cf0c1ee632e6",
+    "displayName": {
+      "value": "Async Tool"
+    },
+    "startTime": "2026-11-18T13:10:55.341844Z",
+    "endTime": "2026-11-18T13:10:55.905201Z",
+    "parentSpanId": "f79fddf54bc42b8b",
+    "attributes": {
+      "attributeMap": {
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-121b07e4-3c73-42e1-bbc3-a6ec96f6cb15"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "get_active_region_monitoring"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":{\"status\":\"success\",\"active_region\":\"europe-west1\"}}"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/4e1211b8eb722209",
+    "spanId": "4e1211b8eb722209",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:11:05.856739Z",
+    "endTime": "2026-11-18T13:11:07.419280Z",
+    "parentSpanId": "de73cedf3453e434",
+    "attributes": {
+      "attributeMap": {
+        "audio duration (ms)": {
+          "intValue": "3080"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "output token count": {
+          "intValue": "78"
+        },
+        "time to first audio (ms)": {
+          "intValue": "592"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "592"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "input token count": {
+          "intValue": "3136"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/2ee9ac3438c7a214",
+    "spanId": "2ee9ac3438c7a214",
+    "displayName": {
+      "value": "Turn 3"
+    },
+    "startTime": "2026-11-18T13:11:07.277710Z",
+    "endTime": "2026-11-18T13:11:12.710443Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "perceived latency (ms)": {
+          "intValue": "580"
+        },
+        "input types": {
+          "stringValue": {
+            "value": "[\"audio\"]"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/8ae4679c5effc403",
+    "spanId": "8ae4679c5effc403",
+    "displayName": {
+      "value": "VAD"
+    },
+    "startTime": "2026-11-18T13:11:07.277710Z",
+    "endTime": "2026-11-18T13:11:08.793143Z",
+    "parentSpanId": "2ee9ac3438c7a214",
+    "attributes": {
+      "attributeMap": {
+        "start of speech offset (ms)": {
+          "intValue": "12520"
+        },
+        "end of speech offset (ms)": {
+          "intValue": "14040"
+        },
+        "endpointing decision time": {
+          "stringValue": {
+            "value": "2026-11-18T13:11:08.793118Z"
+          }
+        },
+        "barge-in": {
+          "boolValue": true
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/0e56cbac3f19a7ba",
+    "spanId": "0e56cbac3f19a7ba",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:11:08.795248Z",
+    "endTime": "2026-11-18T13:11:12.675010Z",
+    "parentSpanId": "2ee9ac3438c7a214",
+    "attributes": {
+      "attributeMap": {
+        "time to first chunk (ms)": {
+          "intValue": "578"
+        },
+        "input token count": {
+          "intValue": "3306"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "output token count": {
+          "intValue": "244"
+        },
+        "audio duration (ms)": {
+          "intValue": "9720"
+        },
+        "time to first audio (ms)": {
+          "intValue": "578"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/60da6d7e2ac3aea8",
+    "spanId": "60da6d7e2ac3aea8",
+    "displayName": {
+      "value": "Turn 4"
+    },
+    "startTime": "2026-11-18T13:11:19.094684Z",
+    "endTime": "2026-11-18T13:11:32.468270Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "perceived latency (ms)": {
+          "intValue": "4861"
+        },
+        "input types": {
+          "stringValue": {
+            "value": "[\"audio\"]"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/010f5c7da9bfe354",
+    "spanId": "010f5c7da9bfe354",
+    "displayName": {
+      "value": "VAD"
+    },
+    "startTime": "2026-11-18T13:11:20.477233Z",
+    "endTime": "2026-11-18T13:11:22.761830Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "start of speech offset (ms)": {
+          "intValue": "25760"
+        },
+        "endpointing decision time": {
+          "stringValue": {
+            "value": "2026-11-18T13:11:22.662392Z"
+          }
+        },
+        "end of speech offset (ms)": {
+          "intValue": "27920"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/fedb39b1939105c4",
+    "spanId": "fedb39b1939105c4",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:11:22.764666Z",
+    "endTime": "2026-11-18T13:11:23.272102Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "input token count": {
+          "intValue": "3685"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "output token count": {
+          "intValue": "22"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "506"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/10ea06ee1685efaa",
+    "spanId": "10ea06ee1685efaa",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:23.273000Z",
+    "endTime": "2026-11-18T13:11:23.273000Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"agent_name\":\"weather_agent_sync\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "TransferToAgentTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "transfer_to_agent"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-68662e71-8fc5-46f7-afad-8f93ef482401"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/4917a642e0a90d28",
+    "spanId": "4917a642e0a90d28",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:11:23.273485Z",
+    "endTime": "2026-11-18T13:11:27.048435Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "stdout": {
+          "stringValue": {
+            "value": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-2fe4f6b205198845-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Probe regional weather service (integration test)."
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeAgent"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/2fe4f6b205198845",
+    "spanId": "2fe4f6b205198845",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:23.300871Z",
+    "endTime": "2026-11-18T13:11:27.039956Z",
+    "parentSpanId": "4917a642e0a90d28",
+    "attributes": {
+      "attributeMap": {
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"Zurich\",\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-2fe4f6b205198845-01\"}"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"city\":\"Zurich\",\"condition\":\"Rainy\",\"humidity\":\"88%\",\"source\":\"europe-west1\",\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"temperature\":\"23\\u00b0C\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Zurich"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/830d55ccc7a2659d",
+    "spanId": "830d55ccc7a2659d",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:11:27.049996Z",
+    "endTime": "2026-11-18T13:11:29.594789Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "input token count": {
+          "intValue": "3018"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "573"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "output token count": {
+          "intValue": "161"
+        },
+        "audio duration (ms)": {
+          "intValue": "5760"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "time to first audio (ms)": {
+          "intValue": "573"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/fab91ce291e454ae",
+    "spanId": "fab91ce291e454ae",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:11:29.595963Z",
+    "endTime": "2026-11-18T13:11:29.616138Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "before_tool_callback: tool=get_weather_openapi args={'city': 'London'}\n"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Log tool calls (integration test)."
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeTool"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/e99a6fc320330360",
+    "spanId": "e99a6fc320330360",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:29.616180Z",
+    "endTime": "2026-11-18T13:11:29.697046Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":{\"status\":\"error\",\"error_message\":\"{\\\"status\\\":\\\"error\\\",\\\"errorCode\\\":\\\"INTERNAL\\\",\\\"error\\\":\\\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\\\nunable to complete your request. Eithe..."
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-8baff044-ec88-49f3-82ae-7150cea7d59c"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"London\"}"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "Routing OpenAPI weather request for London to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-d02de7f8d70af678-01\n500\nRequest URL was unreachable - 500 Internal Server Error: The server encountered an internal..."
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "get_weather_openapi"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/d02de7f8d70af678",
+    "spanId": "d02de7f8d70af678",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:29.633418Z",
+    "endTime": "2026-11-18T13:11:29.689768Z",
+    "parentSpanId": "e99a6fc320330360",
+    "attributes": {
+      "attributeMap": {
+        "response": {
+          "stringValue": {
+            "value": "{\"status\":\"error\",\"error\":\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\nunable to complete your request. Either the server is overloaded or there \\nis an error in the application.\",\"errorCod..."
+          }
+        },
+        "error": {
+          "stringValue": {
+            "value": "Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application."
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-d02de7f8d70af678-01\",\"city\":\"London\"}"
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=London"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/c5e975ffb896be71",
+    "spanId": "c5e975ffb896be71",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:11:29.698889Z",
+    "endTime": "2026-11-18T13:11:32.430913Z",
+    "parentSpanId": "60da6d7e2ac3aea8",
+    "attributes": {
+      "attributeMap": {
+        "audio duration (ms)": {
+          "intValue": "6280"
+        },
+        "time to first audio (ms)": {
+          "intValue": "571"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "output token count": {
+          "intValue": "158"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "571"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "input token count": {
+          "intValue": "3288"
+        },
+        "thought token count": {
+          "intValue": "0"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/80a46cc54c3aa6e0",
+    "spanId": "80a46cc54c3aa6e0",
+    "displayName": {
+      "value": "Turn 5"
+    },
+    "startTime": "2026-11-18T13:11:39.663978Z",
+    "endTime": "2026-11-18T13:11:53.612099Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "perceived latency (ms)": {
+          "intValue": "650"
+        },
+        "input types": {
+          "stringValue": {
+            "value": "[\"audio\"]"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/581a695f48a2e83d",
+    "spanId": "581a695f48a2e83d",
+    "displayName": {
+      "value": "VAD"
+    },
+    "startTime": "2026-11-18T13:11:41.873732Z",
+    "endTime": "2026-11-18T13:11:45.858022Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "start of speech offset (ms)": {
+          "intValue": "47160"
+        },
+        "end of speech offset (ms)": {
+          "intValue": "51000"
+        },
+        "endpointing decision time": {
+          "stringValue": {
+            "value": "2026-11-18T13:11:45.758401Z"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/8d4dd593602cc320",
+    "spanId": "8d4dd593602cc320",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:11:45.859180Z",
+    "endTime": "2026-11-18T13:11:45.935637Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "stage": {
+          "stringValue": {
+            "value": "BeforeAgent"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Probe regional weather service (integration test)."
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-03331e7ed20e175e-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/03331e7ed20e175e",
+    "spanId": "03331e7ed20e175e",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:45.882097Z",
+    "endTime": "2026-11-18T13:11:45.922398Z",
+    "parentSpanId": "8d4dd593602cc320",
+    "attributes": {
+      "attributeMap": {
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Zurich"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"humidity\":\"70%\",\"temperature\":\"29\\u00b0C\",\"source\":\"europe-west1\",\"city\":\"Zurich\",\"condition\":\"Sunny\",\"forecast\":\"Expected to stay the same for the next 4 hours.\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"Zurich\",\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-03331e7ed20e175e-01\"}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/b65618a3cc1422c1",
+    "spanId": "b65618a3cc1422c1",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:11:45.937980Z",
+    "endTime": "2026-11-18T13:11:48.525693Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "time to first chunk (ms)": {
+          "intValue": "571"
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "audio duration (ms)": {
+          "intValue": "5840"
+        },
+        "input token count": {
+          "intValue": "3606"
+        },
+        "time to first audio (ms)": {
+          "intValue": "571"
+        },
+        "output token count": {
+          "intValue": "179"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/c62a96d753e621d5",
+    "spanId": "c62a96d753e621d5",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:11:48.527087Z",
+    "endTime": "2026-11-18T13:11:48.560176Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "before_tool_callback: tool=get_weather_openapi args={'city': 'London'}\n"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Log tool calls (integration test)."
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeTool"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/d9656616a2612005",
+    "spanId": "d9656616a2612005",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:11:48.527092Z",
+    "endTime": "2026-11-18T13:11:48.572480Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "stage": {
+          "stringValue": {
+            "value": "BeforeTool"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Log tool calls (integration test)."
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "before_tool_callback: tool=get_weather_openapi args={'city': 'Paris'}\n"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/b25003fa1bcda8f8",
+    "spanId": "b25003fa1bcda8f8",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:48.560210Z",
+    "endTime": "2026-11-18T13:11:48.633266Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "get_weather_openapi"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":{\"error_message\":\"{\\\"status\\\":\\\"error\\\",\\\"errorCode\\\":\\\"INTERNAL\\\",\\\"error\\\":\\\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\\\nunable to complete your request. Either the server is o..."
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"London\"}"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-984b990e-3d9a-401e-9c6f-535efbe76c61"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "Routing OpenAPI weather request for London to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-495f840261db7a4f-01\n500\nRequest URL was unreachable - 500 Internal Server Error: The server encountered an internal..."
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/495f840261db7a4f",
+    "spanId": "495f840261db7a4f",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:48.581553Z",
+    "endTime": "2026-11-18T13:11:48.625941Z",
+    "parentSpanId": "b25003fa1bcda8f8",
+    "attributes": {
+      "attributeMap": {
+        "response": {
+          "stringValue": {
+            "value": "{\"status\":\"error\",\"errorCode\":\"INTERNAL\",\"error\":\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\nunable to complete your request. Either the server is overloaded or there \\nis an error in the ..."
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=London"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        },
+        "error": {
+          "stringValue": {
+            "value": "Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application."
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"London\",\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-495f840261db7a4f-01\"}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/c6f8ef779e04100f",
+    "spanId": "c6f8ef779e04100f",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:48.572525Z",
+    "endTime": "2026-11-18T13:11:48.651557Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":{\"report\":{\"condition\":\"Cloudy\",\"humidity\":\"45%\",\"branding\":\"this forecast brought to you by the forecasting service in europe-west1\",\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"city\":\"Paris\",\"temperature\":\"24\\u00b0C\",\"source..."
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "Routing OpenAPI weather request for Paris to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-923b4478b71bf48b-01\n200\nOK\nTrue\n"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"Paris\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "get_weather_openapi"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-fed65cfa-42ad-4dec-894d-498518cf850b"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/923b4478b71bf48b",
+    "spanId": "923b4478b71bf48b",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:11:48.604772Z",
+    "endTime": "2026-11-18T13:11:48.645035Z",
+    "parentSpanId": "c6f8ef779e04100f",
+    "attributes": {
+      "attributeMap": {
+        "response": {
+          "stringValue": {
+            "value": "{\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"humidity\":\"45%\",\"temperature\":\"24\\u00b0C\",\"condition\":\"Cloudy\",\"city\":\"Paris\",\"source\":\"europe-west1\"}"
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Paris"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-923b4478b71bf48b-01\",\"city\":\"Paris\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/1cc4d0fb499120ea",
+    "spanId": "1cc4d0fb499120ea",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:11:48.654213Z",
+    "endTime": "2026-11-18T13:11:53.567360Z",
+    "parentSpanId": "80a46cc54c3aa6e0",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "time to first audio (ms)": {
+          "intValue": "576"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "input token count": {
+          "intValue": "3982"
+        },
+        "audio duration (ms)": {
+          "intValue": "13440"
+        },
+        "output token count": {
+          "intValue": "337"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "576"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/08f81dc0204a7c59",
+    "spanId": "08f81dc0204a7c59",
+    "displayName": {
+      "value": "Turn 6"
+    },
+    "startTime": "2026-11-18T13:12:05.791034Z",
+    "endTime": "2026-11-18T13:12:19.109760Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "input types": {
+          "stringValue": {
+            "value": "[\"audio\"]"
+          }
+        },
+        "perceived latency (ms)": {
+          "intValue": "686"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/49ed55d000824d7a",
+    "spanId": "49ed55d000824d7a",
+    "displayName": {
+      "value": "VAD"
+    },
+    "startTime": "2026-11-18T13:12:07.393405Z",
+    "endTime": "2026-11-18T13:12:10.377938Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "endpointing decision time": {
+          "stringValue": {
+            "value": "2026-11-18T13:12:10.277325Z"
+          }
+        },
+        "end of speech offset (ms)": {
+          "intValue": "75520"
+        },
+        "start of speech offset (ms)": {
+          "intValue": "72640"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/1a0dcda235ba1fad",
+    "spanId": "1a0dcda235ba1fad",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:12:10.379012Z",
+    "endTime": "2026-11-18T13:12:10.468106Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "stage": {
+          "stringValue": {
+            "value": "BeforeAgent"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Probe regional weather service (integration test)."
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-6e179ab59351997d-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/6e179ab59351997d",
+    "spanId": "6e179ab59351997d",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:10.413344Z",
+    "endTime": "2026-11-18T13:12:10.455899Z",
+    "parentSpanId": "1a0dcda235ba1fad",
+    "attributes": {
+      "attributeMap": {
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"Zurich\",\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-6e179ab59351997d-01\"}"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"condition\":\"Windy\",\"source\":\"europe-west1\",\"humidity\":\"87%\",\"city\":\"Zurich\",\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"temperature\":\"22\\u00b0C\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Zurich"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/e343f736a2e5f220",
+    "spanId": "e343f736a2e5f220",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:12:10.471657Z",
+    "endTime": "2026-11-18T13:12:12.953563Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "output token count": {
+          "intValue": "168"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "time to first chunk (ms)": {
+          "intValue": "593"
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "audio duration (ms)": {
+          "intValue": "5400"
+        },
+        "time to first audio (ms)": {
+          "intValue": "593"
+        },
+        "input token count": {
+          "intValue": "4473"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/9325833eb1a2ef51",
+    "spanId": "9325833eb1a2ef51",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:12:12.955305Z",
+    "endTime": "2026-11-18T13:12:12.994967Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "description": {
+          "stringValue": {
+            "value": "Log tool calls (integration test)."
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "before_tool_callback: tool=get_weather_openapi args={'city': 'Singapore'}\n"
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeTool"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/8a372c065ef0d35d",
+    "spanId": "8a372c065ef0d35d",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:12:12.955310Z",
+    "endTime": "2026-11-18T13:12:12.993319Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeTool"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "before_tool_callback: tool=get_weather_openapi args={'city': 'Tokyo'}\n"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Log tool calls (integration test)."
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/33032fcccd9d719a",
+    "spanId": "33032fcccd9d719a",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:12.993361Z",
+    "endTime": "2026-11-18T13:12:13.062141Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "get_weather_openapi"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"Tokyo\"}"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":{\"status\":\"success\",\"report\":{\"humidity\":\"77%\",\"branding\":\"this forecast brought to you by the forecasting service in europe-west1\",\"city\":\"Tokyo\",\"condition\":\"Windy\",\"source\":\"europe-west1\",\"temperature\":\"14\\u00b0C\",\"forecast\":\"Expected to st..."
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "Routing OpenAPI weather request for Tokyo to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-e54ac00f60e06f5b-01\n200\nOK\nTrue\n"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-aee072a4-3cac-4193-9ba5-6087c65c034a"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/e54ac00f60e06f5b",
+    "spanId": "e54ac00f60e06f5b",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:13.025173Z",
+    "endTime": "2026-11-18T13:12:13.055017Z",
+    "parentSpanId": "33032fcccd9d719a",
+    "attributes": {
+      "attributeMap": {
+        "response": {
+          "stringValue": {
+            "value": "{\"source\":\"europe-west1\",\"temperature\":\"14\\u00b0C\",\"humidity\":\"77%\",\"city\":\"Tokyo\",\"condition\":\"Windy\",\"forecast\":\"Expected to stay the same for the next 4 hours.\"}"
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Tokyo"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-e54ac00f60e06f5b-01\",\"city\":\"Tokyo\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/b2d8318a00ad0f34",
+    "spanId": "b2d8318a00ad0f34",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:12.995038Z",
+    "endTime": "2026-11-18T13:12:13.069479Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "stdout": {
+          "stringValue": {
+            "value": "Routing OpenAPI weather request for Singapore to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-529def9c55e8c9c3-01\n200\nOK\nTrue\n"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"Singapore\"}"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":{\"report\":{\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"city\":\"Singapore\",\"temperature\":\"32\\u00b0C\",\"source\":\"europe-west1\",\"condition\":\"Cloudy\",\"humidity\":\"36%\",\"branding\":\"this forecast brought to you by the forecasting serv..."
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-7661e5d4-4565-4c65-a2f5-3a67d59c73fc"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "get_weather_openapi"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/529def9c55e8c9c3",
+    "spanId": "529def9c55e8c9c3",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:13.023379Z",
+    "endTime": "2026-11-18T13:12:13.063013Z",
+    "parentSpanId": "b2d8318a00ad0f34",
+    "attributes": {
+      "attributeMap": {
+        "args": {
+          "stringValue": {
+            "value": "{\"city\":\"Singapore\",\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-529def9c55e8c9c3-01\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"temperature\":\"32\\u00b0C\",\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"source\":\"europe-west1\",\"city\":\"Singapore\",\"condition\":\"Cloudy\",\"humidity\":\"36%\"}"
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Singapore"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/e5a708755233627c",
+    "spanId": "e5a708755233627c",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:12:13.074709Z",
+    "endTime": "2026-11-18T13:12:19.059828Z",
+    "parentSpanId": "08f81dc0204a7c59",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "615"
+        },
+        "input token count": {
+          "intValue": "4852"
+        },
+        "time to first audio (ms)": {
+          "intValue": "615"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "output token count": {
+          "intValue": "419"
+        },
+        "audio duration (ms)": {
+          "intValue": "16720"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/b9b968698b239696",
+    "spanId": "b9b968698b239696",
+    "displayName": {
+      "value": "Turn 7"
+    },
+    "startTime": "2026-11-18T13:12:33.186036Z",
+    "endTime": "2026-11-18T13:12:40.566197Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "perceived latency (ms)": {
+          "intValue": "716"
+        },
+        "input types": {
+          "stringValue": {
+            "value": "[\"audio\"]"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/1190a094352000ce",
+    "spanId": "1190a094352000ce",
+    "displayName": {
+      "value": "VAD"
+    },
+    "startTime": "2026-11-18T13:12:34.773281Z",
+    "endTime": "2026-11-18T13:12:36.058072Z",
+    "parentSpanId": "b9b968698b239696",
+    "attributes": {
+      "attributeMap": {
+        "end of speech offset (ms)": {
+          "intValue": "101280"
+        },
+        "endpointing decision time": {
+          "stringValue": {
+            "value": "2026-11-18T13:12:35.988057Z"
+          }
+        },
+        "start of speech offset (ms)": {
+          "intValue": "100040"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/8a8b46073098ce60",
+    "spanId": "8a8b46073098ce60",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:12:36.059382Z",
+    "endTime": "2026-11-18T13:12:36.148069Z",
+    "parentSpanId": "b9b968698b239696",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeAgent"
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-fff23d77f2a8635c-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Probe regional weather service (integration test)."
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/fff23d77f2a8635c",
+    "spanId": "fff23d77f2a8635c",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:36.104106Z",
+    "endTime": "2026-11-18T13:12:36.138497Z",
+    "parentSpanId": "8a8b46073098ce60",
+    "attributes": {
+      "attributeMap": {
+        "response": {
+          "stringValue": {
+            "value": "{\"condition\":\"Windy\",\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"humidity\":\"44%\",\"temperature\":\"27\\u00b0C\",\"source\":\"europe-west1\",\"city\":\"Zurich\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        },
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Zurich"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-fff23d77f2a8635c-01\",\"city\":\"Zurich\"}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/cfc6997ec81af65d",
+    "spanId": "cfc6997ec81af65d",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:12:36.152631Z",
+    "endTime": "2026-11-18T13:12:40.508042Z",
+    "parentSpanId": "b9b968698b239696",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "audio duration (ms)": {
+          "intValue": "11320"
+        },
+        "output token count": {
+          "intValue": "284"
+        },
+        "input token count": {
+          "intValue": "5399"
+        },
+        "time to first audio (ms)": {
+          "intValue": "622"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "time to first chunk (ms)": {
+          "intValue": "622"
+        },
+        "thought token count": {
+          "intValue": "0"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/f97a54ca0513171a",
+    "spanId": "f97a54ca0513171a",
+    "displayName": {
+      "value": "Turn 8"
+    },
+    "startTime": "2026-11-18T13:12:48.096557Z",
+    "endTime": "2026-11-18T13:12:55.887578Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "input types": {
+          "stringValue": {
+            "value": "[\"audio\"]"
+          }
+        },
+        "perceived latency (ms)": {
+          "intValue": "1280"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/d3b425acb5ee4564",
+    "spanId": "d3b425acb5ee4564",
+    "displayName": {
+      "value": "VAD"
+    },
+    "startTime": "2026-11-18T13:12:49.174696Z",
+    "endTime": "2026-11-18T13:12:50.760302Z",
+    "parentSpanId": "f97a54ca0513171a",
+    "attributes": {
+      "attributeMap": {
+        "start of speech offset (ms)": {
+          "intValue": "114440"
+        },
+        "end of speech offset (ms)": {
+          "intValue": "116000"
+        },
+        "endpointing decision time": {
+          "stringValue": {
+            "value": "2026-11-18T13:12:50.760276Z"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/6fb9f49b918ee886",
+    "spanId": "6fb9f49b918ee886",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:12:50.761386Z",
+    "endTime": "2026-11-18T13:12:50.860664Z",
+    "parentSpanId": "f97a54ca0513171a",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Probe regional weather service (integration test)."
+          }
+        },
+        "stdout": {
+          "stringValue": {
+            "value": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-9c159f3142078654-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n"
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeAgent"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/9c159f3142078654",
+    "spanId": "9c159f3142078654",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:50.816483Z",
+    "endTime": "2026-11-18T13:12:50.851836Z",
+    "parentSpanId": "6fb9f49b918ee886",
+    "attributes": {
+      "attributeMap": {
+        "request uri": {
+          "stringValue": {
+            "value": "https://api.example.com/weather/?city=Zurich"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"city\":\"Zurich\",\"condition\":\"Snowy\",\"source\":\"europe-west1\",\"forecast\":\"Expected to stay the same for the next 4 hours.\",\"humidity\":\"63%\",\"temperature\":\"23\\u00b0C\"}"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"traceparent\":\"00-dbc954507c34d7218a66c039e40fb482-9c159f3142078654-01\",\"city\":\"Zurich\"}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "OpenApiTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "openapi_get_weather_ew1_getWeather"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/4c3169d33541d6b4",
+    "spanId": "4c3169d33541d6b4",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:12:50.865182Z",
+    "endTime": "2026-11-18T13:12:51.400015Z",
+    "parentSpanId": "f97a54ca0513171a",
+    "attributes": {
+      "attributeMap": {
+        "output token count": {
+          "intValue": "20"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "input token count": {
+          "intValue": "5802"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "517"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/bb5ff14208265d76",
+    "spanId": "bb5ff14208265d76",
+    "displayName": {
+      "value": "Callback"
+    },
+    "startTime": "2026-11-18T13:12:51.401283Z",
+    "endTime": "2026-11-18T13:12:51.450813Z",
+    "parentSpanId": "f97a54ca0513171a",
+    "attributes": {
+      "attributeMap": {
+        "stdout": {
+          "stringValue": {
+            "value": "before_tool_callback: tool=transfer_to_agent args={'agent_name': 'greeting_agent'}\n"
+          }
+        },
+        "stage": {
+          "stringValue": {
+            "value": "BeforeTool"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "description": {
+          "stringValue": {
+            "value": "Log tool calls (integration test)."
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/48acd073dcc7352f",
+    "spanId": "48acd073dcc7352f",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:12:51.450000Z",
+    "endTime": "2026-11-18T13:12:51.450000Z",
+    "parentSpanId": "f97a54ca0513171a",
+    "attributes": {
+      "attributeMap": {
+        "type": {
+          "stringValue": {
+            "value": "TransferToAgentTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "transfer_to_agent"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-69fd702a-6c0c-45e6-9892-c3c63360dafe"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "weather_agent_sync"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"agent_name\":\"greeting_agent\"}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/f5d327e82afd508e",
+    "spanId": "f5d327e82afd508e",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:12:51.455068Z",
+    "endTime": "2026-11-18T13:12:55.833854Z",
+    "parentSpanId": "f97a54ca0513171a",
+    "attributes": {
+      "attributeMap": {
+        "thought token count": {
+          "intValue": "0"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "input token count": {
+          "intValue": "4414"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "586"
+        },
+        "output token count": {
+          "intValue": "287"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "audio duration (ms)": {
+          "intValue": "11440"
+        },
+        "time to first audio (ms)": {
+          "intValue": "586"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/296abe26b25a0f6a",
+    "spanId": "296abe26b25a0f6a",
+    "displayName": {
+      "value": "Turn 9"
+    },
+    "startTime": "2026-11-18T13:13:03.482784Z",
+    "endTime": "2026-11-18T13:13:08.194695Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "input types": {
+          "stringValue": {
+            "value": "[\"audio\"]"
+          }
+        },
+        "perceived latency (ms)": {
+          "intValue": "1596"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/934996e20c45b526",
+    "spanId": "934996e20c45b526",
+    "displayName": {
+      "value": "VAD"
+    },
+    "startTime": "2026-11-18T13:13:04.592735Z",
+    "endTime": "2026-11-18T13:13:05.662983Z",
+    "parentSpanId": "296abe26b25a0f6a",
+    "attributes": {
+      "attributeMap": {
+        "endpointing decision time": {
+          "stringValue": {
+            "value": "2026-11-18T13:13:05.662941Z"
+          }
+        },
+        "start of speech offset (ms)": {
+          "intValue": "129880"
+        },
+        "end of speech offset (ms)": {
+          "intValue": "130920"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/b55331c8e10faf9c",
+    "spanId": "b55331c8e10faf9c",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:13:05.669294Z",
+    "endTime": "2026-11-18T13:13:06.214183Z",
+    "parentSpanId": "296abe26b25a0f6a",
+    "attributes": {
+      "attributeMap": {
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "input token count": {
+          "intValue": "4803"
+        },
+        "output token count": {
+          "intValue": "21"
+        },
+        "time to first chunk (ms)": {
+          "intValue": "544"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/e6e066b972403746",
+    "spanId": "e6e066b972403746",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:13:06.215000Z",
+    "endTime": "2026-11-18T13:13:06.215000Z",
+    "parentSpanId": "296abe26b25a0f6a",
+    "attributes": {
+      "attributeMap": {
+        "type": {
+          "stringValue": {
+            "value": "TransferToAgentTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "transfer_to_agent"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-087aa53f-2fbf-4211-8125-2d5abf57f270"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "greeting_agent"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"agent_name\":\"farewell_agent\"}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/0156e6c2db81dea8",
+    "spanId": "0156e6c2db81dea8",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:13:06.221946Z",
+    "endTime": "2026-11-18T13:13:06.636675Z",
+    "parentSpanId": "296abe26b25a0f6a",
+    "attributes": {
+      "attributeMap": {
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "input token count": {
+          "intValue": "3633"
+        },
+        "output token count": {
+          "intValue": "9"
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "farewell_agent"
+          }
+        },
+        "time to first chunk (ms)": {
+          "intValue": "414"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/2ed2cf0ea3a46167",
+    "spanId": "2ed2cf0ea3a46167",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:13:06.638162Z",
+    "endTime": "2026-11-18T13:13:06.689243Z",
+    "parentSpanId": "296abe26b25a0f6a",
+    "attributes": {
+      "attributeMap": {
+        "type": {
+          "stringValue": {
+            "value": "PythonFunctionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "farewell_user"
+          }
+        },
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-2012e5d0-c36e-4c71-953f-0390d66b7b87"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "farewell_agent"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{}"
+          }
+        },
+        "response": {
+          "stringValue": {
+            "value": "{\"result\":\"Goodbye! Have a great day.\"}"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/4efd93a99c7ba4fd",
+    "spanId": "4efd93a99c7ba4fd",
+    "displayName": {
+      "value": "LLM"
+    },
+    "startTime": "2026-11-18T13:13:06.696364Z",
+    "endTime": "2026-11-18T13:13:08.137895Z",
+    "parentSpanId": "296abe26b25a0f6a",
+    "attributes": {
+      "attributeMap": {
+        "input token count": {
+          "intValue": "3663"
+        },
+        "time to first audio (ms)": {
+          "intValue": "563"
+        },
+        "model": {
+          "stringValue": {
+            "value": "gemini-3.1-flash-live"
+          }
+        },
+        "thought token count": {
+          "intValue": "0"
+        },
+        "audio duration (ms)": {
+          "intValue": "2080"
+        },
+        "agent": {
+          "stringValue": {
+            "value": "farewell_agent"
+          }
+        },
+        "time to first chunk (ms)": {
+          "intValue": "563"
+        },
+        "output token count": {
+          "intValue": "53"
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/cff7984eceb5b92d",
+    "spanId": "cff7984eceb5b92d",
+    "displayName": {
+      "value": "Turn 10"
+    },
+    "startTime": "2026-11-18T13:13:09.341442Z",
+    "endTime": "2026-11-18T13:13:16.168643Z",
+    "parentSpanId": "4fe098e1b6786fb8",
+    "attributes": {
+      "attributeMap": {
+        "perceived latency (ms)": {
+          "intValue": "61"
+        },
+        "input types": {
+          "stringValue": {
+            "value": "[]"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "projects/example-ces-project/traces/dbc954507c34d7218a66c039e40fb482/spans/30a6ade19c96d12a",
+    "spanId": "30a6ade19c96d12a",
+    "displayName": {
+      "value": "Tool"
+    },
+    "startTime": "2026-11-18T13:13:16.112166Z",
+    "endTime": "2026-11-18T13:13:16.112215Z",
+    "parentSpanId": "cff7984eceb5b92d",
+    "attributes": {
+      "attributeMap": {
+        "tool call id": {
+          "stringValue": {
+            "value": "adk-c7ee8066-62fa-4ac2-8b46-59818dd19f2b"
+          }
+        },
+        "args": {
+          "stringValue": {
+            "value": "{\"reason\":\"call disconnected by the client\",\"session_escalated\":false}"
+          }
+        },
+        "type": {
+          "stringValue": {
+            "value": "EndSessionTool"
+          }
+        },
+        "name": {
+          "stringValue": {
+            "value": "end_session"
+          }
+        },
+        "agent": {
+          "stringValue": {
+            "value": "farewell_agent"
+          }
+        }
+      }
+    }
+  }
+]

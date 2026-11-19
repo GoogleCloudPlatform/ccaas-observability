@@ -45,6 +45,11 @@ PII_ATTRIBUTE_KEYS = {
     "response_body",
 }
 
+# Top-level CES span attributes that identify the span and are never redacted, even though the
+# key is in PII_ATTRIBUTE_KEYS. A span's own 'name' attribute is the tool name; a top-level
+# 'name' key inside a tool's args or response (e.g. the user's name) is still redacted.
+SPAN_IDENTITY_ATTRIBUTE_KEYS = {"name"}
+
 CONVERSATION_RESOURCE_RE = re.compile(
     r"^projects/(?P<project_id>[^/]+)(?:/locations/(?P<location>[^/]+))?/conversations/(?P<session_id>[^/]+)$"
 )
@@ -521,7 +526,9 @@ def _convert_ces_span(
     raw_attrs = ces_span.get("attributes")
     if isinstance(raw_attrs, dict):
         for k, v in raw_attrs.items():
-            converted = convert_attribute_value(v, key=k, redact_pii=redact_pii)
+            # Keep the span's own tool name readable; it is needed for troubleshooting.
+            is_identity = isinstance(v, str) and k.lower() in SPAN_IDENTITY_ATTRIBUTE_KEYS
+            converted = convert_attribute_value(v, key=k, redact_pii=redact_pii and not is_identity)
             if converted is not None:
                 attr_map[k] = converted
 

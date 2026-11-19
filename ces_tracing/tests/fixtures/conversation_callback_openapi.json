@@ -1,0 +1,1748 @@
+{
+  "name": "projects/example-ces-project/locations/eu/apps/weather-eu/conversations/119y0lNKWz2SUCExu2xYYAYFw",
+  "startTime": "2026-11-18T13:10:54.708038Z",
+  "endTime": "2026-11-18T13:13:16.168643Z",
+  "turns": [
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "defaultVariables": {
+                "current_date": "2026-11-18[America/Los_Angeles]",
+                "_session": {
+                  "modality": "VOICE",
+                  "channel": "GOOGLE_TELEPHONY_PLATFORM"
+                },
+                "is_async": "false"
+              }
+            },
+            {
+              "updatedVariables": {
+                "x-headers": {
+                  "google-session-callid": "<scrubbed>",
+                  "google-sbc-address": "<scrubbed>",
+                  "google-callee-did-data-application": "<scrubbed>",
+                  "google-caller-gtp-application": "<scrubbed>",
+                  "google-call-flow-type": "<scrubbed>",
+                  "google-inbound-carrier-id": "<scrubbed>",
+                  "google-callee-gtp-application": "<scrubbed>",
+                  "voxbone-hop-counter": "<scrubbed>",
+                  "google-source-address": "<scrubbed>",
+                  "google-product-type": "<scrubbed>",
+                  "google-caller-did-data-application": "<scrubbed>"
+                },
+                "uui-headers": [],
+                "visitor_id": "00000000-0000-4000-8000-000000000001",
+                "telephony-caller-id": "+15550100100",
+                "session_metadata": {
+                  "client_metadata": {
+                    "visitor_id": "00000000-0000-4000-8000-000000000001"
+                  }
+                }
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:10:54.779Z"
+        },
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "text": "<scrubbed>"
+            }
+          ],
+          "eventTime": "2026-11-18T13:10:54.779Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "toolCall": {
+                "id": "adk-121b07e4-3c73-42e1-bbc3-a6ec96f6cb15",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_active_region_monitoring",
+                "args": {},
+                "displayName": "get_active_region_monitoring"
+              }
+            },
+            {
+              "toolCall": {
+                "id": "adk-cd92086c-bac4-4fe2-ace1-4157c15523dd",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/greet_user",
+                "args": {
+                  "name": "friend"
+                },
+                "displayName": "greet_user"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:10:55.341Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "updatedVariables": {
+                "user_name": "friend"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:10:55.341Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "toolResponse": {
+                "id": "adk-121b07e4-3c73-42e1-bbc3-a6ec96f6cb15",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_active_region_monitoring",
+                "response": {
+                  "result": "pending"
+                },
+                "displayName": "get_active_region_monitoring"
+              }
+            },
+            {
+              "toolResponse": {
+                "id": "adk-cd92086c-bac4-4fe2-ace1-4157c15523dd",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/greet_user",
+                "response": {
+                  "result": "Hello, friend!"
+                },
+                "displayName": "greet_user"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:10:55.341Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "transcript": "[greeting_agent transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:10:55.960Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:10:54.708038Z",
+        "endTime": "2026-11-18T13:10:59.451751Z",
+        "attributes": {
+          "visitor id": "00000000-0000-4000-8000-000000000001",
+          "perceived latency (ms)": 1180,
+          "connection index": 2,
+          "input types": [
+            "variables"
+          ]
+        },
+        "childSpans": [
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:10:54.780353Z",
+            "endTime": "2026-11-18T13:10:55.340288Z",
+            "attributes": {
+              "model": "gemini-3.1-flash-live",
+              "input token count": 2694,
+              "thought token count": 0,
+              "agent": "greeting_agent",
+              "time to first chunk (ms)": 416,
+              "output token count": 26
+            },
+            "duration": "0.559935s"
+          },
+          {
+            "name": "Async Tool",
+            "startTime": "2026-11-18T13:10:55.341765Z",
+            "endTime": "2026-11-18T13:10:55.341832Z",
+            "attributes": {
+              "agent": "greeting_agent",
+              "response": {
+                "result": "pending"
+              },
+              "type": "PythonFunctionTool",
+              "name": "get_active_region_monitoring",
+              "tool call id": "adk-121b07e4-3c73-42e1-bbc3-a6ec96f6cb15",
+              "args": {}
+            },
+            "duration": "0.000067s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:10:55.341789Z",
+            "endTime": "2026-11-18T13:10:55.360191Z",
+            "attributes": {
+              "tool call id": "adk-cd92086c-bac4-4fe2-ace1-4157c15523dd",
+              "response": {
+                "result": "Hello, friend!"
+              },
+              "agent": "greeting_agent",
+              "args": {
+                "name": "friend"
+              },
+              "stdout": "friend\n",
+              "type": "PythonFunctionTool",
+              "name": "greet_user"
+            },
+            "duration": "0.018402s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:10:55.361073Z",
+            "endTime": "2026-11-18T13:10:59.417928Z",
+            "attributes": {
+              "thought token count": 0,
+              "model": "gemini-3.1-flash-live",
+              "time to first chunk (ms)": 598,
+              "time to first audio (ms)": 598,
+              "agent": "greeting_agent",
+              "input token count": 2755,
+              "output token count": 245,
+              "audio duration (ms)": 9760
+            },
+            "duration": "4.056855s"
+          }
+        ],
+        "duration": "4.743713s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "updatedVariables": {
+                "active_region": "europe-west1"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:05.854Z"
+        },
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "text": "<scrubbed>"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:05.855Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "transcript": "[greeting_agent transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:06.450Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:11:05.720987Z",
+        "endTime": "2026-11-18T13:11:07.454311Z",
+        "attributes": {
+          "input types": [
+            "variables"
+          ],
+          "perceived latency (ms)": 593
+        },
+        "childSpans": [
+          {
+            "name": "Async Tool",
+            "startTime": "2026-11-18T13:10:55.341844Z",
+            "endTime": "2026-11-18T13:10:55.905201Z",
+            "attributes": {
+              "tool call id": "adk-121b07e4-3c73-42e1-bbc3-a6ec96f6cb15",
+              "type": "PythonFunctionTool",
+              "name": "get_active_region_monitoring",
+              "response": {
+                "result": {
+                  "status": "success",
+                  "active_region": "europe-west1"
+                }
+              },
+              "agent": "greeting_agent",
+              "args": {}
+            },
+            "duration": "0.563357s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:11:05.856739Z",
+            "endTime": "2026-11-18T13:11:07.419280Z",
+            "attributes": {
+              "audio duration (ms)": 3080,
+              "model": "gemini-3.1-flash-live",
+              "output token count": 78,
+              "time to first audio (ms)": 592,
+              "time to first chunk (ms)": 592,
+              "agent": "greeting_agent",
+              "thought token count": 0,
+              "input token count": 3136
+            },
+            "duration": "1.562541s"
+          }
+        ],
+        "duration": "1.733324s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "transcript": "[user transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:08.794Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "transcript": "[greeting_agent transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:09.374Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:11:07.277710Z",
+        "endTime": "2026-11-18T13:11:12.710443Z",
+        "attributes": {
+          "perceived latency (ms)": 580,
+          "input types": [
+            "audio"
+          ]
+        },
+        "childSpans": [
+          {
+            "name": "VAD",
+            "startTime": "2026-11-18T13:11:07.277710Z",
+            "endTime": "2026-11-18T13:11:08.793143Z",
+            "attributes": {
+              "start of speech offset (ms)": 12520,
+              "end of speech offset (ms)": 14040,
+              "endpointing decision time": "2026-11-18T13:11:08.793118Z",
+              "barge-in": true
+            },
+            "duration": "1.515433s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:11:08.795248Z",
+            "endTime": "2026-11-18T13:11:12.675010Z",
+            "attributes": {
+              "time to first chunk (ms)": 578,
+              "input token count": 3306,
+              "agent": "greeting_agent",
+              "thought token count": 0,
+              "output token count": 244,
+              "audio duration (ms)": 9720,
+              "time to first audio (ms)": 578,
+              "model": "gemini-3.1-flash-live"
+            },
+            "duration": "3.879762s"
+          }
+        ],
+        "duration": "5.432733s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "transcript": "[user transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:22.762Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "agentTransfer": {
+                "targetAgent": "projects/example-ces-project/locations/eu/apps/weather-eu/agents/weather-agent-sync",
+                "displayName": "weather_agent_sync"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:23.273Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "transcript": "[weather_agent_sync transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:27.623Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "toolCall": {
+                "id": "adk-8baff044-ec88-49f3-82ae-7150cea7d59c",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "args": {
+                  "city": "London"
+                },
+                "displayName": "get_weather_openapi"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:29.595Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "toolResponse": {
+                "id": "adk-8baff044-ec88-49f3-82ae-7150cea7d59c",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "response": {
+                  "result": {
+                    "status": "error",
+                    "error_message": "{\"status\":\"error\",\"errorCode\":\"INTERNAL\",\"error\":\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\nunable to complete your request. Either the server is overloaded or there \\nis an error in the application.\"}"
+                  }
+                },
+                "displayName": "get_weather_openapi"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:29.697Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "transcript": "[weather_agent_sync transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:30.270Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:11:19.094684Z",
+        "endTime": "2026-11-18T13:11:32.468270Z",
+        "attributes": {
+          "perceived latency (ms)": 4861,
+          "input types": [
+            "audio"
+          ]
+        },
+        "childSpans": [
+          {
+            "name": "VAD",
+            "startTime": "2026-11-18T13:11:20.477233Z",
+            "endTime": "2026-11-18T13:11:22.761830Z",
+            "attributes": {
+              "start of speech offset (ms)": 25760,
+              "endpointing decision time": "2026-11-18T13:11:22.662392Z",
+              "end of speech offset (ms)": 27920
+            },
+            "duration": "2.284597s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:11:22.764666Z",
+            "endTime": "2026-11-18T13:11:23.272102Z",
+            "attributes": {
+              "agent": "greeting_agent",
+              "thought token count": 0,
+              "input token count": 3685,
+              "model": "gemini-3.1-flash-live",
+              "output token count": 22,
+              "time to first chunk (ms)": 506
+            },
+            "duration": "0.507436s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:11:23.273Z",
+            "endTime": "2026-11-18T13:11:23.273Z",
+            "attributes": {
+              "agent": "greeting_agent",
+              "args": {
+                "agent_name": "weather_agent_sync"
+              },
+              "type": "TransferToAgentTool",
+              "name": "transfer_to_agent",
+              "tool call id": "adk-68662e71-8fc5-46f7-afad-8f93ef482401"
+            },
+            "duration": "0s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:11:23.273485Z",
+            "endTime": "2026-11-18T13:11:27.048435Z",
+            "attributes": {
+              "stdout": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-2fe4f6b205198845-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n",
+              "agent": "weather_agent_sync",
+              "description": "Probe regional weather service (integration test).",
+              "stage": "BeforeAgent"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:11:23.300871Z",
+                "endTime": "2026-11-18T13:11:27.039956Z",
+                "attributes": {
+                  "args": {
+                    "city": "Zurich",
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-2fe4f6b205198845-01"
+                  },
+                  "response": {
+                    "city": "Zurich",
+                    "condition": "Rainy",
+                    "humidity": "88%",
+                    "source": "europe-west1",
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "temperature": "23°C"
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather",
+                  "request uri": "https://api.example.com/weather/?city=Zurich"
+                },
+                "duration": "3.739085s"
+              }
+            ],
+            "duration": "3.774950s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:11:27.049996Z",
+            "endTime": "2026-11-18T13:11:29.594789Z",
+            "attributes": {
+              "input token count": 3018,
+              "time to first chunk (ms)": 573,
+              "agent": "weather_agent_sync",
+              "thought token count": 0,
+              "output token count": 161,
+              "audio duration (ms)": 5760,
+              "model": "gemini-3.1-flash-live",
+              "time to first audio (ms)": 573
+            },
+            "duration": "2.544793s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:11:29.595963Z",
+            "endTime": "2026-11-18T13:11:29.616138Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "stdout": "before_tool_callback: tool=get_weather_openapi args={'city': 'London'}\n",
+              "description": "Log tool calls (integration test).",
+              "stage": "BeforeTool"
+            },
+            "duration": "0.020175s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:11:29.616180Z",
+            "endTime": "2026-11-18T13:11:29.697046Z",
+            "attributes": {
+              "response": {
+                "result": {
+                  "status": "error",
+                  "error_message": "{\"status\":\"error\",\"errorCode\":\"INTERNAL\",\"error\":\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\nunable to complete your request. Either the server is overloaded or there \\nis an error in the application.\"}"
+                }
+              },
+              "agent": "weather_agent_sync",
+              "tool call id": "adk-8baff044-ec88-49f3-82ae-7150cea7d59c",
+              "args": {
+                "city": "London"
+              },
+              "stdout": "Routing OpenAPI weather request for London to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-d02de7f8d70af678-01\n500\nRequest URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application.\nFalse\nRequest failed with status 500\n",
+              "type": "PythonFunctionTool",
+              "name": "get_weather_openapi"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:11:29.633418Z",
+                "endTime": "2026-11-18T13:11:29.689768Z",
+                "attributes": {
+                  "response": {
+                    "status": "error",
+                    "error": "Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application.",
+                    "errorCode": "INTERNAL"
+                  },
+                  "error": "Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application.",
+                  "args": {
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-d02de7f8d70af678-01",
+                    "city": "London"
+                  },
+                  "request uri": "https://api.example.com/weather/?city=London",
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather"
+                },
+                "duration": "0.056350s"
+              }
+            ],
+            "duration": "0.080866s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:11:29.698889Z",
+            "endTime": "2026-11-18T13:11:32.430913Z",
+            "attributes": {
+              "audio duration (ms)": 6280,
+              "time to first audio (ms)": 571,
+              "agent": "weather_agent_sync",
+              "output token count": 158,
+              "time to first chunk (ms)": 571,
+              "model": "gemini-3.1-flash-live",
+              "input token count": 3288,
+              "thought token count": 0
+            },
+            "duration": "2.732024s"
+          }
+        ],
+        "duration": "13.373586s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "transcript": "[user transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:45.859Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "transcript": "[weather_agent_sync transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:46.510Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "toolCall": {
+                "id": "adk-fed65cfa-42ad-4dec-894d-498518cf850b",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "args": {
+                  "city": "Paris"
+                },
+                "displayName": "get_weather_openapi"
+              }
+            },
+            {
+              "toolCall": {
+                "id": "adk-984b990e-3d9a-401e-9c6f-535efbe76c61",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "args": {
+                  "city": "London"
+                },
+                "displayName": "get_weather_openapi"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:48.526Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "toolResponse": {
+                "id": "adk-fed65cfa-42ad-4dec-894d-498518cf850b",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "response": {
+                  "result": {
+                    "report": {
+                      "temperature": "24°C",
+                      "forecast": "Expected to stay the same for the next 4 hours.",
+                      "source": "europe-west1",
+                      "city": "Paris",
+                      "condition": "Cloudy",
+                      "humidity": "45%",
+                      "branding": "this forecast brought to you by the forecasting service in europe-west1"
+                    },
+                    "status": "success"
+                  }
+                },
+                "displayName": "get_weather_openapi"
+              }
+            },
+            {
+              "toolResponse": {
+                "id": "adk-984b990e-3d9a-401e-9c6f-535efbe76c61",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "response": {
+                  "result": {
+                    "status": "error",
+                    "error_message": "{\"status\":\"error\",\"errorCode\":\"INTERNAL\",\"error\":\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\nunable to complete your request. Either the server is overloaded or there \\nis an error in the application.\"}"
+                  }
+                },
+                "displayName": "get_weather_openapi"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:48.651Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "transcript": "[weather_agent_sync transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:11:49.230Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:11:39.663978Z",
+        "endTime": "2026-11-18T13:11:53.612099Z",
+        "attributes": {
+          "perceived latency (ms)": 650,
+          "input types": [
+            "audio"
+          ]
+        },
+        "childSpans": [
+          {
+            "name": "VAD",
+            "startTime": "2026-11-18T13:11:41.873732Z",
+            "endTime": "2026-11-18T13:11:45.858022Z",
+            "attributes": {
+              "start of speech offset (ms)": 47160,
+              "end of speech offset (ms)": 51000,
+              "endpointing decision time": "2026-11-18T13:11:45.758401Z"
+            },
+            "duration": "3.984290s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:11:45.859180Z",
+            "endTime": "2026-11-18T13:11:45.935637Z",
+            "attributes": {
+              "stage": "BeforeAgent",
+              "description": "Probe regional weather service (integration test).",
+              "agent": "weather_agent_sync",
+              "stdout": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-03331e7ed20e175e-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:11:45.882097Z",
+                "endTime": "2026-11-18T13:11:45.922398Z",
+                "attributes": {
+                  "request uri": "https://api.example.com/weather/?city=Zurich",
+                  "response": {
+                    "humidity": "70%",
+                    "temperature": "29°C",
+                    "source": "europe-west1",
+                    "city": "Zurich",
+                    "condition": "Sunny",
+                    "forecast": "Expected to stay the same for the next 4 hours."
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather",
+                  "args": {
+                    "city": "Zurich",
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-03331e7ed20e175e-01"
+                  }
+                },
+                "duration": "0.040301s"
+              }
+            ],
+            "duration": "0.076457s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:11:45.937980Z",
+            "endTime": "2026-11-18T13:11:48.525693Z",
+            "attributes": {
+              "model": "gemini-3.1-flash-live",
+              "time to first chunk (ms)": 571,
+              "thought token count": 0,
+              "agent": "weather_agent_sync",
+              "audio duration (ms)": 5840,
+              "input token count": 3606,
+              "time to first audio (ms)": 571,
+              "output token count": 179
+            },
+            "duration": "2.587713s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:11:48.527087Z",
+            "endTime": "2026-11-18T13:11:48.560176Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "stdout": "before_tool_callback: tool=get_weather_openapi args={'city': 'London'}\n",
+              "description": "Log tool calls (integration test).",
+              "stage": "BeforeTool"
+            },
+            "duration": "0.033089s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:11:48.527092Z",
+            "endTime": "2026-11-18T13:11:48.572480Z",
+            "attributes": {
+              "stage": "BeforeTool",
+              "agent": "weather_agent_sync",
+              "description": "Log tool calls (integration test).",
+              "stdout": "before_tool_callback: tool=get_weather_openapi args={'city': 'Paris'}\n"
+            },
+            "duration": "0.045388s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:11:48.560210Z",
+            "endTime": "2026-11-18T13:11:48.633266Z",
+            "attributes": {
+              "type": "PythonFunctionTool",
+              "name": "get_weather_openapi",
+              "response": {
+                "result": {
+                  "error_message": "{\"status\":\"error\",\"errorCode\":\"INTERNAL\",\"error\":\"Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \\nunable to complete your request. Either the server is overloaded or there \\nis an error in the application.\"}",
+                  "status": "error"
+                }
+              },
+              "args": {
+                "city": "London"
+              },
+              "tool call id": "adk-984b990e-3d9a-401e-9c6f-535efbe76c61",
+              "agent": "weather_agent_sync",
+              "stdout": "Routing OpenAPI weather request for London to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-495f840261db7a4f-01\n500\nRequest URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application.\nFalse\nRequest failed with status 500\n"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:11:48.581553Z",
+                "endTime": "2026-11-18T13:11:48.625941Z",
+                "attributes": {
+                  "response": {
+                    "status": "error",
+                    "errorCode": "INTERNAL",
+                    "error": "Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application."
+                  },
+                  "request uri": "https://api.example.com/weather/?city=London",
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather",
+                  "error": "Request URL was unreachable - 500 Internal Server Error: The server encountered an internal error and was \nunable to complete your request. Either the server is overloaded or there \nis an error in the application.",
+                  "args": {
+                    "city": "London",
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-495f840261db7a4f-01"
+                  }
+                },
+                "duration": "0.044388s"
+              }
+            ],
+            "duration": "0.073056s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:11:48.572525Z",
+            "endTime": "2026-11-18T13:11:48.651557Z",
+            "attributes": {
+              "response": {
+                "result": {
+                  "report": {
+                    "condition": "Cloudy",
+                    "humidity": "45%",
+                    "branding": "this forecast brought to you by the forecasting service in europe-west1",
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "city": "Paris",
+                    "temperature": "24°C",
+                    "source": "europe-west1"
+                  },
+                  "status": "success"
+                }
+              },
+              "stdout": "Routing OpenAPI weather request for Paris to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-923b4478b71bf48b-01\n200\nOK\nTrue\n",
+              "agent": "weather_agent_sync",
+              "args": {
+                "city": "Paris"
+              },
+              "type": "PythonFunctionTool",
+              "name": "get_weather_openapi",
+              "tool call id": "adk-fed65cfa-42ad-4dec-894d-498518cf850b"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:11:48.604772Z",
+                "endTime": "2026-11-18T13:11:48.645035Z",
+                "attributes": {
+                  "response": {
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "humidity": "45%",
+                    "temperature": "24°C",
+                    "condition": "Cloudy",
+                    "city": "Paris",
+                    "source": "europe-west1"
+                  },
+                  "request uri": "https://api.example.com/weather/?city=Paris",
+                  "args": {
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-923b4478b71bf48b-01",
+                    "city": "Paris"
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather"
+                },
+                "duration": "0.040263s"
+              }
+            ],
+            "duration": "0.079032s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:11:48.654213Z",
+            "endTime": "2026-11-18T13:11:53.567360Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "thought token count": 0,
+              "time to first audio (ms)": 576,
+              "model": "gemini-3.1-flash-live",
+              "input token count": 3982,
+              "audio duration (ms)": 13440,
+              "output token count": 337,
+              "time to first chunk (ms)": 576
+            },
+            "duration": "4.913147s"
+          }
+        ],
+        "duration": "13.948121s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "transcript": "[user transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:10.378Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "transcript": "[weather_agent_sync transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:11.065Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "toolCall": {
+                "id": "adk-aee072a4-3cac-4193-9ba5-6087c65c034a",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "args": {
+                  "city": "Tokyo"
+                },
+                "displayName": "get_weather_openapi"
+              }
+            },
+            {
+              "toolCall": {
+                "id": "adk-7661e5d4-4565-4c65-a2f5-3a67d59c73fc",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "args": {
+                  "city": "Singapore"
+                },
+                "displayName": "get_weather_openapi"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:12.955Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "toolResponse": {
+                "id": "adk-aee072a4-3cac-4193-9ba5-6087c65c034a",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "response": {
+                  "result": {
+                    "status": "success",
+                    "report": {
+                      "city": "Tokyo",
+                      "source": "europe-west1",
+                      "forecast": "Expected to stay the same for the next 4 hours.",
+                      "humidity": "77%",
+                      "branding": "this forecast brought to you by the forecasting service in europe-west1",
+                      "temperature": "14°C",
+                      "condition": "Windy"
+                    }
+                  }
+                },
+                "displayName": "get_weather_openapi"
+              }
+            },
+            {
+              "toolResponse": {
+                "id": "adk-7661e5d4-4565-4c65-a2f5-3a67d59c73fc",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/get_weather_openapi",
+                "response": {
+                  "result": {
+                    "status": "success",
+                    "report": {
+                      "temperature": "32°C",
+                      "city": "Singapore",
+                      "humidity": "36%",
+                      "branding": "this forecast brought to you by the forecasting service in europe-west1",
+                      "source": "europe-west1",
+                      "forecast": "Expected to stay the same for the next 4 hours.",
+                      "condition": "Cloudy"
+                    }
+                  }
+                },
+                "displayName": "get_weather_openapi"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:13.062Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "transcript": "[weather_agent_sync transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:13.690Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:12:05.791034Z",
+        "endTime": "2026-11-18T13:12:19.109760Z",
+        "attributes": {
+          "input types": [
+            "audio"
+          ],
+          "perceived latency (ms)": 686
+        },
+        "childSpans": [
+          {
+            "name": "VAD",
+            "startTime": "2026-11-18T13:12:07.393405Z",
+            "endTime": "2026-11-18T13:12:10.377938Z",
+            "attributes": {
+              "endpointing decision time": "2026-11-18T13:12:10.277325Z",
+              "end of speech offset (ms)": 75520,
+              "start of speech offset (ms)": 72640
+            },
+            "duration": "2.984533s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:12:10.379012Z",
+            "endTime": "2026-11-18T13:12:10.468106Z",
+            "attributes": {
+              "stage": "BeforeAgent",
+              "description": "Probe regional weather service (integration test).",
+              "stdout": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-6e179ab59351997d-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n",
+              "agent": "weather_agent_sync"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:12:10.413344Z",
+                "endTime": "2026-11-18T13:12:10.455899Z",
+                "attributes": {
+                  "args": {
+                    "city": "Zurich",
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-6e179ab59351997d-01"
+                  },
+                  "response": {
+                    "condition": "Windy",
+                    "source": "europe-west1",
+                    "humidity": "87%",
+                    "city": "Zurich",
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "temperature": "22°C"
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather",
+                  "request uri": "https://api.example.com/weather/?city=Zurich"
+                },
+                "duration": "0.042555s"
+              }
+            ],
+            "duration": "0.089094s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:12:10.471657Z",
+            "endTime": "2026-11-18T13:12:12.953563Z",
+            "attributes": {
+              "output token count": 168,
+              "agent": "weather_agent_sync",
+              "time to first chunk (ms)": 593,
+              "thought token count": 0,
+              "audio duration (ms)": 5400,
+              "time to first audio (ms)": 593,
+              "input token count": 4473,
+              "model": "gemini-3.1-flash-live"
+            },
+            "duration": "2.481906s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:12:12.955305Z",
+            "endTime": "2026-11-18T13:12:12.994967Z",
+            "attributes": {
+              "description": "Log tool calls (integration test).",
+              "stdout": "before_tool_callback: tool=get_weather_openapi args={'city': 'Singapore'}\n",
+              "stage": "BeforeTool",
+              "agent": "weather_agent_sync"
+            },
+            "duration": "0.039662s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:12:12.955310Z",
+            "endTime": "2026-11-18T13:12:12.993319Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "stage": "BeforeTool",
+              "stdout": "before_tool_callback: tool=get_weather_openapi args={'city': 'Tokyo'}\n",
+              "description": "Log tool calls (integration test)."
+            },
+            "duration": "0.038009s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:12:12.993361Z",
+            "endTime": "2026-11-18T13:12:13.062141Z",
+            "attributes": {
+              "type": "PythonFunctionTool",
+              "name": "get_weather_openapi",
+              "args": {
+                "city": "Tokyo"
+              },
+              "response": {
+                "result": {
+                  "status": "success",
+                  "report": {
+                    "humidity": "77%",
+                    "branding": "this forecast brought to you by the forecasting service in europe-west1",
+                    "city": "Tokyo",
+                    "condition": "Windy",
+                    "source": "europe-west1",
+                    "temperature": "14°C",
+                    "forecast": "Expected to stay the same for the next 4 hours."
+                  }
+                }
+              },
+              "agent": "weather_agent_sync",
+              "stdout": "Routing OpenAPI weather request for Tokyo to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-e54ac00f60e06f5b-01\n200\nOK\nTrue\n",
+              "tool call id": "adk-aee072a4-3cac-4193-9ba5-6087c65c034a"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:12:13.025173Z",
+                "endTime": "2026-11-18T13:12:13.055017Z",
+                "attributes": {
+                  "response": {
+                    "source": "europe-west1",
+                    "temperature": "14°C",
+                    "humidity": "77%",
+                    "city": "Tokyo",
+                    "condition": "Windy",
+                    "forecast": "Expected to stay the same for the next 4 hours."
+                  },
+                  "request uri": "https://api.example.com/weather/?city=Tokyo",
+                  "args": {
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-e54ac00f60e06f5b-01",
+                    "city": "Tokyo"
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather"
+                },
+                "duration": "0.029844s"
+              }
+            ],
+            "duration": "0.068780s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:12:12.995038Z",
+            "endTime": "2026-11-18T13:12:13.069479Z",
+            "attributes": {
+              "stdout": "Routing OpenAPI weather request for Singapore to region: europe-west1\nPropagating traceparent (OpenAPI): 00-dbc954507c34d7218a66c039e40fb482-529def9c55e8c9c3-01\n200\nOK\nTrue\n",
+              "args": {
+                "city": "Singapore"
+              },
+              "response": {
+                "result": {
+                  "report": {
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "city": "Singapore",
+                    "temperature": "32°C",
+                    "source": "europe-west1",
+                    "condition": "Cloudy",
+                    "humidity": "36%",
+                    "branding": "this forecast brought to you by the forecasting service in europe-west1"
+                  },
+                  "status": "success"
+                }
+              },
+              "tool call id": "adk-7661e5d4-4565-4c65-a2f5-3a67d59c73fc",
+              "agent": "weather_agent_sync",
+              "type": "PythonFunctionTool",
+              "name": "get_weather_openapi"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:12:13.023379Z",
+                "endTime": "2026-11-18T13:12:13.063013Z",
+                "attributes": {
+                  "args": {
+                    "city": "Singapore",
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-529def9c55e8c9c3-01"
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather",
+                  "response": {
+                    "temperature": "32°C",
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "source": "europe-west1",
+                    "city": "Singapore",
+                    "condition": "Cloudy",
+                    "humidity": "36%"
+                  },
+                  "request uri": "https://api.example.com/weather/?city=Singapore"
+                },
+                "duration": "0.039634s"
+              }
+            ],
+            "duration": "0.074441s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:12:13.074709Z",
+            "endTime": "2026-11-18T13:12:19.059828Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "thought token count": 0,
+              "time to first chunk (ms)": 615,
+              "input token count": 4852,
+              "time to first audio (ms)": 615,
+              "model": "gemini-3.1-flash-live",
+              "output token count": 419,
+              "audio duration (ms)": 16720
+            },
+            "duration": "5.985119s"
+          }
+        ],
+        "duration": "13.318726s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "transcript": "[user transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:36.059Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "transcript": "[weather_agent_sync transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:36.776Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:12:33.186036Z",
+        "endTime": "2026-11-18T13:12:40.566197Z",
+        "attributes": {
+          "perceived latency (ms)": 716,
+          "input types": [
+            "audio"
+          ]
+        },
+        "childSpans": [
+          {
+            "name": "VAD",
+            "startTime": "2026-11-18T13:12:34.773281Z",
+            "endTime": "2026-11-18T13:12:36.058072Z",
+            "attributes": {
+              "end of speech offset (ms)": 101280,
+              "endpointing decision time": "2026-11-18T13:12:35.988057Z",
+              "start of speech offset (ms)": 100040
+            },
+            "duration": "1.284791s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:12:36.059382Z",
+            "endTime": "2026-11-18T13:12:36.148069Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "stage": "BeforeAgent",
+              "stdout": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-fff23d77f2a8635c-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n",
+              "description": "Probe regional weather service (integration test)."
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:12:36.104106Z",
+                "endTime": "2026-11-18T13:12:36.138497Z",
+                "attributes": {
+                  "response": {
+                    "condition": "Windy",
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "humidity": "44%",
+                    "temperature": "27°C",
+                    "source": "europe-west1",
+                    "city": "Zurich"
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather",
+                  "request uri": "https://api.example.com/weather/?city=Zurich",
+                  "args": {
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-fff23d77f2a8635c-01",
+                    "city": "Zurich"
+                  }
+                },
+                "duration": "0.034391s"
+              }
+            ],
+            "duration": "0.088687s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:12:36.152631Z",
+            "endTime": "2026-11-18T13:12:40.508042Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "audio duration (ms)": 11320,
+              "output token count": 284,
+              "input token count": 5399,
+              "time to first audio (ms)": 622,
+              "model": "gemini-3.1-flash-live",
+              "time to first chunk (ms)": 622,
+              "thought token count": 0
+            },
+            "duration": "4.355411s"
+          }
+        ],
+        "duration": "7.380161s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "transcript": "[user transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:50.761Z"
+        },
+        {
+          "role": "weather_agent_sync",
+          "chunks": [
+            {
+              "agentTransfer": {
+                "targetAgent": "projects/example-ces-project/locations/eu/apps/weather-eu/agents/greeting-agent",
+                "displayName": "greeting_agent"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:51.401Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "transcript": "[greeting_agent transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:12:52.042Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:12:48.096557Z",
+        "endTime": "2026-11-18T13:12:55.887578Z",
+        "attributes": {
+          "input types": [
+            "audio"
+          ],
+          "perceived latency (ms)": 1280
+        },
+        "childSpans": [
+          {
+            "name": "VAD",
+            "startTime": "2026-11-18T13:12:49.174696Z",
+            "endTime": "2026-11-18T13:12:50.760302Z",
+            "attributes": {
+              "start of speech offset (ms)": 114440,
+              "end of speech offset (ms)": 116000,
+              "endpointing decision time": "2026-11-18T13:12:50.760276Z"
+            },
+            "duration": "1.585606s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:12:50.761386Z",
+            "endTime": "2026-11-18T13:12:50.860664Z",
+            "attributes": {
+              "agent": "weather_agent_sync",
+              "description": "Probe regional weather service (integration test).",
+              "stdout": "traceparent tool=openapi_get_weather_ew1_getWeather 00-dbc954507c34d7218a66c039e40fb482-9c159f3142078654-01\ncallback probe: openapi_get_weather_ew1_getWeather status=200\n",
+              "stage": "BeforeAgent"
+            },
+            "childSpans": [
+              {
+                "name": "Tool",
+                "startTime": "2026-11-18T13:12:50.816483Z",
+                "endTime": "2026-11-18T13:12:50.851836Z",
+                "attributes": {
+                  "request uri": "https://api.example.com/weather/?city=Zurich",
+                  "response": {
+                    "city": "Zurich",
+                    "condition": "Snowy",
+                    "source": "europe-west1",
+                    "forecast": "Expected to stay the same for the next 4 hours.",
+                    "humidity": "63%",
+                    "temperature": "23°C"
+                  },
+                  "args": {
+                    "traceparent": "00-dbc954507c34d7218a66c039e40fb482-9c159f3142078654-01",
+                    "city": "Zurich"
+                  },
+                  "type": "OpenApiTool",
+                  "name": "openapi_get_weather_ew1_getWeather"
+                },
+                "duration": "0.035353s"
+              }
+            ],
+            "duration": "0.099278s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:12:50.865182Z",
+            "endTime": "2026-11-18T13:12:51.400015Z",
+            "attributes": {
+              "output token count": 20,
+              "agent": "weather_agent_sync",
+              "input token count": 5802,
+              "time to first chunk (ms)": 517,
+              "model": "gemini-3.1-flash-live",
+              "thought token count": 0
+            },
+            "duration": "0.534833s"
+          },
+          {
+            "name": "Callback",
+            "startTime": "2026-11-18T13:12:51.401283Z",
+            "endTime": "2026-11-18T13:12:51.450813Z",
+            "attributes": {
+              "stdout": "before_tool_callback: tool=transfer_to_agent args={'agent_name': 'greeting_agent'}\n",
+              "stage": "BeforeTool",
+              "agent": "weather_agent_sync",
+              "description": "Log tool calls (integration test)."
+            },
+            "duration": "0.049530s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:12:51.450Z",
+            "endTime": "2026-11-18T13:12:51.450Z",
+            "attributes": {
+              "type": "TransferToAgentTool",
+              "name": "transfer_to_agent",
+              "tool call id": "adk-69fd702a-6c0c-45e6-9892-c3c63360dafe",
+              "agent": "weather_agent_sync",
+              "args": {
+                "agent_name": "greeting_agent"
+              }
+            },
+            "duration": "0s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:12:51.455068Z",
+            "endTime": "2026-11-18T13:12:55.833854Z",
+            "attributes": {
+              "thought token count": 0,
+              "model": "gemini-3.1-flash-live",
+              "input token count": 4414,
+              "time to first chunk (ms)": 586,
+              "output token count": 287,
+              "agent": "greeting_agent",
+              "audio duration (ms)": 11440,
+              "time to first audio (ms)": 586
+            },
+            "duration": "4.378786s"
+          }
+        ],
+        "duration": "7.791021s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "transcript": "[user transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:13:05.664Z"
+        },
+        {
+          "role": "greeting_agent",
+          "chunks": [
+            {
+              "agentTransfer": {
+                "targetAgent": "projects/example-ces-project/locations/eu/apps/weather-eu/agents/farewell-agent",
+                "displayName": "farewell_agent"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:13:06.215Z"
+        },
+        {
+          "role": "farewell_agent",
+          "chunks": [
+            {
+              "toolCall": {
+                "id": "adk-2012e5d0-c36e-4c71-953f-0390d66b7b87",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/farewell_user",
+                "args": {},
+                "displayName": "farewell_user"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:13:06.637Z"
+        },
+        {
+          "role": "farewell_agent",
+          "chunks": [
+            {
+              "toolResponse": {
+                "id": "adk-2012e5d0-c36e-4c71-953f-0390d66b7b87",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/farewell_user",
+                "response": {
+                  "result": "Goodbye! Have a great day."
+                },
+                "displayName": "farewell_user"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:13:06.689Z"
+        },
+        {
+          "role": "farewell_agent",
+          "chunks": [
+            {
+              "transcript": "[farewell_agent transcript]"
+            }
+          ],
+          "eventTime": "2026-11-18T13:13:07.260Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:13:03.482784Z",
+        "endTime": "2026-11-18T13:13:08.194695Z",
+        "attributes": {
+          "input types": [
+            "audio"
+          ],
+          "perceived latency (ms)": 1596
+        },
+        "childSpans": [
+          {
+            "name": "VAD",
+            "startTime": "2026-11-18T13:13:04.592735Z",
+            "endTime": "2026-11-18T13:13:05.662983Z",
+            "attributes": {
+              "endpointing decision time": "2026-11-18T13:13:05.662941Z",
+              "start of speech offset (ms)": 129880,
+              "end of speech offset (ms)": 130920
+            },
+            "duration": "1.070248s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:13:05.669294Z",
+            "endTime": "2026-11-18T13:13:06.214183Z",
+            "attributes": {
+              "agent": "greeting_agent",
+              "input token count": 4803,
+              "output token count": 21,
+              "time to first chunk (ms)": 544,
+              "model": "gemini-3.1-flash-live",
+              "thought token count": 0
+            },
+            "duration": "0.544889s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:13:06.215Z",
+            "endTime": "2026-11-18T13:13:06.215Z",
+            "attributes": {
+              "type": "TransferToAgentTool",
+              "name": "transfer_to_agent",
+              "tool call id": "adk-087aa53f-2fbf-4211-8125-2d5abf57f270",
+              "agent": "greeting_agent",
+              "args": {
+                "agent_name": "farewell_agent"
+              }
+            },
+            "duration": "0s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:13:06.221946Z",
+            "endTime": "2026-11-18T13:13:06.636675Z",
+            "attributes": {
+              "model": "gemini-3.1-flash-live",
+              "input token count": 3633,
+              "output token count": 9,
+              "thought token count": 0,
+              "agent": "farewell_agent",
+              "time to first chunk (ms)": 414
+            },
+            "duration": "0.414729s"
+          },
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:13:06.638162Z",
+            "endTime": "2026-11-18T13:13:06.689243Z",
+            "attributes": {
+              "type": "PythonFunctionTool",
+              "name": "farewell_user",
+              "tool call id": "adk-2012e5d0-c36e-4c71-953f-0390d66b7b87",
+              "agent": "farewell_agent",
+              "args": {},
+              "response": {
+                "result": "Goodbye! Have a great day."
+              }
+            },
+            "duration": "0.051081s"
+          },
+          {
+            "name": "LLM",
+            "startTime": "2026-11-18T13:13:06.696364Z",
+            "endTime": "2026-11-18T13:13:08.137895Z",
+            "attributes": {
+              "input token count": 3663,
+              "time to first audio (ms)": 563,
+              "model": "gemini-3.1-flash-live",
+              "thought token count": 0,
+              "audio duration (ms)": 2080,
+              "agent": "farewell_agent",
+              "time to first chunk (ms)": 563,
+              "output token count": 53
+            },
+            "duration": "1.441531s"
+          }
+        ],
+        "duration": "4.711911s"
+      }
+    },
+    {
+      "messages": [
+        {
+          "role": "user",
+          "chunks": [
+            {
+              "text": "<scrubbed>"
+            }
+          ],
+          "eventTime": "2026-11-18T13:13:16.107Z"
+        },
+        {
+          "role": "farewell_agent",
+          "chunks": [
+            {
+              "toolCall": {
+                "id": "adk-c7ee8066-62fa-4ac2-8b46-59818dd19f2b",
+                "tool": "projects/example-ces-project/locations/eu/apps/weather-eu/tools/end_session",
+                "args": {
+                  "session_escalated": false,
+                  "reason": "call disconnected by the client"
+                },
+                "displayName": "end_session"
+              }
+            }
+          ],
+          "eventTime": "2026-11-18T13:13:16.112Z"
+        }
+      ],
+      "rootSpan": {
+        "name": "root",
+        "startTime": "2026-11-18T13:13:09.341442Z",
+        "endTime": "2026-11-18T13:13:16.168643Z",
+        "attributes": {
+          "perceived latency (ms)": 61,
+          "input types": []
+        },
+        "childSpans": [
+          {
+            "name": "Tool",
+            "startTime": "2026-11-18T13:13:16.112166Z",
+            "endTime": "2026-11-18T13:13:16.112215Z",
+            "attributes": {
+              "tool call id": "adk-c7ee8066-62fa-4ac2-8b46-59818dd19f2b",
+              "args": {
+                "reason": "call disconnected by the client",
+                "session_escalated": false
+              },
+              "type": "EndSessionTool",
+              "name": "end_session",
+              "agent": "farewell_agent"
+            },
+            "duration": "0.000049s"
+          }
+        ],
+        "duration": "6.827201s"
+      }
+    }
+  ],
+  "turnCount": 10,
+  "channelType": "AUDIO",
+  "source": "LIVE",
+  "inputTypes": [
+    "INPUT_TYPE_VARIABLES",
+    "INPUT_TYPE_AUDIO"
+  ],
+  "entryAgent": "projects/123456789012/locations/eu/apps/weather-eu/agents/greeting-agent",
+  "languageCode": "en-US"
+}
