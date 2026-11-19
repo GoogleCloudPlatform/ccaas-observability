@@ -93,4 +93,5 @@ module "ces_tracer" {
   grant_project_iam_roles = var.ces_tracer.grant_project_iam_roles
   enable_apis             = var.ces_tracer.enable_apis
   service_name            = var.ces_tracer.service_name
+  vpc_access              = var.ces_tracer.vpc_access
 }

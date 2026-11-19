@@ -82,6 +82,7 @@ project.
         *   `grant_project_iam_roles`: (boolean, optional) Whether to automatically create project-level IAM role bindings. Defaults to `true`.
         *   `enable_apis`: (boolean, optional) Whether to automatically enable required GCP service APIs. Defaults to `true`.
         *   `service_name`: (string, optional) The name of the Cloud Run service. Defaults to `"ces-tracer"`.
+        *   `vpc_access`: (object, optional) Direct VPC Egress (`network`, `subnet`, `tags`) or Serverless VPC Access (`connector`) configuration with `egress` (defaults to `"ALL_TRAFFIC"`) for environments with Cloud Run egress org policies or VPC Service Controls perimeters. Defaults to `null`.
 
     The easiest way to pass these variables is via a `project.auto.tfvars` file.
     Create a file named `project.auto.tfvars` in this directory with the

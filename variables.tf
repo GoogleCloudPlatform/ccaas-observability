@@ -148,6 +148,15 @@ variable "ces_tracer" {
 
     # The name of the Cloud Run service and prefix for related resources.
     service_name = optional(string, "ces-tracer")
+
+    # Optional Direct VPC Egress or Serverless VPC Access connector configuration.
+    vpc_access = optional(object({
+      connector = optional(string)
+      egress    = optional(string, "ALL_TRAFFIC")
+      network   = optional(string)
+      subnet    = optional(string)
+      tags      = optional(list(string))
+    }))
   })
   default     = {}
   description = "Configuration settings for the CXAS Tracer service."
